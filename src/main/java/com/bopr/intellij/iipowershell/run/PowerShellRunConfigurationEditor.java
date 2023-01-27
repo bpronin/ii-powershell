@@ -9,7 +9,7 @@ import org.intellij.sdk.language.PowerShellFileType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellRunConfiguration> {
 
@@ -19,11 +19,17 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
     private TextFieldWithBrowseButton executableEditor;
 
     public PowerShellRunConfigurationEditor(Project project) {
-        scriptEditor.addBrowseFolderListener("Select Script", "Select script", project,
+        ResourceBundle r = ResourceBundle.getBundle("values.strings");
+
+        scriptEditor.addBrowseFolderListener(r.getString("select_Script"), r.getString("select_script_file"), project,
                 new FileChooserDescriptor(true, false, false, false, false, false)
                         .withFileFilter(virtualFile ->
-                                Objects.equals(virtualFile.getExtension(), PowerShellFileType.getINSTANCE().getDefaultExtension())
+                                PowerShellFileType.getINSTANCE().getDefaultExtension().equals(virtualFile.getExtension())
                         )
+        );
+        executableEditor.addBrowseFolderListener(r.getString("select_Executable"), r.getString("select_powershell_executable"), project,
+                new FileChooserDescriptor(true, false, false, false, false, false)
+                        .withFileFilter(virtualFile -> "exe".equals(virtualFile.getExtension()))
         );
     }
 

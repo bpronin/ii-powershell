@@ -6,9 +6,8 @@ import java.util.*
 import javax.swing.Icon
 
 class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
-
+    
     private val r = ResourceBundle.getBundle("values.strings")
-    private val iconImage = IconLoader.getIcon("/icons/powershell-file.svg", javaClass)
 
     override fun getName(): String {
         return "PowerShell Script"
@@ -23,10 +22,12 @@ class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
     }
 
     override fun getIcon(): Icon {
-        return iconImage
+        return ICON
     }
 
     companion object {
+
+        val ICON = IconLoader.getIcon("/icons/powershell-file.svg", Companion::class.java)
 
         @JvmStatic
         val INSTANCE = PowerShellFileType()
