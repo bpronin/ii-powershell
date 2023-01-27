@@ -44,15 +44,18 @@
 
         <colorSettingsPage
             implementation="org.intellij.sdk.language.PowerShellColorSettingsPage"/>
+
+        <configurationType
+            implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationType"/>
     </extensions>
 
-    <actions>
-        <action id="com.bopr.intellij.iipowershell.CreatePowerShellScriptAction"
-                class="com.bopr.intellij.iipowershell.CreatePowerShellScriptAction"
-                text="PowerShell Script "
-                description="Creates new PowerShell script">
-            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
-        </action>
-    </actions>
+<!--    <actions>-->
+<!--        <action id="com.bopr.intellij.iipowershell.CreatePowerShellScriptAction"-->
+<!--                class="com.bopr.intellij.iipowershell.CreatePowerShellScriptAction"-->
+<!--                text="PowerShell Script "-->
+<!--                description="Creates new PowerShell script">-->
+<!--            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>-->
+<!--        </action>-->
+<!--    </actions>-->
 
 </idea-plugin>
