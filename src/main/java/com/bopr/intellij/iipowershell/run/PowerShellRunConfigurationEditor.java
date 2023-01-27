@@ -24,7 +24,7 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
         scriptEditor.addBrowseFolderListener(r.getString("select_Script"), r.getString("select_script_file"), project,
                 new FileChooserDescriptor(true, false, false, false, false, false)
                         .withFileFilter(virtualFile ->
-                                PowerShellFileType.getINSTANCE().getDefaultExtension().equals(virtualFile.getExtension())
+                                PowerShellFileType.EXTENSION.equals(virtualFile.getExtension())
                         )
         );
         executableEditor.addBrowseFolderListener(r.getString("select_Executable"), r.getString("select_powershell_executable"), project,
@@ -52,15 +52,4 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
         configuration.getOptions().setExecutablePath(executableEditor.getText());
     }
 
-    private void createUIComponents() {
-//        scriptFileEditor = LabeledComponent<TextFieldWithBrowseButton>().apply {
-//            component = TextFieldWithBrowseButton()
-//        }
-//        scriptArgumentsEditor = LabeledComponent<TextFieldWithBrowseButton>().apply {
-//            component = TextFieldWithBrowseButton()
-//        }
-//        executableEditor = LabeledComponent<ExtendableTextField>().apply {
-//            component = ExtendableTextField()
-//        }
-    }
 }

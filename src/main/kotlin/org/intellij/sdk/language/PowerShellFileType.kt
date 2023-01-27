@@ -10,7 +10,7 @@ class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
     private val r = ResourceBundle.getBundle("values.strings")
 
     override fun getName(): String {
-        return "PowerShell Script"
+        return NAME
     }
 
     override fun getDescription(): String {
@@ -18,7 +18,7 @@ class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
     }
 
     override fun getDefaultExtension(): String {
-        return "ps1"
+        return EXTENSION
     }
 
     override fun getIcon(): Icon {
@@ -27,8 +27,9 @@ class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
 
     companion object {
 
+        const val NAME = "PowerShell Script"
+        const val EXTENSION = "ps1"
         val ICON = IconLoader.getIcon("/icons/powershell-file.svg", Companion::class.java)
-
         @JvmStatic
         val INSTANCE = PowerShellFileType()
     }

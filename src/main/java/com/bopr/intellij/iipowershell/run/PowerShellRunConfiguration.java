@@ -43,7 +43,13 @@ public class PowerShellRunConfiguration extends RunConfigurationBase<PowerShellR
             @NotNull
             @Override
             protected ProcessHandler startProcess() throws ExecutionException {
-                GeneralCommandLine commandLine = new GeneralCommandLine(getOptions().getScriptPath());
+                PowerShellRunConfigurationOptions options = getOptions();
+
+                GeneralCommandLine commandLine = new GeneralCommandLine().withExePath(options.getExecutablePath());
+                commandLine.addParameter(options.getScriptPath());
+                if (options.getScriptArguments() != null) {
+                    commandLine.addParameter(options.getScriptArguments());
+                }
 
                 OSProcessHandler handler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine);
                 ProcessTerminatedListener.attach(handler);

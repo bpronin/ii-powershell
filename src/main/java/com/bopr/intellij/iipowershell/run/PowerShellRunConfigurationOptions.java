@@ -2,6 +2,8 @@ package com.bopr.intellij.iipowershell.run;
 
 import com.intellij.execution.configurations.RunConfigurationOptions;
 import com.intellij.openapi.components.StoredProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PowerShellRunConfigurationOptions extends RunConfigurationOptions {
 
@@ -9,6 +11,7 @@ public class PowerShellRunConfigurationOptions extends RunConfigurationOptions {
     private final StoredProperty<String> scriptArguments = string("").provideDelegate(this, "scriptArguments");
     private final StoredProperty<String> executablePath = string("pwsh.exe").provideDelegate(this, "executablePath");
 
+    @NotNull
     public String getScriptPath() {
         return scriptPath.getValue(this);
     }
@@ -17,6 +20,7 @@ public class PowerShellRunConfigurationOptions extends RunConfigurationOptions {
         scriptPath.setValue(this, value);
     }
 
+    @Nullable
     public String getScriptArguments() {
         return scriptArguments.getValue(this);
     }
@@ -25,6 +29,7 @@ public class PowerShellRunConfigurationOptions extends RunConfigurationOptions {
         scriptArguments.setValue(this, value);
     }
 
+    @NotNull
     public String getExecutablePath() {
         return executablePath.getValue(this);
     }

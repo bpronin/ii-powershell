@@ -24,7 +24,7 @@ public class PowerShellRunConfigurationType implements ConfigurationType {
 
     @Override
     public Icon getIcon() {
-        return PowerShellFileType.getINSTANCE().getIcon();
+        return PowerShellFileType.Companion.getICON();
     }
 
     @NotNull

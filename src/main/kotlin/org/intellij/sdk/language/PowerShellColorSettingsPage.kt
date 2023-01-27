@@ -14,7 +14,7 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
     }
 
     override fun getIcon(): Icon {
-        return PowerShellFileType.INSTANCE.icon
+        return PowerShellFileType.ICON
     }
 
     override fun getHighlighter(): SyntaxHighlighter {
