@@ -3,7 +3,7 @@ package com.bopr.intellij.iipowershell.run
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
 import org.intellij.sdk.language.PowerShellFileType.Companion.POWERSHELL_FILE_ICON
-import org.intellij.sdk.language.R
+import org.intellij.sdk.language.Resources.string
 import javax.swing.Icon
 
 class PowerShellRunConfigurationType : ConfigurationType {
@@ -13,7 +13,7 @@ class PowerShellRunConfigurationType : ConfigurationType {
     }
 
     override fun getConfigurationTypeDescription(): String {
-        return R.getString("powershell_run_configuration_type")
+        return string("powershell_run_configuration_type")
     }
 
     override fun getIcon(): Icon {

@@ -2,16 +2,17 @@ package org.intellij.sdk.language
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.util.IconLoader
+import org.intellij.sdk.language.Resources.string
 import javax.swing.Icon
 
 class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
-    
+
     override fun getName(): String {
         return POWERSHELL_FILE_NAME
     }
 
     override fun getDescription(): String {
-        return R.getString("powershell_script_file")
+        return string("powershell_script_file")
     }
 
     override fun getDefaultExtension(): String {

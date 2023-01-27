@@ -2,4 +2,10 @@ package org.intellij.sdk.language
 
 import java.util.ResourceBundle
 
-val R: ResourceBundle = ResourceBundle.getBundle("values.strings")
+object Resources {
+
+    private var bundle: ResourceBundle = ResourceBundle.getBundle("values.strings")
+
+    @JvmStatic
+    fun string(key: String): String = bundle.getString(key)
+}

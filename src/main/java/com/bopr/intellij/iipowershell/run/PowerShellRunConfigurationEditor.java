@@ -9,9 +9,13 @@ import org.intellij.sdk.language.PowerShellFileType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ResourceBundle;
 
+import static org.intellij.sdk.language.Resources.string;
+
+/* NOTE: Do not convert into Kotlin. Form designer does not work well with it. */
 public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellRunConfiguration> {
+
+//    private static final ResourceBundle R = ResourceBundle.getBundle("values.strings");
 
     private JPanel editorPanel;
     private TextFieldWithBrowseButton scriptEditor;
@@ -19,15 +23,13 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
     private TextFieldWithBrowseButton executableEditor;
 
     public PowerShellRunConfigurationEditor(Project project) {
-        ResourceBundle r = ResourceBundle.getBundle("values.strings");
-
-        scriptEditor.addBrowseFolderListener(r.getString("select_Script"), r.getString("select_script_file"), project,
+        scriptEditor.addBrowseFolderListener(string("select_Script"), string("select_script_file"), project,
                 new FileChooserDescriptor(true, false, false, false, false, false)
                         .withFileFilter(virtualFile ->
                                 PowerShellFileType.POWERSHELL_FILE_EXTENSION.equals(virtualFile.getExtension())
                         )
         );
-        executableEditor.addBrowseFolderListener(r.getString("select_Executable"), r.getString("select_powershell_executable"), project,
+        executableEditor.addBrowseFolderListener(string("select_Executable"), string("select_powershell_executable"), project,
                 new FileChooserDescriptor(true, false, false, false, false, false)
                         .withFileFilter(virtualFile -> "exe".equals(virtualFile.getExtension()))
         );
