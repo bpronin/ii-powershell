@@ -5,12 +5,12 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.fields.ExtendableTextField;
-import org.intellij.sdk.language.PowerShellFileType;
+import com.bopr.intellij.iipowershell.language.PowerShellFileType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-import static org.intellij.sdk.language.Resources.string;
+import static com.bopr.intellij.iipowershell.language.Resources.string;
 
 /* NOTE: Do not convert into Kotlin. Form designer does not work well with it. */
 public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellRunConfiguration> {

@@ -1,0 +1,17 @@
+{
+  parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+  psiClassPrefix="PowerShell"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.bopr.intellij.iipowershell.psi"
+  psiImplPackage="com.bopr.intellij.iipowershell.language.psi.impl"
+  elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
+  elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
+  tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
+}
+
+powerShellFile ::= item_*
+
+private item_ ::= (property|COMMENT|CRLF)
+
+property ::= (KEY? SEPARATOR VALUE?) | KEY

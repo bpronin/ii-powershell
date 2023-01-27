@@ -2,8 +2,8 @@ package com.bopr.intellij.iipowershell.run
 
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
-import org.intellij.sdk.language.PowerShellFileType.Companion.POWERSHELL_FILE_ICON
-import org.intellij.sdk.language.Resources.string
+import com.bopr.intellij.iipowershell.language.PowerShellFileType.Companion.POWERSHELL_FILE_ICON
+import com.bopr.intellij.iipowershell.language.Resources.string
 import javax.swing.Icon
 
 class PowerShellRunConfigurationType : ConfigurationType {
