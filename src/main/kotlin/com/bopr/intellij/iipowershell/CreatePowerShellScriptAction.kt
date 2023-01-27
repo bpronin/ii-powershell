@@ -8,14 +8,14 @@ import com.intellij.psi.PsiDirectory
 import org.intellij.sdk.language.PowerShellFileType
 
 class CreatePowerShellScriptAction : CreateFileFromTemplateAction(
-    PowerShellFileType.NAME, "Create PowerShell script", PowerShellFileType.ICON
+    PowerShellFileType.POWERSHELL_FILE_NAME, "Create PowerShell script", PowerShellFileType.POWERSHELL_FILE_ICON
 ), DumbAware {
 
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
         builder
             .setTitle("New PowerShell Script")
             .setDefaultText("untitled")
-            .addKind("PowerShell script file", PowerShellFileType.ICON, "powershell-file.ps1")
+            .addKind("PowerShell script file", PowerShellFileType.POWERSHELL_FILE_ICON, "powershell-file.ps1")
     }
 
     override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?) =

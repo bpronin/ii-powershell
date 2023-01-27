@@ -2,34 +2,32 @@ package org.intellij.sdk.language
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.util.IconLoader
-import java.util.*
 import javax.swing.Icon
 
 class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
     
-    private val r = ResourceBundle.getBundle("values.strings")
-
     override fun getName(): String {
-        return NAME
+        return POWERSHELL_FILE_NAME
     }
 
     override fun getDescription(): String {
-        return r.getString("powershell_script_file")
+        return R.getString("powershell_script_file")
     }
 
     override fun getDefaultExtension(): String {
-        return EXTENSION
+        return POWERSHELL_FILE_EXTENSION
     }
 
     override fun getIcon(): Icon {
-        return ICON
+        return POWERSHELL_FILE_ICON
     }
 
     companion object {
 
-        const val NAME = "PowerShell Script"
-        const val EXTENSION = "ps1"
-        val ICON = IconLoader.getIcon("/icons/powershell-file.svg", Companion::class.java)
+        const val POWERSHELL_FILE_NAME = "PowerShell Script"
+        const val POWERSHELL_FILE_EXTENSION = "ps1"
+        val POWERSHELL_FILE_ICON = IconLoader.getIcon("/icons/powershell-file.svg", Companion::class.java)
+
         @JvmStatic
         val INSTANCE = PowerShellFileType()
     }

@@ -24,7 +24,7 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
         scriptEditor.addBrowseFolderListener(r.getString("select_Script"), r.getString("select_script_file"), project,
                 new FileChooserDescriptor(true, false, false, false, false, false)
                         .withFileFilter(virtualFile ->
-                                PowerShellFileType.EXTENSION.equals(virtualFile.getExtension())
+                                PowerShellFileType.POWERSHELL_FILE_EXTENSION.equals(virtualFile.getExtension())
                         )
         );
         executableEditor.addBrowseFolderListener(r.getString("select_Executable"), r.getString("select_powershell_executable"), project,
