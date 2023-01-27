@@ -28,25 +28,28 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <fileType
-            name="PowerShell Script"
-            language="PowerShell"
-            implementationClass="com.bopr.intellij.iipowershell.language.PowerShellFileType"
-            fieldName="INSTANCE"
-            extensions="ps1"/>
+                name="PowerShell Script"
+                language="PowerShell"
+                implementationClass="com.bopr.intellij.iipowershell.language.PowerShellFileType"
+                fieldName="INSTANCE"
+                extensions="ps1"/>
 
         <lang.parserDefinition
-            language="PowerShell"
-            implementationClass="com.bopr.intellij.iipowershell.language.PowerShellParserDefinition"/>
+                language="PowerShell"
+                implementationClass="com.bopr.intellij.iipowershell.language.PowerShellParserDefinition"/>
 
         <lang.syntaxHighlighterFactory
-            language="PowerShell"
-            implementationClass="com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighterFactory"/>
+                language="PowerShell"
+                implementationClass="com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighterFactory"/>
 
         <colorSettingsPage
-            implementation="com.bopr.intellij.iipowershell.language.PowerShellColorSettingsPage"/>
+                implementation="com.bopr.intellij.iipowershell.language.PowerShellColorSettingsPage"/>
 
         <configurationType
-            implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationType"/>
+                implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationType"/>
+
+        <runConfigurationProducer
+                implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationProducer"/>
     </extensions>
 
     <actions>

@@ -8,6 +8,9 @@ import javax.swing.Icon
 
 class PowerShellRunConfigurationType : ConfigurationType {
 
+    val defaultConfigurationFactory = PowerShellRunConfigurationFactory(this)
+    private val runConfigurationFactories = arrayOf<ConfigurationFactory>(defaultConfigurationFactory)
+
     override fun getDisplayName(): String {
         return "PowerShell"
     }
@@ -25,7 +28,7 @@ class PowerShellRunConfigurationType : ConfigurationType {
     }
 
     override fun getConfigurationFactories(): Array<ConfigurationFactory> {
-        return arrayOf(PowerShellRunConfigurationFactory(this))
+        return runConfigurationFactories
     }
 
     companion object {
