@@ -19,10 +19,12 @@ class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {
     }
 
     override fun getIcon(): Icon {
-        return IconLoader.getIcon("/icons/powershell-16.png", javaClass)
+        return ICON
     }
 
     companion object {
+
+        private val ICON = IconLoader.getIcon("/icons/powershell-file.svg", Companion::class.java)
 
         @JvmStatic
         val INSTANCE = PowerShellFileType()
