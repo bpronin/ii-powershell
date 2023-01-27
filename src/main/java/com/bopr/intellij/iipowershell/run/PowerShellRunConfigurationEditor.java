@@ -1,16 +1,31 @@
 package com.bopr.intellij.iipowershell.run;
 
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.components.fields.ExtendableTextField;
+import org.intellij.sdk.language.PowerShellFileType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellRunConfiguration> {
 
     private JPanel editorPanel;
-    private com.intellij.openapi.ui.TextFieldWithBrowseButton scriptEditor;
-    private com.intellij.ui.components.fields.ExtendableTextField argumentsEditor;
-    private com.intellij.ui.components.fields.ExtendableTextField executableEditor;
+    private TextFieldWithBrowseButton scriptEditor;
+    private ExtendableTextField argumentsEditor;
+    private TextFieldWithBrowseButton executableEditor;
+
+    public PowerShellRunConfigurationEditor(Project project) {
+        scriptEditor.addBrowseFolderListener("Select Script", "Select script", project,
+                new FileChooserDescriptor(true, false, false, false, false, false)
+                        .withFileFilter(virtualFile ->
+                                Objects.equals(virtualFile.getExtension(), PowerShellFileType.getINSTANCE().getDefaultExtension())
+                        )
+        );
+    }
 
     @Override
     protected @NotNull JComponent createEditor() {

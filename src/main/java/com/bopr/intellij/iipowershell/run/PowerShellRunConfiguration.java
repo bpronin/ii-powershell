@@ -28,7 +28,7 @@ public class PowerShellRunConfiguration extends RunConfigurationBase<PowerShellR
     @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        return new PowerShellRunConfigurationEditor();
+        return new PowerShellRunConfigurationEditor(getProject());
     }
 
     @Override
@@ -39,13 +39,15 @@ public class PowerShellRunConfiguration extends RunConfigurationBase<PowerShellR
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) {
         return new CommandLineState(executionEnvironment) {
+
             @NotNull
             @Override
             protected ProcessHandler startProcess() throws ExecutionException {
                 GeneralCommandLine commandLine = new GeneralCommandLine(getOptions().getScriptPath());
-                OSProcessHandler processHandler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine);
-                ProcessTerminatedListener.attach(processHandler);
-                return processHandler;
+
+                OSProcessHandler handler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine);
+                ProcessTerminatedListener.attach(handler);
+                return handler;
             }
         };
     }

@@ -29,7 +29,7 @@
           <text resource-bundle="values/strings" key="script_arguments|"/>
         </properties>
       </component>
-      <component id="a3cd4" class="javax.swing.JLabel">
+      <component id="a04fb" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -53,7 +53,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="b433c" class="com.intellij.ui.components.fields.ExtendableTextField" binding="executableEditor">
+      <component id="5b228" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="executableEditor">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
