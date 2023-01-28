@@ -11,6 +11,8 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMExternalizerUtil.*
+import com.intellij.openapi.util.io.FileUtil.*
+import com.intellij.openapi.util.text.StringUtilRt.*
 import org.jdom.Element
 
 class PowerShellRunConfiguration(
@@ -19,27 +21,27 @@ class PowerShellRunConfiguration(
     project, factory, "PowerShell"
 ) {
 
-    var interpreterPath: String = "pwsh.exe"
-    var scriptPath: String = ""
+    var interpreterPath = "pwsh.exe"
+    var workingDirectory = ""
+    var scriptPath = ""
     var scriptArguments: String? = null
-    var workingDirectory: String? = null
     var environmentVariables: EnvironmentVariablesData = EnvironmentVariablesData.DEFAULT
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
-        writeField(element, TAG_INTERPRETER_PATH, interpreterPath)
-        writeField(element, TAG_SCRIPT_PATH, scriptPath)
+        writePath(element, TAG_INTERPRETER_PATH, interpreterPath)
+        writePath(element, TAG_SCRIPT_PATH, scriptPath)
         writeField(element, TAG_SCRIPT_ARGUMENTS, scriptArguments)
-        writeField(element, TAG_WORKING_DIRECTORY, workingDirectory)
+        writePath(element, TAG_WORKING_DIRECTORY, workingDirectory)
         environmentVariables.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
         super.readExternal(element)
-        interpreterPath = readField(element, TAG_INTERPRETER_PATH, "")
-        scriptPath = readField(element, TAG_SCRIPT_PATH, "")
+        interpreterPath = readPath(element, TAG_INTERPRETER_PATH)
+        scriptPath = readPath(element, TAG_SCRIPT_PATH)
         scriptArguments = readField(element, TAG_SCRIPT_ARGUMENTS)
-        workingDirectory = readField(element, TAG_WORKING_DIRECTORY)
+        workingDirectory = readPath(element, TAG_WORKING_DIRECTORY)
         environmentVariables = EnvironmentVariablesData.readExternal(element)
     }
 
@@ -54,23 +56,42 @@ class PowerShellRunConfiguration(
 
             @Throws(ExecutionException::class)
             override fun startProcess(): ProcessHandler {
-                val commandLine = PtyCommandLine().apply {
-                    withExePath(interpreterPath)
-                    withWorkDirectory(workingDirectory)
-                    addParameters("-File", scriptPath)
-                    scriptArguments?.let { addParameter(it) }
-                    environmentVariables.configureCommandLine(this, true)
-                }
-
-                return ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine).apply {
-                    ProcessTerminatedListener.attach(this)
-                }
+                return ProcessHandlerFactory.getInstance()
+                    .createColoredProcessHandler(buildCommandLine()).also {
+                        ProcessTerminatedListener.attach(it)
+                    }
             }
         }
     }
 
+    private fun buildCommandLine(): GeneralCommandLine {
+        return PtyCommandLine().apply {
+            withExePath(interpreterPath)
+            addParameters("-File", scriptPath)
+            scriptArguments?.let { addParameter(it) }
+            if (workingDirectory.isNotEmpty()) {
+                withWorkDirectory(workingDirectory)
+            }
+            environmentVariables.configureCommandLine(this, true)
+        }
+    }
+
+    private fun writePath(element: Element, fieldName: String, path: String) {
+        val systemIndependentPath = toSystemIndependentName(path)
+        val isSystemIndependentPath = (systemIndependentPath == path).toString()
+        writeField(element, TAG_PREFIX + fieldName, isSystemIndependentPath)
+        writeField(element, fieldName, systemIndependentPath)
+    }
+
+    private fun readPath(element: Element, fieldName: String): String {
+        val systemIndependentPath = readField(element, fieldName, "")
+        val isSystemIndependentPath = readField(element, TAG_PREFIX + fieldName).toBoolean()
+        return if (isSystemIndependentPath) systemIndependentPath else toSystemDependentName(systemIndependentPath)
+    }
+
     companion object {
 
+        private const val TAG_PREFIX = "independent_"
         private const val TAG_SCRIPT_PATH = "script_path"
         private const val TAG_SCRIPT_ARGUMENTS = "script_arguments"
         private const val TAG_WORKING_DIRECTORY = "script_working_directory"
