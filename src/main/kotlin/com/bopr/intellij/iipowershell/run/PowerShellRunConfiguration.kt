@@ -1,5 +1,9 @@
 package com.bopr.intellij.iipowershell.run
 
+import com.bopr.intellij.iipowershell.language.Resources.string
+import com.bopr.intellij.iipowershell.util.findAbsolutePath
+import com.bopr.intellij.iipowershell.util.readPath
+import com.bopr.intellij.iipowershell.util.writePath
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.Executor
 import com.intellij.execution.configuration.EnvironmentVariablesData
@@ -13,7 +17,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMExternalizerUtil.*
 import com.intellij.openapi.util.io.FileUtil.*
 import com.intellij.openapi.util.text.StringUtilRt.*
+import com.intellij.util.io.exists
 import org.jdom.Element
+import kotlin.io.path.isExecutable
 
 class PowerShellRunConfiguration(
     project: Project, factory: ConfigurationFactory
@@ -49,7 +55,22 @@ class PowerShellRunConfiguration(
         return PowerShellRunConfigurationEditor(project)
     }
 
-    override fun checkConfiguration() {}
+    override fun checkConfiguration() {
+        val interpreter = findAbsolutePath(interpreterPath)
+        when {
+            !interpreter.exists() ->
+                throw RuntimeConfigurationError(string("interpreter_not_found"))
+
+            !interpreter.isExecutable() ->
+                throw RuntimeConfigurationError(string("interpreter_should_be_executable"))
+
+            !exists(scriptPath) && !exists(join(workingDirectory, scriptPath)) ->
+                throw RuntimeConfigurationError(string("script_not_found"))
+
+            workingDirectory.isNotBlank() && !exists(workingDirectory) ->
+                throw RuntimeConfigurationError(string("working_dir_not_found"))
+        }
+    }
 
     override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState {
         return object : CommandLineState(executionEnvironment) {
@@ -65,33 +86,18 @@ class PowerShellRunConfiguration(
     }
 
     private fun buildCommandLine(): GeneralCommandLine {
-        return PtyCommandLine().apply {
-            withExePath(interpreterPath)
-            addParameters("-File", scriptPath)
-            scriptArguments?.let { addParameter(it) }
-            if (workingDirectory.isNotEmpty()) {
-                withWorkDirectory(workingDirectory)
+        return PtyCommandLine()
+            .withExePath(interpreterPath)
+            .withParameters("-File", scriptPath)
+            .apply {
+                scriptArguments?.let { args -> addParameter(args) }
+                if (workingDirectory.isNotBlank()) withWorkDirectory(workingDirectory)
+                environmentVariables.configureCommandLine(this, true)
             }
-            environmentVariables.configureCommandLine(this, true)
-        }
-    }
-
-    private fun writePath(element: Element, fieldName: String, path: String) {
-        val systemIndependentPath = toSystemIndependentName(path)
-        val isSystemIndependentPath = (systemIndependentPath == path).toString()
-        writeField(element, TAG_PREFIX + fieldName, isSystemIndependentPath)
-        writeField(element, fieldName, systemIndependentPath)
-    }
-
-    private fun readPath(element: Element, fieldName: String): String {
-        val systemIndependentPath = readField(element, fieldName, "")
-        val isSystemIndependentPath = readField(element, TAG_PREFIX + fieldName).toBoolean()
-        return if (isSystemIndependentPath) systemIndependentPath else toSystemDependentName(systemIndependentPath)
     }
 
     companion object {
 
-        private const val TAG_PREFIX = "independent_"
         private const val TAG_SCRIPT_PATH = "script_path"
         private const val TAG_SCRIPT_ARGUMENTS = "script_arguments"
         private const val TAG_WORKING_DIRECTORY = "script_working_directory"
