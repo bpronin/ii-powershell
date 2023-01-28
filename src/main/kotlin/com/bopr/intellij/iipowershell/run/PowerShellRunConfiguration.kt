@@ -18,8 +18,12 @@ import com.intellij.openapi.util.JDOMExternalizerUtil.*
 import com.intellij.openapi.util.io.FileUtil.*
 import com.intellij.openapi.util.text.StringUtilRt.*
 import com.intellij.util.io.exists
+import com.intellij.util.io.isDirectory
+import com.intellij.util.io.isFile
 import org.jdom.Element
+import java.nio.file.Path
 import kotlin.io.path.isExecutable
+import kotlin.io.path.pathString
 
 class PowerShellRunConfiguration(
     project: Project, factory: ConfigurationFactory
@@ -27,10 +31,10 @@ class PowerShellRunConfiguration(
     project, factory, "PowerShell"
 ) {
 
-    var interpreterPath = "pwsh.exe"
-    var workingDirectory = ""
-    var scriptPath = ""
+    var interpreterPath: Path = Path.of("pwsh.exe")
+    var scriptPath: Path = Path.of("")
     var scriptArguments: String? = null
+    var workingDirectory: Path = Path.of(project.basePath ?: "")
     var environmentVariables: EnvironmentVariablesData = EnvironmentVariablesData.DEFAULT
 
     override fun writeExternal(element: Element) {
@@ -61,13 +65,13 @@ class PowerShellRunConfiguration(
             !interpreter.exists() ->
                 throw RuntimeConfigurationError(string("interpreter_not_found"))
 
-            !interpreter.isExecutable() ->
+            !(interpreter.isExecutable() && interpreter.isFile()) ->
                 throw RuntimeConfigurationError(string("interpreter_should_be_executable"))
 
-            !exists(scriptPath) && !exists(join(workingDirectory, scriptPath)) ->
+            !(scriptPath.exists() || workingDirectory.resolve(scriptPath).exists()) ->
                 throw RuntimeConfigurationError(string("script_not_found"))
 
-            workingDirectory.isNotBlank() && !exists(workingDirectory) ->
+            !(workingDirectory.isDirectory() && workingDirectory.exists()) ->
                 throw RuntimeConfigurationError(string("working_dir_not_found"))
         }
     }
@@ -87,11 +91,15 @@ class PowerShellRunConfiguration(
 
     private fun buildCommandLine(): GeneralCommandLine {
         return PtyCommandLine()
-            .withExePath(interpreterPath)
-            .withParameters("-File", scriptPath)
+            .withExePath(interpreterPath.pathString)
+            .withParameters("-File", scriptPath.pathString)
             .apply {
                 scriptArguments?.let { args -> addParameter(args) }
-                if (workingDirectory.isNotBlank()) withWorkDirectory(workingDirectory)
+
+                workingDirectory.pathString.run {
+                    if (isNotBlank()) withWorkDirectory(this)
+                }
+
                 environmentVariables.configureCommandLine(this, true)
             }
     }

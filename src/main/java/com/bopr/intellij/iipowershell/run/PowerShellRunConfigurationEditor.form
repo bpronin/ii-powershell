@@ -69,7 +69,7 @@
           <text resource-bundle="values/strings" key="working_directory|"/>
         </properties>
       </component>
-      <component id="510c4" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="workingDirectory">
+      <component id="510c4" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="workingDirectoryEditor">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>

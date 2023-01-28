@@ -6,7 +6,6 @@ import com.intellij.execution.actions.LazyRunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import java.nio.file.Path
 
 class PowerShellRunConfigurationProducer : LazyRunConfigurationProducer<PowerShellRunConfiguration>() {
 
@@ -22,8 +21,8 @@ class PowerShellRunConfigurationProducer : LazyRunConfigurationProducer<PowerShe
         sourceElement: Ref<PsiElement>
     ): Boolean {
         val element = context.psiLocation as? PowerShellFile ?: return false
-        configuration.scriptPath = element.virtualFile.name
-        configuration.workingDirectory = element.virtualFile.parent.path
+        configuration.scriptPath = element.virtualFile.toNioPath()
+        configuration.workingDirectory = element.virtualFile.parent.toNioPath()
         return true
     }
 
@@ -32,6 +31,6 @@ class PowerShellRunConfigurationProducer : LazyRunConfigurationProducer<PowerShe
         context: ConfigurationContext
     ): Boolean {
         val element = context.psiLocation as? PowerShellFile ?: return false
-        return element.virtualFile.toNioPath() == Path.of(configuration.workingDirectory, configuration.scriptPath)
+        return element.virtualFile.toNioPath() == configuration.workingDirectory.resolve(configuration.scriptPath)
     }
 }

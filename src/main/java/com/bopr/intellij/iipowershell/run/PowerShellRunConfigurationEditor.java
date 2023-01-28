@@ -9,6 +9,7 @@ import com.intellij.ui.components.fields.ExtendableTextField;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.nio.file.Path;
 
 import static com.bopr.intellij.iipowershell.language.PowerShellFileType.POWERSHELL_FILE_EXTENSION;
 import static com.bopr.intellij.iipowershell.language.Resources.string;
@@ -20,7 +21,7 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
     private TextFieldWithBrowseButton scriptEditor;
     private ExtendableTextField argumentsEditor;
     private TextFieldWithBrowseButton executableEditor;
-    private TextFieldWithBrowseButton workingDirectory;
+    private TextFieldWithBrowseButton workingDirectoryEditor;
     private EnvironmentVariablesTextFieldWithBrowseButton environmentVariablesEditor;
 
     public PowerShellRunConfigurationEditor(Project project) {
@@ -32,9 +33,11 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
                 new FileChooserDescriptor(true, false, false, false, false, false)
                         .withFileFilter(virtualFile -> "exe".equals(virtualFile.getExtension()))
         );
-        workingDirectory.addBrowseFolderListener(string("working_directory"), string("choose_script_working_directory"), project,
+        workingDirectoryEditor.addBrowseFolderListener(string("working_directory"), string("choose_script_working_directory"), project,
                 new FileChooserDescriptor(false, true, false, false, false, false)
         );
+
+//        MacrosDialog.addMacroSupport(workingDirectoryEditor, MacrosDialog.Filters.ALL, () -> false);
     }
 
     @Override
@@ -44,19 +47,19 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
 
     @Override
     protected void resetEditorFrom(@NotNull PowerShellRunConfiguration configuration) {
-        scriptEditor.setText(configuration.getScriptPath());
+        scriptEditor.setText(configuration.getScriptPath().toString());
         argumentsEditor.setText(configuration.getScriptArguments());
-        executableEditor.setText(configuration.getInterpreterPath());
-        workingDirectory.setText(configuration.getWorkingDirectory());
+        executableEditor.setText(configuration.getInterpreterPath().toString());
+        workingDirectoryEditor.setText(configuration.getWorkingDirectory().toString());
         environmentVariablesEditor.setData(configuration.getEnvironmentVariables());
     }
 
     @Override
     protected void applyEditorTo(@NotNull PowerShellRunConfiguration configuration) /*throws ConfigurationException*/ {
-        configuration.setScriptPath(scriptEditor.getText());
+        configuration.setScriptPath(Path.of(scriptEditor.getText()));
         configuration.setScriptArguments(argumentsEditor.getText());
-        configuration.setInterpreterPath(executableEditor.getText());
-        configuration.setWorkingDirectory(workingDirectory.getText());
+        configuration.setInterpreterPath(Path.of(executableEditor.getText()));
+        configuration.setWorkingDirectory(Path.of(workingDirectoryEditor.getText()));
         configuration.setEnvironmentVariables(environmentVariablesEditor.getData());
     }
 
