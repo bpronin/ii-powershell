@@ -21,7 +21,7 @@ class PowerShellRunConfigurationProducer : LazyRunConfigurationProducer<PowerShe
         sourceElement: Ref<PsiElement>
     ): Boolean {
         val element = context.psiLocation as? PowerShellFile ?: return false
-        configuration.options.scriptPath = element.virtualFile.path
+        configuration.scriptPath = element.virtualFile.path
         return true
     }
 
@@ -30,6 +30,6 @@ class PowerShellRunConfigurationProducer : LazyRunConfigurationProducer<PowerShe
         context: ConfigurationContext
     ): Boolean {
         val element = context.psiLocation as? PowerShellFile ?: return false
-        return configuration.options.scriptPath == element.virtualFile.path
+        return configuration.scriptPath == element.virtualFile.path
     }
 }
