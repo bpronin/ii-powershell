@@ -1,9 +1,7 @@
 package com.bopr.intellij.iipowershell.run
 
 import com.bopr.intellij.iipowershell.language.Resources.string
-import com.bopr.intellij.iipowershell.util.findAbsolutePath
-import com.bopr.intellij.iipowershell.util.readPath
-import com.bopr.intellij.iipowershell.util.writePath
+import com.bopr.intellij.iipowershell.util.*
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.Executor
 import com.intellij.execution.configuration.EnvironmentVariablesData
@@ -19,10 +17,8 @@ import com.intellij.openapi.util.io.FileUtil.*
 import com.intellij.openapi.util.text.StringUtilRt.*
 import com.intellij.util.io.exists
 import com.intellij.util.io.isDirectory
-import com.intellij.util.io.isFile
 import org.jdom.Element
 import java.nio.file.Path
-import kotlin.io.path.isExecutable
 import kotlin.io.path.pathString
 
 class PowerShellRunConfiguration(
@@ -31,10 +27,10 @@ class PowerShellRunConfiguration(
     project, factory, "PowerShell"
 ) {
 
-    var interpreterPath: Path = Path.of("pwsh.exe")
-    var scriptPath: Path = Path.of("")
+    var interpreterPath: Path = path("pwsh.exe")
+    var scriptPath: Path = EMPTY_PATH
     var scriptArguments: String? = null
-    var workingDirectory: Path = Path.of(project.basePath ?: "")
+    var workingDirectory: Path = path(project.basePath)
     var environmentVariables: EnvironmentVariablesData = EnvironmentVariablesData.DEFAULT
 
     override fun writeExternal(element: Element) {
@@ -60,13 +56,9 @@ class PowerShellRunConfiguration(
     }
 
     override fun checkConfiguration() {
-        val interpreter = findAbsolutePath(interpreterPath)
         when {
-            !interpreter.exists() ->
+            !interpreterPath.canExecute() ->
                 throw RuntimeConfigurationError(string("interpreter_not_found"))
-
-            !(interpreter.isExecutable() && interpreter.isFile()) ->
-                throw RuntimeConfigurationError(string("interpreter_should_be_executable"))
 
             !(scriptPath.exists() || workingDirectory.resolve(scriptPath).exists()) ->
                 throw RuntimeConfigurationError(string("script_not_found"))

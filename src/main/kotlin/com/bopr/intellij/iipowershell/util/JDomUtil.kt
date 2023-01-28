@@ -10,5 +10,5 @@ fun writePath(element: Element, fieldName: String, path: Path) {
 }
 
 fun readPath(element: Element, fieldName: String): Path {
-    return Path.of(JDOMExternalizerUtil.readField(element, fieldName, ""))
+    return path(JDOMExternalizerUtil.readField(element, fieldName, ""))
 }

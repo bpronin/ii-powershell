@@ -1,6 +1,7 @@
 package com.bopr.intellij.iipowershell.run;
 
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -15,7 +16,7 @@ import java.nio.file.Path;
 
 import static com.bopr.intellij.iipowershell.language.PowerShellFileType.POWERSHELL_FILE_EXTENSION;
 import static com.bopr.intellij.iipowershell.language.Resources.string;
-import static com.bopr.intellij.iipowershell.util.IoUtilKt.detectPowerShellVersion;
+import static com.bopr.intellij.iipowershell.util.IoUtilKt.*;
 import static java.lang.String.format;
 
 /* NOTE: Do not convert into Kotlin. Form designer does not work well with it. */
@@ -28,6 +29,8 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
     private TextFieldWithBrowseButton workingDirectoryEditor;
     private EnvironmentVariablesTextFieldWithBrowseButton environmentVariablesEditor;
     private JLabel interpreterVersionLabel;
+
+    private PowerShellVersionDetectorWorker versionDetectorWorker;
 
     public PowerShellRunConfigurationEditor(Project project) {
         interpreterEditor.addBrowseFolderListener(string("interpreter"), string("choose_powershell_executable"), project,
@@ -51,8 +54,13 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
                 new FileChooserDescriptor(false, true, false, false, false, false)
         );
 
-        updateVersionLabel();
 //        MacrosDialog.addMacroSupport(workingDirectoryEditor, MacrosDialog.Filters.ALL, () -> false);
+    }
+
+    @Override
+    protected void disposeEditor() {
+        cancelVersionDetectorWorker();
+        super.disposeEditor();
     }
 
     @Override
@@ -71,17 +79,60 @@ public class PowerShellRunConfigurationEditor extends SettingsEditor<PowerShellR
 
     @Override
     protected void applyEditorTo(@NotNull PowerShellRunConfiguration configuration) /*throws ConfigurationException*/ {
-        configuration.setScriptPath(Path.of(scriptEditor.getText()));
-        configuration.setScriptArguments(argumentsEditor.getText());
-        configuration.setInterpreterPath(Path.of(interpreterEditor.getText()));
-        configuration.setWorkingDirectory(Path.of(workingDirectoryEditor.getText()));
+        configuration.setScriptPath(path(scriptEditor.getText()));
+        configuration.setScriptArguments(argumentsEditor.getText().trim());
+        configuration.setInterpreterPath(path(interpreterEditor.getText()));
+        configuration.setWorkingDirectory(path(workingDirectoryEditor.getText()));
         configuration.setEnvironmentVariables(environmentVariablesEditor.getData());
     }
 
     private void updateVersionLabel() {
-        String version = detectPowerShellVersion(Path.of(interpreterEditor.getText()));
-        String text = (version != null) ? format(string("powershell_version"), version) : string("not_a_powershell");
-        interpreterVersionLabel.setText(text);
+        cancelVersionDetectorWorker();
+
+        Path path = path(interpreterEditor.getText());
+        if (canExecute(path)) {
+            interpreterVersionLabel.setText("...");
+            versionDetectorWorker = new PowerShellVersionDetectorWorker(path, interpreterVersionLabel);
+            versionDetectorWorker.execute();
+        } else {
+            interpreterVersionLabel.setText("");
+        }
     }
 
+    private void cancelVersionDetectorWorker() {
+        if (versionDetectorWorker != null && !versionDetectorWorker.isDone()) {
+            versionDetectorWorker.cancel(true);
+        }
+    }
+
+    private static class PowerShellVersionDetectorWorker extends SwingWorker<String, String> {
+
+        private final Logger log = Logger.getInstance("PowerShellVersionDetectorWorker");
+        private final Path path;
+        private final JLabel label;
+
+        private PowerShellVersionDetectorWorker(Path path, JLabel label) {
+            this.path = path;
+            this.label = label;
+        }
+
+        @Override
+        protected String doInBackground() {
+            return detectPowerShellVersion(path);
+        }
+
+        @Override
+        protected void done() {
+            try {
+                String version = get();
+                String text = (version != null)
+                        ? format(string("powershell_version"), version)
+                        : string("not_a_powershell");
+                label.setText(text);
+            } catch (Throwable e) {
+                log.warn(e);
+                label.setText(null);
+            }
+        }
+    }
 }
