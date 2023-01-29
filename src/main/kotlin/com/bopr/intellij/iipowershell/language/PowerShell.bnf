@@ -1,5 +1,6 @@
 /* Grammar reference: https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-15?view=powershell-7.3 */
 {
+/*
   parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
   psiClassPrefix="PowerShell"
@@ -9,25 +10,22 @@
   elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
   elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
   tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
+*/
 
-//  tokens = [
+  tokens = [
+//    NEW_LINE='regexp:[^\n\r]'
 //    SINGLE_LINE_COMMENT='regexp:#([^\n\r])*'
-////    DELIMITED_COMMENT='regexp:\<\#([#]*[^#>]+)*\#+\>'
-//  ]
+//    DELIMITED_COMMENT='regexp:\<\#([#]*[^#>]+)*\#+\>'
+  ]
 }
 
 input::=
-    input-elements* /*signature-block**/
+    input-element* /*signature-block**/
 
-input-elements::=
-    input-element |
-    input-elements
-    input-element
-
-input-element::=
-    whitespace |
-    comment |
-    token
+private input-element ::=
+    whitespace
+  | comment
+  | token
 
 /*
 signature-block::=
@@ -45,66 +43,67 @@ signature-end::=
 
 /* B.1.1 Line terminators */
 
-new-line-character::=
-    '\n' |
-    '\r' |
-    '\n\r'
+//new-line-character::=
+//    'regexp:$'|
+//    'regexp:\n'|
+//    'regexp:\r'|
+//    'regexp:[\n\r]'
+//    '\n' |
+//    '\r' |
+//    '\n\r'
 
-new-lines::=
-    new-line-character |
-    new-lines new-line-character
+//new-lines::=
+//    new-line-character
+//   | new-lines new-line-character
 
 /* B.1.2 Comments */
 
 comment::=
-    single-line-comment |
-    requires-comment |
-    delimited-comment
+    single-line-comment
+//  |  requires-comment
+//  |  delimited-comment
 
-single-line-comment::=
-    '#' input-characters*
+private single-line-comment::=
+    'regexp:#[^\n\r]*'
+//    '#' input-character*
 
-input-characters::=
-    input-character |
-    input-characters input-character
+//input-character::=
+//     !new-line-character // Any Unicode character except a new-line-character
 
-input-character::=
-     !new-line-character // Any Unicode character except a new-line-character
-
-requires-comment::=
-    '#'requires whitespace command-arguments
-
-dash::=
-    '-' |
-     '\u2013' | // EnDash character
-     '\u2014' | // EmDash character
-     '\u2015'   // Horizontal bar character
-
-dashdash::=
-    dash dash
-
-delimited-comment::=
-    '<#' delimited-comment-text* hashes '>'
-
-delimited-comment-text::=
-    delimited-comment-section |
-    delimited-comment-text delimited-comment-section
-
-delimited-comment-section::=
-    '>' |
-    hashes* not-greater-than-or-hash
-
-hashes::=
-    '#'|
-    hashes '#'
-
-not-greater-than-or-hash::=
-    'regex:[^>#]' // Any Unicode character except > or #
+//requires-comment::=
+//    '#requires' whitespace command-arguments
+//
+//dash::=
+//    '-' |
+//     '\u2013' | // EnDash character
+//     '\u2014' | // EmDash character
+//     '\u2015'   // Horizontal bar character
+//
+//dashdash::=
+//    dash dash
+//
+//delimited-comment::=
+//    '<#' delimited-comment-text* hashes '>'
+//
+//delimited-comment-text::=
+//    delimited-comment-section |
+//    delimited-comment-text delimited-comment-section
+//
+//delimited-comment-section::=
+//    '>' |
+//    hashes* not-greater-than-or-hash
+//
+//hashes::=
+//    '#'|
+//    hashes '#'
+//
+//not-greater-than-or-hash::=
+//    'regex:[^>#]' // Any Unicode character except > or #
 
 /* B.1.3 White space */
 
 whitespace::=
-    'regexp:\s'
+      'regexp:\s+'
 //    ??? Any character with Unicode class Zs, Zl, or Zp
 //    '/u009' | // Horizontal tab character
 //    '/u00B' | // Vertical tab character
@@ -114,39 +113,87 @@ whitespace::=
 /* B.1.4 Tokens */
 
 token::=
-    keyword |
-    variable |
-    command |
-    command-parameter |
-    command-argument-token |
-    integer-literal |
-    real-literal |
-    string-literal |
-    type-literal |
-    operator-or-punctuator
-
-/* B.1.5 Keywords */
-keyword::=
-    'begin'|'break'|'catch'|'class'|'continue'|'data'|'define'|'do'|'dynamicparam'|'else'|'elseif'|'end'|'exit'|
-    'filter'|'finally'|'for'|'foreach'|'from'|'function'|'if'|'in'|'inlinescript'|'parallel'|'param'|'process'|
-    'return'|'switch'|'throw'|'trap'|'try'|'until'|'using'|'var'|'while'|'workflow'|
-
-/* B.1.6 Variables */
-
-/* B.1.7 Commands */
-
-/* B.1.8 Parameters */
-
-/* B.1.9 Literals */
-
-/* B.1.9.1 Integer Literals */
-
-/* B.1.9.2 Real Literals */
-
-/* B.1.9.3 String Literals */
-
-/* B.1.10 Simple Names */
-
-/* B.1.11 Type Names */
-
-/* B.1.12 Operators and punctuators */
+//    keyword |
+//    variable |
+//    command |
+//    command-parameter |
+//    command-argument-token |
+//    integer-literal |
+//    real-literal |
+//    string-literal |
+//    type-literal |
+//    operator-or-punctuator
+      'regexp:\S+'
+///* B.1.5 Keywords */
+//keyword::=
+//    'begin'|'break'|'catch'|'class'|'continue'|'data'|'define'|'do'|'dynamicparam'|'else'|'elseif'|'end'|'exit'|
+//    'filter'|'finally'|'for'|'foreach'|'from'|'function'|'if'|'in'|'inlinescript'|'parallel'|'param'|'process'|
+//    'return'|'switch'|'throw'|'trap'|'try'|'until'|'using'|'var'|'while'|'workflow'|
+//
+///* B.1.6 Variables */
+//
+//variable::=
+//    '$$' |
+//    '$?' |
+//    '$^' |
+//    '$' variable-scope* variable-characters |
+//    '@' variable-scope* variable-characters |
+//    braced-variable
+//
+//
+//braced-variable::=
+//    '${' variable-scope* braced-variable-characters '}'
+//
+//variable-scope::=
+//    'global:' |
+//    'local:' |
+//    'private:' |
+//    'script:' |
+//    'using:' |
+//    'workflow:' |
+//    variable-namespace
+//
+//variable-namespace::=
+//    variable-characters ':'
+//
+//variable-characters::=
+//    variable-character
+//    variable-characters variable-character
+//
+//variable-character::=
+//    'regex:\w'
+////          //A Unicode character of classes Lu, Ll, Lt, Lm, Lo, or Nd
+////    '_' | // The underscore character U+005F
+////    '?'
+//
+//braced-variable-characters::=
+//    braced-variable-character |
+//    braced-variable-characters braced-variable-character
+//
+//braced-variable-character::=
+//    'regex:[^}`]' |
+////    Any Unicode character except
+////        }   (The closing curly brace character U+007D)
+////        `   (The backtick character U+0060)
+//    escaped-character
+//
+//escaped-character::=
+//    '`'   // (The backtick character U+0060) followed by any Unicode character
+//
+///* B.1.7 Commands */
+//
+///* B.1.8 Parameters */
+//
+///* B.1.9 Literals */
+//
+///* B.1.9.1 Integer Literals */
+//
+///* B.1.9.2 Real Literals */
+//
+///* B.1.9.3 String Literals */
+//
+///* B.1.10 Simple Names */
+//
+///* B.1.11 Type Names */
+//
+///* B.1.12 Operators and punctuators */
