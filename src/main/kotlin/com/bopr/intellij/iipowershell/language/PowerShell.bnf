@@ -20,26 +20,20 @@
 }
 
 input::=
-    input-element* /*signature-block**/
+    input-element* [signature-block]
 
 private input-element ::=
     whitespace
   | comment
   | token
 
-/*
 signature-block::=
-    signature-begin signature signature-end
-
-signature-begin::=
-    new-line-character # SIG # Begin signature block new-line-character
+    '# SIG # Begin signature block'
+    signature
+    '# SIG # End signature block'
 
 signature::=
-    base64 encoded signature blob in multiple single-line-comments
-
-signature-end::=
-    new-line-character # SIG # End signature block new-line-character
-*/
+    'regexp:#[^\n\r]*'*
 
 /* B.1.1 Line terminators */
 
