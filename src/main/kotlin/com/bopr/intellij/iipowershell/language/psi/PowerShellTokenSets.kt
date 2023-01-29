@@ -6,7 +6,7 @@ interface PowerShellTokenSets {
 
     companion object {
 
-//        val IDENTIFIERS = TokenSet.create(PowerShellTypes.KEY)
+        val IDENTIFIERS = TokenSet.create(PowerShellTypes.KEY)
         val COMMENTS = TokenSet.create(PowerShellTypes.COMMENT)
     }
 }

@@ -9,7 +9,6 @@ import com.bopr.intellij.iipowershell.language.psi.impl.*;
 public interface PowerShellTypes {
 
   IElementType PROPERTY = new PowerShellElementType("PROPERTY");
-
   IElementType COMMENT = new PowerShellTokenType("COMMENT");
   IElementType CRLF = new PowerShellTokenType("CRLF");
   IElementType KEY = new PowerShellTokenType("KEY");

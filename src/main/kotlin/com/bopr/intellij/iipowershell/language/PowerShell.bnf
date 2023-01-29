@@ -1,3 +1,4 @@
+/* Grammar reference: https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-15?view=powershell-7.3 */
 {
   parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
@@ -8,10 +9,144 @@
   elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
   elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
   tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
+
+//  tokens = [
+//    SINGLE_LINE_COMMENT='regexp:#([^\n\r])*'
+////    DELIMITED_COMMENT='regexp:\<\#([#]*[^#>]+)*\#+\>'
+//  ]
 }
 
-powerShellFile ::= item_*
+input::=
+    input-elements* /*signature-block**/
 
-private item_ ::= (property|COMMENT|CRLF)
+input-elements::=
+    input-element |
+    input-elements
+    input-element
 
-property ::= (KEY? SEPARATOR VALUE?) | KEY
+input-element::=
+    whitespace |
+    comment |
+    token
+
+/*
+signature-block::=
+    signature-begin signature signature-end
+
+signature-begin::=
+    new-line-character # SIG # Begin signature block new-line-character
+
+signature::=
+    base64 encoded signature blob in multiple single-line-comments
+
+signature-end::=
+    new-line-character # SIG # End signature block new-line-character
+*/
+
+/* B.1.1 Line terminators */
+
+new-line-character::=
+    '\n' |
+    '\r' |
+    '\n\r'
+
+new-lines::=
+    new-line-character |
+    new-lines new-line-character
+
+/* B.1.2 Comments */
+
+comment::=
+    single-line-comment |
+    requires-comment |
+    delimited-comment
+
+single-line-comment::=
+    '#' input-characters*
+
+input-characters::=
+    input-character |
+    input-characters input-character
+
+input-character::=
+     !new-line-character // Any Unicode character except a new-line-character
+
+requires-comment::=
+    '#'requires whitespace command-arguments
+
+dash::=
+    '-' |
+     '\u2013' | // EnDash character
+     '\u2014' | // EmDash character
+     '\u2015'   // Horizontal bar character
+
+dashdash::=
+    dash dash
+
+delimited-comment::=
+    '<#' delimited-comment-text* hashes '>'
+
+delimited-comment-text::=
+    delimited-comment-section |
+    delimited-comment-text delimited-comment-section
+
+delimited-comment-section::=
+    '>' |
+    hashes* not-greater-than-or-hash
+
+hashes::=
+    '#'|
+    hashes '#'
+
+not-greater-than-or-hash::=
+    'regex:[^>#]' // Any Unicode character except > or #
+
+/* B.1.3 White space */
+
+whitespace::=
+    'regexp:\s'
+//    ??? Any character with Unicode class Zs, Zl, or Zp
+//    '/u009' | // Horizontal tab character
+//    '/u00B' | // Vertical tab character
+//    '/u00C' | // Form feed character
+//    '`' new-line-character // The backtick character followed by new-line-character
+
+/* B.1.4 Tokens */
+
+token::=
+    keyword |
+    variable |
+    command |
+    command-parameter |
+    command-argument-token |
+    integer-literal |
+    real-literal |
+    string-literal |
+    type-literal |
+    operator-or-punctuator
+
+/* B.1.5 Keywords */
+keyword::=
+    'begin'|'break'|'catch'|'class'|'continue'|'data'|'define'|'do'|'dynamicparam'|'else'|'elseif'|'end'|'exit'|
+    'filter'|'finally'|'for'|'foreach'|'from'|'function'|'if'|'in'|'inlinescript'|'parallel'|'param'|'process'|
+    'return'|'switch'|'throw'|'trap'|'try'|'until'|'using'|'var'|'while'|'workflow'|
+
+/* B.1.6 Variables */
+
+/* B.1.7 Commands */
+
+/* B.1.8 Parameters */
+
+/* B.1.9 Literals */
+
+/* B.1.9.1 Integer Literals */
+
+/* B.1.9.2 Real Literals */
+
+/* B.1.9.3 String Literals */
+
+/* B.1.10 Simple Names */
+
+/* B.1.11 Type Names */
+
+/* B.1.12 Operators and punctuators */

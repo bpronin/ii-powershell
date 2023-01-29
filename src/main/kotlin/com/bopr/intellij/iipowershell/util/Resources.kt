@@ -1,4 +1,4 @@
-package com.bopr.intellij.iipowershell.language
+package com.bopr.intellij.iipowershell.util
 
 import java.util.ResourceBundle
 

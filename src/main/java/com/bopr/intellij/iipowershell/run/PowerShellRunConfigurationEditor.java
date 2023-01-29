@@ -15,7 +15,7 @@ import javax.swing.event.DocumentEvent;
 import java.nio.file.Path;
 
 import static com.bopr.intellij.iipowershell.language.PowerShellFileType.POWERSHELL_FILE_EXTENSION;
-import static com.bopr.intellij.iipowershell.language.Resources.string;
+import static com.bopr.intellij.iipowershell.util.Resources.string;
 import static com.bopr.intellij.iipowershell.util.IoUtilKt.*;
 import static java.lang.String.format;
 

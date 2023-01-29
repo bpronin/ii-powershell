@@ -2,7 +2,7 @@ package com.bopr.intellij.iipowershell.language
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.util.IconLoader
-import com.bopr.intellij.iipowershell.language.Resources.string
+import com.bopr.intellij.iipowershell.util.Resources.string
 import javax.swing.Icon
 
 class PowerShellFileType : LanguageFileType(PowerShellLanguage.INSTANCE) {

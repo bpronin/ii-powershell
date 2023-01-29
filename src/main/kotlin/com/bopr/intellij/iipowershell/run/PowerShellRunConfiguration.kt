@@ -1,6 +1,6 @@
 package com.bopr.intellij.iipowershell.run
 
-import com.bopr.intellij.iipowershell.language.Resources.string
+import com.bopr.intellij.iipowershell.util.Resources.string
 import com.bopr.intellij.iipowershell.util.*
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.Executor
