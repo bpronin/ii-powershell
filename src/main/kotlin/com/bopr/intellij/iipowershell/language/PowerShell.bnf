@@ -1,87 +1,86 @@
 /* Grammar reference: https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-15?view=powershell-7.3 */
 {
-/*
-  parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
-  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
-  psiClassPrefix="PowerShell"
-  psiImplClassSuffix="Impl"
-  psiPackage="com.bopr.intellij.iipowershell.psi"
-  psiImplPackage="com.bopr.intellij.iipowershell.language.psi.impl"
-  elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
-  elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
-  tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
-*/
+    parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    psiClassPrefix="PowerShell"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.bopr.intellij.iipowershell.psi"
+    psiImplPackage="com.bopr.intellij.iipowershell.language.psi.impl"
+    elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
+    elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
+    tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
 
   tokens = [
 //    NEW_LINE='regexp:[^\n\r]'
-//    SINGLE_LINE_COMMENT='regexp:#([^\n\r])*'
-//    DELIMITED_COMMENT='regexp:\<\#([#]*[^#>]+)*\#+\>'
+    VAR_PREFIX = 'regexp:[$@]'
+    RESERVED_IDENTIFIER = 'regexp:(\$\$|\$\?|\$\^|\$_)'
+    IDENTIFIER = 'regexp:[\w?]+'
+//    SINGLE_LINE_COMMENT = 'regexp:#.*'
+//    DELIMITED_COMMENT='regexp:<#+(?s).*#+>'
+//    SIGNATURE_BEGIN = 'regexp:(# SIG # Begin signature block)'
+//    SIGNATURE_END = '# SIG # End signature block'
   ]
 }
 
 /* B.1 Lexical grammar */
 
-input::=
+input ::=
     input-element* signature-block?
 
 private input-element ::=
-    whitespace
-  | comment
-  | token
+   token |
+   comment |
+   whitespace
 
-signature-block::=
+private signature-block ::=
+    /* signature-begin signature signature-end */
     '# SIG # Begin signature block' signature '# SIG # End signature block'
-//    signature-begin signature signature-end //DOES NOT WORK
 
-//private signature-begin::=
-//    new-line-character # SIG # Begin signature block new-line-character
+/* private signature-begin:
+    new-line-character # SIG # Begin signature block new-line-character */
 
-signature::=
-    'regexp:#[^\n\r]*'*
-//    base64 encoded signature blob in multiple single-line-comments
+signature ::=
+    /* base64 encoded signature blob in multiple single-line-comments */
+    'regexp:#.*'*
 
-//private signature-end::=
-//    new-line-character # SIG # End signature block new-line-character
+/* private signature-end:
+    new-line-character # SIG # End signature block new-line-character */
 
 /* B.1.1 Line terminators */
 
-//new-line-character::=
-//    'regexp:$'|
-//    'regexp:\n'|
-//    'regexp:\r'|
-//    'regexp:[\n\r]'
-//    '\n' |
-//    '\r' |
-//    '\n\r'
+/*
+new-line-character:
+    Carriage return character (U+000D)
+    Line feed character (U+000A)
+    Carriage return character (U+000D) followed by line feed character (U+000A)
 
-//new-lines::=
-//    new-line-character
-//   | new-lines new-line-character
+new-lines:
+    new-line-character
+    new-lines new-line-character
+*/
 
 /* B.1.2 Comments */
 
-comment::=
-    single-line-comment
-//  | requires-comment
-  |  delimited-comment
+comment ::=
+    single-line-comment |
+    /* requires-comment |*/
+    delimited-comment
 
-private single-line-comment::=
-    'regexp:#[^\n\r]*'
-//    '#' input-character*
-
-//input-character::=
-//     !new-line-character // Any Unicode character except a new-line-character
-
-//requires-comment::=
-//    '#requires' whitespace command-arguments
-//    '#requires' whitespace requires-comment-arguments
-//    '#requires' whitespace 'regexp:[^\n\r]+'
-//    '#requires' 'regexp:[^\n\r]*'
-
-//requires-comment-arguments::=
-//    'regexp:[^\n\r]*'
+single-line-comment ::=
+    /* # input-characters~opt~ */
+    'regexp:#.*'
 
 /*
+input-characters:
+    input-character
+    input-characters input-character
+
+input-character:
+    Any Unicode character except a new-line-character
+
+requires-comment:
+    #requires whitespace command-arguments
+
 dash:
     - (U+002D)
     EnDash character (U+2013)
@@ -92,11 +91,9 @@ dashdash:
     dash dash
 */
 
-delimited-comment::=
+delimited-comment ::=
     /* <# delimited-comment-text~opt~ hashes > */
     'regexp:<#+(?s).*#+>'
-
-//delimited-comment-text::= 'regexp:(?s).*'
 
 /*
 delimited-comment-text:
@@ -117,19 +114,19 @@ not-greater-than-or-hash:
 
 /* B.1.3 White space */
 
-whitespace::=
+whitespace ::=
+/*     Any character with Unicode class Zs, Zl, or Zp
+       Horizontal tab character (U+0009)
+       Vertical tab character (U+000B)
+       Form feed character (U+000C)
+       ` (The backtick character U+0060) followed by new-line-character */
       'regexp:\s+'
-//    ??? Any character with Unicode class Zs, Zl, or Zp
-//    '/u009' | // Horizontal tab character
-//    '/u00B' | // Vertical tab character
-//    '/u00C' | // Form feed character
-//    '`' new-line-character // The backtick character followed by new-line-character
 
 /* B.1.4 Tokens */
 
-token::=
-//    keyword |
-//    variable |
+private token ::=
+    keyword |
+    variable
 //    command |
 //    command-parameter |
 //    command-argument-token |
@@ -138,65 +135,62 @@ token::=
 //    string-literal |
 //    type-literal |
 //    operator-or-punctuator
-      'regexp:\S+'
 
 /* B.1.5 Keywords */
 
-//keyword::=
-//    'begin'|'break'|'catch'|'class'|'continue'|'data'|'define'|'do'|'dynamicparam'|'else'|'elseif'|'end'|'exit'|
-//    'filter'|'finally'|'for'|'foreach'|'from'|'function'|'if'|'in'|'inlinescript'|'parallel'|'param'|'process'|
-//    'return'|'switch'|'throw'|'trap'|'try'|'until'|'using'|'var'|'while'|'workflow'|
+keyword ::=
+    'begin'|'break'|'catch'|'class'|'continue'|'data'|'define'|'do'|'dynamicparam'|'else'|'elseif'|'end'|'exit'|
+    'filter'|'finally'|'for'|'foreach'|'from'|'function'|'if'|'in'|'inlinescript'|'parallel'|'param'|'process'|
+    'return'|'switch'|'throw'|'trap'|'try'|'until'|'using'|'var'|'while'|'workflow'
 
 /* B.1.6 Variables */
 
-/*
 variable::=
     '$$' |
     '$?' |
     '$^' |
-    '$' variable-scope* variable-characters |
-    '@' variable-scope* variable-characters |
+    'regexp:[$@]' variable-scope? variable-characters |
     braced-variable
 
+braced-variable ::=
+    /* '${' variable-scope* braced-variable-characters '}' */
+    'regexp:\$\{[^}]+}'
 
-braced-variable::=
-    '${' variable-scope* braced-variable-characters '}'
-
-variable-scope::=
-    'global:' |
-    'local:' |
-    'private:' |
-    'script:' |
-    'using:' |
-    'workflow:' |
+variable-scope ::=
+    'global:'|
+    'local:'|
+    'private:'|
+    'script:'|
+    'using:'|
+    'workflow:'|
     variable-namespace
 
-variable-namespace::=
+variable-namespace ::=
     variable-characters ':'
 
-variable-characters::=
-    variable-character
-    variable-characters variable-character
+variable-characters ::=
+    'regexp:[\w?]+'
+/*  variable-character
+    variable-characters   variable-character */
 
-variable-character::=
-    'regex:\w'
-//          //A Unicode character of classes Lu, Ll, Lt, Lm, Lo, or Nd
-//    '_' | // The underscore character U+005F
-//    '?'
+/*
+variable-character:
+    A Unicode character of classes Lu, Ll, Lt, Lm, Lo, or Nd
+    _   (The underscore character U+005F)
+    ?
 
-braced-variable-characters::=
-    braced-variable-character |
-    braced-variable-characters braced-variable-character
+braced-variable-characters:
+    braced-variable-character
+    braced-variable-characters   braced-variable-character
 
-braced-variable-character::=
-    'regex:[^}`]' |
-//    Any Unicode character except
-//        }   (The closing curly brace character U+007D)
-//        `   (The backtick character U+0060)
+braced-variable-character:
+    Any Unicode character except
+    }   (The closing curly brace character U+007D)
+    `   (The backtick character U+0060)
     escaped-character
 
-escaped-character::=
-    '`'   // (The backtick character U+0060) followed by any Unicode character
+escaped-character:
+ `   (The backtick character U+0060) followed by any Unicode character
 */
 
 /* B.1.7 Commands */

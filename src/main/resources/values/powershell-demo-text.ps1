@@ -1,11 +1,8 @@
 # Single line comment
 
 <########################
-#Delimited comment  #
-
-
-
- #########################>
+# Delimited comment     #
+#########################>
 
 $include = @("*.mkv", "*.mp4")
 
