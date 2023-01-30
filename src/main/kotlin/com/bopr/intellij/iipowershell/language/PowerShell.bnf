@@ -12,15 +12,19 @@
 
   tokens = [
 //    NEW_LINE='regexp:[^\n\r]'
-    VAR_PREFIX = 'regexp:[$@]'
+    VARIABLE_PREFIX = 'regexp:[$@]'
     RESERVED_IDENTIFIER = 'regexp:\$\$|\$\?|\$\^|\$_'
 //    IDENTIFIER = 'regexp:[\w?]+'
     VARIABLE_IDENTIFIER = 'regexp:[\w?]+'
-//    DECIMAL_INTEGER = 'regexp:\d+'
 //    SINGLE_LINE_COMMENT = 'regexp:#.*'
 //    DELIMITED_COMMENT='regexp:<#+(?s).*#+>'
 //    SIGNATURE_BEGIN = 'regexp:(# SIG # Begin signature block)'
 //    SIGNATURE_END = '# SIG # End signature block'
+//    DECIMAL-INTEGER = 'regexp:\d+(?i)[ld]?(kb|mb|gb|tb|pb)?'
+    DASH = 'regexp:[-\u2013\u2014\u2015]'
+    DASH-DASH = 'regexp:[-\u2013\u2014\u2015]{2}'
+    DASH-EQUAL = 'regexp:[-\u2013\u2014\u2015]='
+    FORMAT-OPERATOR = 'regexp:(?i)[-\u2013\u2014\u2015]f'
   ]
 }
 
@@ -84,15 +88,15 @@ requires-comment:
     #requires whitespace command-arguments
 */
 
-dash ::=
-/*  - (U+002D)
-    EnDash character (U+2013)
-    EmDash character (U+2014)
-    Horizontal bar character (U+2015) */
-    'regexp:[-\u2013\u2014\u2015]'
-
-//dashdash ::=
-//    dash dash
+//dash ::=
+///*  - (U+002D)
+//    EnDash character (U+2013)
+//    EmDash character (U+2014)
+//    Horizontal bar character (U+2015) */
+//    'regexp:[-\u2013\u2014\u2015]'
+//
+//dash-dash ::=
+//    /* dash dash */
 
 delimited-comment ::=
     /* <# delimited-comment-text~opt~ hashes > */
@@ -133,11 +137,9 @@ private token ::=
 //    command
 //    command-parameter |
 //    command-argument-token |
-    integer-literal |
-    real-literal
-//    string-literal |
+    literal |
 //    type-literal |
-//    operator-or-punctuator
+    operator-or-punctuator
 
 /* B.1.5 Keywords */
 
@@ -283,9 +285,9 @@ non-double-quote-char:
 
 /* B.1.9 Literals */
 
-//literal ::=
-//    integer-literal |
-//    real-literal |
+private literal ::=
+    integer-literal |
+    real-literal
 //    string-literal
 
 /* B.1.9.1 Integer Literals */
@@ -297,10 +299,10 @@ decimal-integer-literal ::=
     'regexp:(?i)\d+[ld]?(kb|mb|gb|tb|pb)?'
 
 hexadecimal-integer-literal ::=
-    'regexp:(?i)0x[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
+    'regexp:0x(?i)[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
 
 sign ::=
-    '+' | dash
+    '+' | DASH
 
 /*
 
@@ -520,8 +522,18 @@ generic-type-name:
 
 /* B.1.12 Operators and punctuators */
 
+private operator-or-punctuator ::=
+    punctuator|
+//    dash and   dash band   dash bnot   dash bor
+//    dash bxor  dash not    dash or     dash xor
+    assignment-operator|
+    merging-redirection-operator|
+    file-redirection-operator|
+//    comparison-operator
+    format-operator
+
 /*
-operator-or-punctuator: one of
+    one of
     {   }   [   ]   (   )   @(   @{   $(   ;
     &&  ||  &   |   ,   ++  ..   ::   .
     !   *   /   %   +
@@ -533,18 +545,26 @@ operator-or-punctuator: one of
     file-redirection-operator
     comparison-operator
     format-operator
+*/
 
-assignment-operator: one of
-    =    dash =    +=    *=    /=    %=
+punctuator ::=
+    '{'|'}'|'['|']'|'('|')'|
+    '@('|'@{'|'$('|';'|
+    '&&'|'||'|'&'|'|'|','|'++'|DASH-DASH|'..'|'::'|'.'|
+    '!'|'*'|'/'|'%'|'+'|DASH
 
-file-redirection-operator: one of
-    >  >>  2>  2>>  3>  3>>  4>  4>>
-    5>  5>>  6>  6>>  *>  *>>  <
+assignment-operator ::=
+    '='|DASH-EQUAL|'+='|'*='|'/='|'%='
 
-merging-redirection-operator: one of
-    *>&1  2>&1  3>&1  4>&1  5>&1  6>&1
-    *>&2  1>&2  3>&2  4>&2  5>&2  6>&2
+file-redirection-operator ::=
+    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|
+    '5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
 
+merging-redirection-operator ::=
+    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|
+    '*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
+
+/*
 comparison-operator: one of
     dash as           dash ccontains      dash ceq
     dash cge          dash cgt            dash cle
@@ -563,10 +583,11 @@ comparison-operator: one of
     dash notcontains  dash notin         dash notlike
     dash notmatch     dash replace       dash shl*
     dash shr          dash split
-
-format-operator:
-    dash f
 */
+
+format-operator ::=
+    FORMAT-OPERATOR
+
 
 /* B.2.1 Basic concepts */
 
