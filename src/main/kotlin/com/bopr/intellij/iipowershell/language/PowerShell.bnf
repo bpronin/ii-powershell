@@ -82,16 +82,17 @@ input-character:
 
 requires-comment:
     #requires whitespace command-arguments
+*/
 
-dash:
-    - (U+002D)
+dash ::=
+/*  - (U+002D)
     EnDash character (U+2013)
     EmDash character (U+2014)
-    Horizontal bar character (U+2015)
+    Horizontal bar character (U+2015) */
+    'regexp:[-\u2013\u2014\u2015]'
 
-dashdash:
-    dash dash
-*/
+//dashdash ::=
+//    dash dash
 
 delimited-comment ::=
     /* <# delimited-comment-text~opt~ hashes > */
@@ -132,8 +133,8 @@ private token ::=
 //    command
 //    command-parameter |
 //    command-argument-token |
-    integer-literal
-//    real-literal |
+    integer-literal |
+    real-literal
 //    string-literal |
 //    type-literal |
 //    operator-or-punctuator
@@ -290,14 +291,16 @@ non-double-quote-char:
 /* B.1.9.1 Integer Literals */
 
 integer-literal ::=
-    decimal-integer-literal |
-    hexadecimal-integer-literal
+    sign? (decimal-integer-literal | hexadecimal-integer-literal)
 
 decimal-integer-literal ::=
     'regexp:(?i)\d+[ld]?(kb|mb|gb|tb|pb)?'
 
 hexadecimal-integer-literal ::=
     'regexp:(?i)0x[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
+
+sign ::=
+    '+' | dash
 
 /*
 
@@ -345,6 +348,9 @@ hexadecimal-digit: one of
 */
 
 /* B.1.9.2 Real Literals */
+
+real-literal ::=
+    sign? ('regexp:(?i)\d*\.\d+e?\d+[ld]?(kb|mb|gb|tb|pb)?' | 'regexp:(?i)\d+e\d+[ld]?(kb|mb|gb|tb|pb)?')
 
 /*
 real-literal:
