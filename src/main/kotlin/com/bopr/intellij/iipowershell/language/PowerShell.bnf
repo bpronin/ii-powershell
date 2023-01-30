@@ -24,7 +24,9 @@
     DASH = 'regexp:[-\u2013\u2014\u2015]'
     DASH-DASH = 'regexp:[-\u2013\u2014\u2015]{2}'
     DASH-EQUAL = 'regexp:[-\u2013\u2014\u2015]='
-    FORMAT-OPERATOR = 'regexp:(?i)[-\u2013\u2014\u2015]f'
+    FORMAT = 'regexp:[-\u2013\u2014\u2015](?i)f'
+    BITWISE ='regexp:[-\u2013\u2014\u2015](?i)(band|bor|bxor|bnot|shl|shr)'
+    LOGICAL ='regexp:[-\u2013\u2014\u2015](?i)(and|or|xor|not)'
   ]
 }
 
@@ -523,35 +525,28 @@ generic-type-name:
 /* B.1.12 Operators and punctuators */
 
 private operator-or-punctuator ::=
-    punctuator|
-//    dash and   dash band   dash bnot   dash bor
-//    dash bxor  dash not    dash or     dash xor
+    common-operator|
     assignment-operator|
     merging-redirection-operator|
     file-redirection-operator|
 //    comparison-operator
     format-operator
 
-/*
-    one of
-    {   }   [   ]   (   )   @(   @{   $(   ;
-    &&  ||  &   |   ,   ++  ..   ::   .
-    !   *   /   %   +
-    dash       dashdash
-    dash and   dash band   dash bnot   dash bor
-    dash bxor  dash not    dash or     dash xor
-    assignment-operator
-    merging-redirection-operator
-    file-redirection-operator
-    comparison-operator
-    format-operator
-*/
-
-punctuator ::=
-    '{'|'}'|'['|']'|'('|')'|
-    '@('|'@{'|'$('|';'|
-    '&&'|'||'|'&'|'|'|','|'++'|DASH-DASH|'..'|'::'|'.'|
-    '!'|'*'|'/'|'%'|'+'|DASH
+/* see https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.2 */
+common-operator ::=
+    '{'|'@{'|'}'|                   /* script block or hash table literal */
+    '('|'$('|'@('|')'|              /* grouping, subexpression or array subexpression */
+    '['|']'|                        /* cast or index */
+    '..'|                           /* range */
+    '::'|                           /* static member */
+    '+'|DASH|'*'|'/'|'%'|BITWISE|   /* arithmetic */
+    '!'|LOGICAL|                    /* logical */
+    '++'|DASH-DASH|                 /* unary */
+    '&'|                            /* call or background*/
+    '.'|                            /* dot-sourcing or member-access */
+    ','|                            /* comma */
+    '&&'|'||'|'|'|                  /* pipeline */
+    ';'
 
 assignment-operator ::=
     '='|DASH-EQUAL|'+='|'*='|'/='|'%='
@@ -586,8 +581,7 @@ comparison-operator: one of
 */
 
 format-operator ::=
-    FORMAT-OPERATOR
-
+    FORMAT
 
 /* B.2.1 Basic concepts */
 
