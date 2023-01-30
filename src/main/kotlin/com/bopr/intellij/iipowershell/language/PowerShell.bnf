@@ -11,22 +11,23 @@
     tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
 
   tokens = [
-//    NEW_LINE='regexp:[^\n\r]'
-    VARIABLE_PREFIX = 'regexp:[$@]'
-    RESERVED_IDENTIFIER = 'regexp:\$\$|\$\?|\$\^|\$_'
-//    IDENTIFIER = 'regexp:[\w?]+'
-    VARIABLE_IDENTIFIER = 'regexp:[\w?]+'
+//    NEW_LINE='regexp:([\n\r]|\n\r)'
+    VAR_PREFIX = 'regexp:[$@]'
+    VAR_NAME = 'regexp:[\w?]+'
+    RESERVED_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
 //    SINGLE_LINE_COMMENT = 'regexp:#.*'
 //    DELIMITED_COMMENT='regexp:<#+(?s).*#+>'
 //    SIGNATURE_BEGIN = 'regexp:(# SIG # Begin signature block)'
 //    SIGNATURE_END = '# SIG # End signature block'
 //    DECIMAL-INTEGER = 'regexp:\d+(?i)[ld]?(kb|mb|gb|tb|pb)?'
     DASH = 'regexp:[-\u2013\u2014\u2015]'
-    DASH-DASH = 'regexp:[-\u2013\u2014\u2015]{2}'
-    DASH-EQUAL = 'regexp:[-\u2013\u2014\u2015]='
-    FORMAT = 'regexp:[-\u2013\u2014\u2015](?i)f'
-    BITWISE ='regexp:[-\u2013\u2014\u2015](?i)(band|bor|bxor|bnot|shl|shr)'
-    LOGICAL ='regexp:[-\u2013\u2014\u2015](?i)(and|or|xor|not)'
+    DASH_DASH = 'regexp:[-\u2013\u2014\u2015]{2}'
+    DASH_EQUAL = 'regexp:[-\u2013\u2014\u2015]='
+    DASH_F = 'regexp:[-\u2013\u2014\u2015](?i)f'
+    DASH_OP ='regexp:[-\u2013\u2014\u2015](?i)(shl|shr)'
+    DASH_OP_2 ='regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)'
+    DASH_B_OP ='regexp:[-\u2013\u2014\u2015](?i)b?(and|or|xor|not)'
+    DASH_IC_OP ='regexp:[-\u2013\u2014\u2015](?i)[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
   ]
 }
 
@@ -90,16 +91,6 @@ requires-comment:
     #requires whitespace command-arguments
 */
 
-//dash ::=
-///*  - (U+002D)
-//    EnDash character (U+2013)
-//    EmDash character (U+2014)
-//    Horizontal bar character (U+2015) */
-//    'regexp:[-\u2013\u2014\u2015]'
-//
-//dash-dash ::=
-//    /* dash dash */
-
 delimited-comment ::=
     /* <# delimited-comment-text~opt~ hashes > */
     'regexp:<#+(?s).*#+>'
@@ -153,8 +144,8 @@ keyword ::=
 /* B.1.6 Variables */
 
 variable::=
-    '$$'|'$?'|'$^'|'$_'|
-    'regexp:[$@]' variable-scope? variable-characters |
+    RESERVED_NAME|
+    VAR_PREFIX variable-scope? variable-characters |
     braced-variable
 
 braced-variable ::=
@@ -162,21 +153,14 @@ braced-variable ::=
     'regexp:\$\{[^}]+}'
 
 variable-scope ::=
-    'global:'|
-    'local:'|
-    'private:'|
-    'script:'|
-    'using:'|
-    'workflow:'|
+    'global:'|'local:'|'private:'|'script:'|'using:'|'workflow:'|
     variable-namespace
 
 variable-namespace ::=
     variable-characters ':'
 
 variable-characters ::=
-    'regexp:[\w?]+'
-/*  variable-character
-    variable-characters   variable-character */
+    VAR_NAME
 
 /*
 variable-character:
@@ -529,59 +513,28 @@ private operator-or-punctuator ::=
     assignment-operator|
     merging-redirection-operator|
     file-redirection-operator|
-//    comparison-operator
+    comparison-operator|
     format-operator
 
 /* see https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.2 */
 common-operator ::=
-    '{'|'@{'|'}'|                   /* script block or hash table literal */
-    '('|'$('|'@('|')'|              /* grouping, subexpression or array subexpression */
-    '['|']'|                        /* cast or index */
-    '..'|                           /* range */
-    '::'|                           /* static member */
-    '+'|DASH|'*'|'/'|'%'|BITWISE|   /* arithmetic */
-    '!'|LOGICAL|                    /* logical */
-    '++'|DASH-DASH|                 /* unary */
-    '&'|                            /* call or background*/
-    '.'|                            /* dot-sourcing or member-access */
-    ','|                            /* comma */
-    '&&'|'||'|'|'|                  /* pipeline */
-    ';'
+    '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
+    DASH|DASH_DASH|DASH_OP|DASH_B_OP
 
 assignment-operator ::=
-    '='|DASH-EQUAL|'+='|'*='|'/='|'%='
+    '='|'+='|'*='|'/='|'%='|DASH_EQUAL
 
 file-redirection-operator ::=
-    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|
-    '5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
+    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|'5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
 
 merging-redirection-operator ::=
-    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|
-    '*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
+    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|'*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
 
-/*
-comparison-operator: one of
-    dash as           dash ccontains      dash ceq
-    dash cge          dash cgt            dash cle
-    dash clike        dash clt            dash cmatch
-    dash cne          dash cnotcontains   dash cnotlike
-    dash cnotmatch    dash contains       dash creplace
-    dash csplit       dash eq             dash ge
-    dash gt           dash icontains      dash ieq
-    dash ige          dash igt            dash ile
-    dash ilike        dash ilt            dash imatch
-    dash in           dash ine            dash inotcontains
-    dash inotlike     dash inotmatch      dash ireplace
-    dash is           dash isnot          dash isplit
-    dash join         dash le             dash like
-    dash lt           dash match          dash ne
-    dash notcontains  dash notin         dash notlike
-    dash notmatch     dash replace       dash shl*
-    dash shr          dash split
-*/
+comparison-operator ::=
+    DASH_OP_2 | DASH_IC_OP
 
 format-operator ::=
-    FORMAT
+    DASH_F
 
 /* B.2.1 Basic concepts */
 
