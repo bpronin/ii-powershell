@@ -2,7 +2,7 @@
 {
     parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
-    psiClassPrefix="PowerShell"
+//    psiClassPrefix="PowerShell"
     psiImplClassSuffix="Impl"
     psiPackage="com.bopr.intellij.iipowershell.psi"
     psiImplPackage="com.bopr.intellij.iipowershell.language.psi.impl"
@@ -13,8 +13,10 @@
   tokens = [
 //    NEW_LINE='regexp:[^\n\r]'
     VAR_PREFIX = 'regexp:[$@]'
-    RESERVED_IDENTIFIER = 'regexp:(\$\$|\$\?|\$\^|\$_)'
-    IDENTIFIER = 'regexp:[\w?]+'
+    RESERVED_IDENTIFIER = 'regexp:\$\$|\$\?|\$\^|\$_'
+//    IDENTIFIER = 'regexp:[\w?]+'
+    VARIABLE_IDENTIFIER = 'regexp:[\w?]+'
+//    DECIMAL_INTEGER = 'regexp:\d+'
 //    SINGLE_LINE_COMMENT = 'regexp:#.*'
 //    DELIMITED_COMMENT='regexp:<#+(?s).*#+>'
 //    SIGNATURE_BEGIN = 'regexp:(# SIG # Begin signature block)'
@@ -126,11 +128,11 @@ whitespace ::=
 
 private token ::=
     keyword |
-    variable
-//    command |
+    variable |
+//    command
 //    command-parameter |
 //    command-argument-token |
-//    integer-literal |
+    integer-literal
 //    real-literal |
 //    string-literal |
 //    type-literal |
@@ -146,9 +148,7 @@ keyword ::=
 /* B.1.6 Variables */
 
 variable::=
-    '$$' |
-    '$?' |
-    '$^' |
+    '$$'|'$?'|'$^'|'$_'|
     'regexp:[$@]' variable-scope? variable-characters |
     braced-variable
 
@@ -195,33 +195,38 @@ escaped-character:
 
 /* B.1.7 Commands */
 
-/*
-generic-token:
-    generic-token-parts
+//generic-token ::=
+//    generic-token-parts
+//
+//generic-token-parts ::=
+//    generic-token-part*
+//
+//generic-token-parts ::=
+//    generic-token-part*
+///*    generic-token-part
+//    generic-token-parts generic-token-part*/
+//
+//generic-token-part ::=
+////    expandable-string-literal |
+////    verbatim-here-string-literal |
+//    variable |
+//    generic-token-char
 
-generic-token-parts:
-    generic-token-part
-    generic-token-parts generic-token-part
+//generic-token-char ::=
+//    'regexp:\w'
+///*
+//    Any Unicode character except
+//        {   }   (   )   ;   ,   |   &   $
+//        ` (The backtick character U+0060)
+//        double-quote-character
+//        single-quote-character
+//        whitespace
+//        new-line-character
+//        escaped-character
+//*/
 
-generic-token-part:
-    expandable-string-literal
-    verbatim-here-string-literal
-    variable
-    generic-token-char
-
-generic-token-char:
-    Any Unicode character except
-        {   }   (   )   ;   ,   |   &   $
-        ` (The backtick character U+0060)
-        double-quote-character
-        single-quote-character
-        whitespace
-        new-line-character
-        escaped-character
-
-generic-token-with-subexpr-start:
-    generic-token-parts $(
-*/
+//generic-token-with-subexpr-start ::=
+//    generic-token-parts '$('
 
 /* B.1.8 Parameters */
 
@@ -277,17 +282,24 @@ non-double-quote-char:
 
 /* B.1.9 Literals */
 
-/*literal:
-    integer-literal
-    real-literal
-    string-literal*/
+//literal ::=
+//    integer-literal |
+//    real-literal |
+//    string-literal
 
 /* B.1.9.1 Integer Literals */
 
-/*
-integer-literal:
-    decimal-integer-literal
+integer-literal ::=
+    decimal-integer-literal |
     hexadecimal-integer-literal
+
+decimal-integer-literal ::=
+    'regexp:(?i)\d+[ld]?(kb|mb|gb|tb|pb)?'
+
+hexadecimal-integer-literal ::=
+    'regexp:(?i)0x[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
+
+/*
 
 decimal-integer-literal:
     decimal-digits numeric-type-suffix~opt~ numeric-multiplier~opt~
@@ -319,6 +331,17 @@ long-type-suffix:
 
 numeric-multiplier: one of
     kb mb gb tb pb
+
+hexadecimal-integer-literal:
+    0x hexadecimal-digits long-type-suffix~opt~
+    numeric-multiplier~opt~
+
+hexadecimal-digits:
+    hexadecimal-digit
+    hexadecimal-digit decimal-digits
+
+hexadecimal-digit: one of
+    0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
 */
 
 /* B.1.9.2 Real Literals */
@@ -335,10 +358,6 @@ exponent-part:
 sign: one of
     +
     dash
-
-decimal-type-suffix:
-    d
-    l
 */
 
 /* B.1.9.3 String Literals */
@@ -595,36 +614,42 @@ block-name: one of
 
 statement-block:
     new-lines~opt~ { statement-list~opt~ new-lines~opt~ }
+*/
 
-statement-list:
-    statement
-    statement-list statement
+//statement-list ::=
+//    statement*
+///*  statement
+//    statement-list statement */
 
-statement:
-    if-statement
-    label~opt~ labeled-statement
-    function-statement
-    flow-control-statement statement-terminator
-    trap-statement
-    try-statement
-    data-statement
-    inlinescript-statement
-    parallel-statement
-    sequence-statement
-    pipeline statement-terminator
+//statement ::=
+//    if-statement
+////    label~opt~ labeled-statement
+////    function-statement
+////    flow-control-statement statement-terminator
+////    trap-statement
+////    try-statement
+////    data-statement
+////    inlinescript-statement
+////    parallel-statement
+////    sequence-statement
+////    pipeline statement-terminator
 
-statement-terminator:
-    ;
-    new-line-character
+//statement-terminator ::=
+//    ';' |
+//    new-line-character
+//
+//statement-terminators ::=
+//    statement-terminator*
+///*  statement-terminator
+//    statement-terminators statement-terminator */
 
-statement-terminators:
-    statement-terminator
-    statement-terminators statement-terminator
+//if-statement ::=
+//    'regexp:if.*'
+////    'regexp:if\s*\((.*)\).*'
+////    'if' new-lines? '(' new-lines? pipeline new-lines? ')' statement-block
+////        elseif-clauses? else-clause?
 
-if-statement:
-    if new-lines~opt~ ( new-lines~opt~ pipeline new-lines~opt~ ) statement-block
-        elseif-clauses~opt~ else-clause~opt~
-
+/*
 elseif-clauses:
     elseif-clause
     elseif-clauses elseif-clause
@@ -800,56 +825,63 @@ assignment-expression:
 pipeline-tail:
     | new-lines~opt~ command
     | new-lines~opt~ command pipeline-tail
+*/
 
-command:
-    command-name command-elements~opt~
-    command-invocation-operator command-module~opt~ command-name-expr command-elements~opt~
+//command ::=
+//    command-name command-elements?
+////    command-invocation-operator command-module? command-name-expr command-elements?
 
+/*
 command-invocation-operator: one of
     &   .
 
 command-module:
     primary-expression
-
-command-name:
-    generic-token
-    generic-token-with-subexpr
-
-generic-token-with-subexpr:
-    No whitespace is allowed between ) and command-name.
-    generic-token-with-subexpr-start statement-list~opt~ ) command-name
-
-command-name-expr:
-    command-name
-    primary-expression
-
-command-elements:
-    command-element
-    command-elements command-element
-
-command-element:
-    command-parameter
-    command-argument
-    redirection
-
-command-argument:
-    command-name-expr
-
-verbatim-command-argument:
-    --% verbatim-command-argument-chars
-
-redirections:
-    redirection
-    redirections redirection
-
-redirection:
-    merging-redirection-operator
-    file-redirection-operator redirected-file-name
-
-redirected-file-name:
-    command-argument
-    primary-expression
 */
+
+//command-name ::=
+//    generic-token //|
+////    generic-token-with-subexpr
+//
+////generic-token-with-subexpr ::=
+/////*
+////    No whitespace is allowed between ) and command-name.
+////    generic-token-with-subexpr-start statement-list~opt~ ) command-name
+////*/
+////    generic-token-with-subexpr-start statement-list? ')' command-name
+////
+//command-name-expr ::=
+//    command-name |
+//    primary-expression
+//
+//command-elements ::=
+//    command-element*
+///*  command-element
+//    command-elements command-element */
+//
+//command-element ::=
+////    command-parameter |
+//    command-argument |
+////    redirection
+//
+//command-argument ::=
+//    command-name-expr
+
+//verbatim-command-argument ::=
+//    '--%' verbatim-command-argument-chars
+//
+//redirections ::=
+//    redirection*
+///*  redirection
+//    redirections redirection */
+//
+//redirection ::=
+//    merging-redirection-operator |
+//    file-redirection-operator redirected-file-name
+//
+//redirected-file-name ::=
+//    command-argument |
+//    primary-expression
 
 /* B.2.3 Expressions */
 
@@ -924,25 +956,27 @@ cast-expression:
 
 attributed-expression:
     type-literal variable
+*/
 
-primary-expression:
-    value
-    member-access
-    element-access
-    invocation-expression
-    post-increment-expression
-    post-decrement-expression
+//primary-expression ::=
+//    value |
+////    member-access |
+////    element-access  |
+////    invocation-expression  |
+////    post-increment-expression |
+////    post-decrement-expression
+//
+//value ::=
+////    parenthesized-expression |
+////    sub-expression |
+////    array-expression |
+////    script-block-expression |
+////    hash-literal-expression |
+////    literal |
+////    type-literal |
+//    variable
 
-value:
-    parenthesized-expression
-    sub-expression
-    array-expression
-    script-block-expression
-    hash-literal-expression
-    literal
-    type-literal
-    variable
-
+/*
 parenthesized-expression:
     ( new-lines~opt~ pipeline new-lines~opt~ )
 

@@ -7,7 +7,7 @@
 
 $$ $? $^ $variable $variable? ${ this is also `variable?` }
 
-if $token return $token
+if ($token) return $token
 
 # SIG # Begin signature block
 # MIInzAYJKoZIhvcNAQcCoIInvTCCJ7kCAQExDzANBglghkgBZQMEAgEFADB5Bgor
