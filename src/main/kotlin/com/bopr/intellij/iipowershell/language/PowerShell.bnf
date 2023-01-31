@@ -12,14 +12,17 @@
 
   tokens = [
 //    NEW_LINE='regexp:([\n\r]|\n\r)'
-    VAR_PREFIX = 'regexp:[$@]'
-    VAR_NAME = 'regexp:[\w?]+'
-    RESERVED_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
+//    STRING="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\\"|\\\'|\\)*\")"
+//    VAR_NAME = 'regexp:[^"]\s*[\w?]+'
+//    VAR_NAME = 'regexp:[\w?]+'
+//    RESERVED_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
 //    SINGLE_LINE_COMMENT = 'regexp:#.*'
 //    DELIMITED_COMMENT='regexp:<#+(?s).*#+>'
 //    SIGNATURE_BEGIN = 'regexp:(# SIG # Begin signature block)'
-//    SIGNATURE_END = '# SIG # End signature block'
+//    SIGNATURE_END = 'regexp:(# SIG # End signature block)'
 //    DECIMAL-INTEGER = 'regexp:\d+(?i)[ld]?(kb|mb|gb|tb|pb)?'
+//    DOUBLE_QUOTE = 'regexp:["\u201C\u201D\u201E]'
+//    SINGLE_QUOTE = "regexp:['\u2018\u2019\u201A\u201B]"
     DASH = 'regexp:[-\u2013\u2014\u2015]'
     DASH_DASH = 'regexp:[-\u2013\u2014\u2015]{2}'
     DASH_EQUAL = 'regexp:[-\u2013\u2014\u2015]='
@@ -41,9 +44,11 @@ private input-element ::=
    comment |
    whitespace
 
-private signature-block ::=
+signature-block ::=
     /* signature-begin signature signature-end */
     '# SIG # Begin signature block' signature '# SIG # End signature block'
+//    SIGNATURE_BEGIN signature SIGNATURE_END //why does not work ?
+//    '(?<=# SIG # Begin signature block)[a-zA-Z0-9/+=#\s]*(?=# SIG # End signature block)' //why does not work ?
 
 /* private signature-begin:
     new-line-character # SIG # Begin signature block new-line-character */
@@ -51,6 +56,8 @@ private signature-block ::=
 signature ::=
     /* base64 encoded signature blob in multiple single-line-comments */
     'regexp:#.*'*
+//    'regexp:#[a-zA-Z0-9/+=\s]*'* //why does not work ?
+
 
 /* private signature-end:
     new-line-character # SIG # End signature block new-line-character */
@@ -144,23 +151,12 @@ keyword ::=
 /* B.1.6 Variables */
 
 variable::=
-    RESERVED_NAME|
-    VAR_PREFIX variable-scope? variable-characters |
+    'regexp:\$\$|\$\?|\$\^|\$_' |
+    'regexp:[$@][\w:?]+' |
     braced-variable
 
 braced-variable ::=
-    /* '${' variable-scope* braced-variable-characters '}' */
     'regexp:\$\{[^}]+}'
-
-variable-scope ::=
-    'global:'|'local:'|'private:'|'script:'|'using:'|'workflow:'|
-    variable-namespace
-
-variable-namespace ::=
-    variable-characters ':'
-
-variable-characters ::=
-    VAR_NAME
 
 /*
 variable-character:
@@ -273,8 +269,8 @@ non-double-quote-char:
 
 private literal ::=
     integer-literal |
-    real-literal
-//    string-literal
+    real-literal |
+    string-literal
 
 /* B.1.9.1 Integer Literals */
 
@@ -355,6 +351,40 @@ sign: one of
 */
 
 /* B.1.9.3 String Literals */
+
+string-literal ::=
+    expandable-string-literal
+//    expandable-here-string-literal
+//    verbatim-string-literal
+//    verbatim-here-string-literal
+
+expandable-string-literal ::=
+//    "regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\\"|\\\'|\\)*\")"
+//    'regexp:"([^"\\]|\\"|\\)*\$?"'
+//    DOUBLE_QUOTE expandable-string-part '$'? DOUBLE_QUOTE
+//    double-quote-character expandable-string-characters~opt~  dollars~opt~ double-quote-character
+    'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|""|)*\$?["\u201C\u201D\u201E]'
+
+//expandable-string-part ::=
+//    'regexp:[^$`"\u201C\u201D\u201E]'
+//    'regexp:[^"]*'
+//    'regexp:[^"]' |
+//    'regexp:""'
+/*
+    Any Unicode character except
+        $
+        double-quote-character
+        ` (The backtick character U+0060)
+    braced-variable
+    $ Any Unicode character except
+        (
+        {
+        double-quote-character
+        ` (The backtick character U+0060)*
+    $ escaped-character
+    escaped-character
+    double-quote-character double-quote-character
+*/
 
 /*
 string-literal:
