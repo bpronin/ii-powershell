@@ -1,0 +1,57 @@
+{
+    tokens = [
+        DOLLAR = '$'
+        AT = '@'
+    ]
+}
+input ::=
+    input-element*
+
+private input-element ::=
+     whitespace
+  |  token
+
+private token ::=
+   variable
+
+private new-line-character ::=
+     'regexp:[\u000D\u000A]|\u000D\u000A'
+
+/* B.1.3 White space */
+
+private whitespace ::=
+    'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C]'
+  | '`' new-line-character
+
+/* B.1.6 Variables */
+
+variable ::=
+    'regexp:\$\$|\$\?|\$\^|\$_'
+  | '$' variable-scope? variable-characters
+  | '@' variable-scope? variable-characters
+  | braced-variable
+
+braced-variable ::=
+   ( '${' variable-scope? braced-variable-characters  '}' )
+
+variable-characters ::=
+    'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?]+'
+
+braced-variable-characters ::=
+    variable-characters
+  | whitespace
+//    'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?\s]+'
+//    'regexp:[^}]+'
+
+
+variable-scope ::=
+    'global:'
+  | 'local:'
+  | 'private:'
+  | 'script:'
+  | 'using:'
+  | 'workflow:'
+  | variable-namespace
+
+variable-namespace ::=
+    (variable-characters ':')

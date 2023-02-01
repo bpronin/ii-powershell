@@ -1,5 +1,6 @@
-# Single line comment
 #
+
+# Single line comment
 
 #Requires something
 
@@ -44,20 +45,54 @@
 -shr          -split
 
 # Variables
-$$ $? $^ $_ $variable $Variable $global:variable $namespace:variable $variable? ${ this is also a `variable?` } @global:variable
+$$ $? $^ $_
+$variable
+$Variable23
+$global:variable
+$namespace:variable
+$variable?
+${ this is also a `variable?` }
+@global:variable
 
 # Integer literals
-123 10 123L 10kb 123LPB 0x12FFF +10 - 20
+123
+10
+123L
+10kb
+123lPB
+123LPB
+0x12FFF
+0x12FFFkb
++10
++10L
+-0x12FFF
+-20d
+-20D
 
 # Real literals
-123.55 .58  1.2e5  1.2e5l 1.2E5l 1.2e5dKB 1e23 2e5dKB +123.55 -123.55
+123.55
+.58
+1.2e5
+1.2e5l
+1.2E5l
+1.2e5dKB
+1e23
+2e5dKB
++123.55
+-123.55
 
 # String literals
 #" s "
 #"string"
 
-if $token return $token
+# Type literals
+[string]
+[int[]]
+[int[,,,]]
+[int[string,string[int]]]
 
+# Expressions
+if $token return $token
 
 # SIG # Begin signature block
 # MIInzAYJKoZIhvcNAQcCoIInvTCCJ7kCAQExDzANBglghkgBZQMEAgEFADB5Bgor

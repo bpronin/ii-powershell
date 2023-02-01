@@ -15,7 +15,14 @@
     elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
     elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
     tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
-    tokens=[
+
+    tokens = [
+//        NEW_LINE = 'regexp:[\u000D\u000A]|\u000D\u000A'
+//        DASH = 'regexp:[-\u2013\u2014\u2015]'
+//        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
+//        DECIMAL_INTEGER = 'regexp:\d+(?i)[ld]?(kb|mb|gb|tb|pb)?'
+//        HEXADECIMAL_INTEGER = 'regexp:0x(?i)[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
+//        REAL = 
     ]
 }
 
@@ -53,15 +60,27 @@ delimited-comment ::=
 private token ::=
     keyword
   | variable
-  | operator-or-punctuator
-  | command-parameter
   | command
+  | command-parameter  //interferes with negative number literals
   | command-argument-token
   | literal
   | type-literal
+  | operator-or-punctuator
 
-private whitespace::=
-    'regexp:\s+'
+/* B.1.1 Line terminators */
+
+private new-line-character ::=
+//     'regexp:[\u000D\u000A]|\u000D\u000A'
+     'regexp:[\r\n]|\r\n'
+
+private new-lines ::=
+    new-line-character*
+
+/* B.1.3 White space */
+
+private whitespace ::=
+    'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C]'
+  | '`' new-line-character
 
 /* B.1.5 Keywords */
 
@@ -72,13 +91,10 @@ keyword ::=
 
 /* B.1.6 Variables */
 
-variable::=
+variable ::=
     'regexp:\$\$|\$\?|\$\^|\$_'
-  | 'regexp:[$@][\w:?]+'
-  | braced-variable
-
-braced-variable ::=
-    'regexp:\$\{[^}]+}'
+  | 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
+  | 'regexp:\$\{[^}]+}'
 
 /* B.1.9 Literals */
 
@@ -89,14 +105,14 @@ private literal ::=
 
 /* B.1.9.1 Integer Literals */
 
-sign ::=
+private sign ::=
     '+' | 'regexp:[-\u2013\u2014\u2015]'
 
 integer-literal ::=
     sign? (decimal-integer-literal | hexadecimal-integer-literal)
 
 decimal-integer-literal ::=
-    'regexp:(?i)\d+[ld]?(kb|mb|gb|tb|pb)?'
+    'regexp:\d+(?i)[ld]?(kb|mb|gb|tb|pb)?'
 
 hexadecimal-integer-literal ::=
     'regexp:0x(?i)[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
@@ -104,7 +120,7 @@ hexadecimal-integer-literal ::=
 /* B.1.9.2 Real Literals */
 
 real-literal ::=
-    sign? ('regexp:(?i)\d*\.\d+e?\d+[ld]?(kb|mb|gb|tb|pb)?' | 'regexp:(?i)\d+e\d+[ld]?(kb|mb|gb|tb|pb)?')
+    sign? ('regexp:(?i)(\d*\.\d+e?|\d+e)\d+[ld]?(kb|mb|gb|tb|pb)?')
 
 /* B.1.9.3 String Literals */
 
@@ -121,7 +137,6 @@ private operator-or-punctuator ::=
   | comparison-operator
   | format-operator
 
-/* see https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.2 */
 common-operator ::=
     '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
     'regexp:[-\u2013\u2014\u2015]'|
@@ -149,3 +164,36 @@ format-operator ::=
 
 command-parameter ::=
     'regexp:[-\u2013\u2014\u2015]\w?[\w?]+'
+
+/* B.1.11 Type Names */
+
+type-name ::=
+    type-identifier ('.' type-identifier)*
+
+private type-identifier ::=
+    type-characters
+
+private type-characters ::=
+    'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
+
+array-type-name ::=
+    type-name '['
+
+generic-type-name ::=
+    type-name '['
+
+/* B.2.3 Expressions */
+
+type-literal ::=
+    '[' type-spec ']'
+
+private type-spec ::=
+    array-type-name new-lines? dimension* ']'
+  | generic-type-name new-lines? generic-type-arguments ']'
+  | type-name
+
+private dimension ::=
+    ','
+
+private generic-type-arguments ::=
+    type-spec new-lines? (',' new-lines? type-spec)*

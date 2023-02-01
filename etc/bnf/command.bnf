@@ -1,0 +1,151 @@
+{
+    tokens = [
+        DOLLAR = '$'
+        AT = '@'
+    ]
+}
+
+input ::=
+    input-element*
+
+private input-element ::=
+     whitespace
+  |  token
+
+private token ::=
+   command-parameter
+
+//private new-line-character ::=
+//     'regexp:[\u000D\u000A]|\u000D\u000A'
+//
+///* B.1.3 White space */
+//
+private whitespace ::=
+    'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C]'
+  | '`' new-line-character
+
+/* B.1.7 Commands */
+
+//generic-token ::=
+//    generic-token-parts
+//
+//generic-token-parts ::=
+//    generic-token-part*
+//
+//generic-token-parts ::=
+//    generic-token-part*
+///*    generic-token-part
+//    generic-token-parts generic-token-part*/
+//
+//generic-token-part ::=
+////    expandable-string-literal |
+////    verbatim-here-string-literal |
+//    variable |
+//    generic-token-char
+
+//generic-token-char ::=
+//    'regexp:\w'
+///*
+//    Any Unicode character except
+//        {   }   (   )   ;   ,   |   &   $
+//        ` (The backtick character U+0060)
+//        double-quote-character
+//        single-quote-character
+//        whitespace
+//        new-line-character
+//        escaped-character
+//*/
+
+//generic-token-with-subexpr-start ::=
+//    generic-token-parts '$('
+
+/* B.1.8 Parameters */
+
+//command-parameter ::=
+//    'regexp:[-\u2013\u2014\u2015][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_?][^{}();:,.|&\[\s]+'
+
+command-parameter ::=
+    parameter-chars*
+//    parameter-chars* ':'?
+
+parameter-chars ::=
+    'regexp:[-\u2013\u2014\u2015][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_?]\w+'
+
+/*
+verbatim-command-argument-chars:
+    verbatim-command-argument-part
+    verbatim-command-argument-chars verbatim-command-argument-part
+
+verbatim-command-argument-part:
+    verbatim-command-string
+    & non-ampersand-character
+    Any Unicode character except
+        |
+        new-line-character
+
+non-ampersand-character:
+    Any Unicode character except &
+
+verbatim-command-string:
+    double-quote-character non-double-quote-chars
+    double-quote-character
+
+non-double-quote-chars:
+    non-double-quote-char
+    non-double-quote-chars non-double-quote-char
+
+non-double-quote-char:
+    Any Unicode character except
+        double-quote-character
+*/
+
+/* B.2.2 Statements */
+
+//command:
+//    command-name command-elements~opt~
+//    command-invocation-operator command-module~opt~ command-name-expr command-elements~opt~
+//
+//command-invocation-operator: one of
+//    &   .
+//
+//command-module:
+//    primary-expression
+//
+//command-name:
+//    generic-token
+//    generic-token-with-subexpr
+//
+//generic-token-with-subexpr:
+//    No whitespace is allowed between ) and command-name.
+//    generic-token-with-subexpr-start statement-list~opt~ ) command-name
+//
+//command-name-expr:
+//    command-name
+//    primary-expression
+//
+//command-elements:
+//    command-element
+//    command-elements command-element
+//
+//command-element:
+//    command-parameter
+//    command-argument
+//    redirection
+//
+//command-argument:
+//    command-name-expr
+//
+//verbatim-command-argument:
+//    --% verbatim-command-argument-chars
+//
+//redirections:
+//    redirection
+//    redirections redirection
+//
+//redirection:
+//    merging-redirection-operator
+//    file-redirection-operator redirected-file-name
+//
+//redirected-file-name:
+//    command-argument
+//    primary-expression
