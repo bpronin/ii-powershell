@@ -30,7 +30,7 @@ class PowerShellParserDefinition : ParserDefinition {
     }
 
     override fun getStringLiteralElements(): TokenSet {
-        return TokenSet.EMPTY
+        return PowerShellTokenSets.STRINGS
     }
 
     override fun createParser(project: Project): PsiParser {
@@ -51,6 +51,6 @@ class PowerShellParserDefinition : ParserDefinition {
 
     companion object {
 
-        val FILE = IFileElementType(PowerShellLanguage.INSTANCE)
+        private val FILE = IFileElementType(PowerShellLanguage.INSTANCE)
     }
 }

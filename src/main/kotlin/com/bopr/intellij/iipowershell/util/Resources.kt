@@ -7,5 +7,11 @@ object Resources {
     private var bundle: ResourceBundle = ResourceBundle.getBundle("values.strings")
 
     @JvmStatic
-    fun string(key: String): String = bundle.getString(key)
+    fun string(key: String): String {
+        try {
+            return bundle.getString(key)
+        } catch (e: Exception) {
+            TODO("Not yet implemented")
+        }
+    }
 }

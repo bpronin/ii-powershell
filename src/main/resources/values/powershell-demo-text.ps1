@@ -1,35 +1,10 @@
 # Single line comment
 
-<########################
-# Delimited comment     #
-#########################>
+<#---------------#
+ # Block comment #
+ #---------------#>
 
-$include = @("*.mkv", "*.mp4")
-
-Import-Module -Name $PSScriptRoot\ffmpeg
-
-class Track
-{
-    [Int]$Index
-}
-
-function Read-Time
-{
-    param (
-        [String]$String
-    )
-    process {
-        $timeString = $String.Trim()
-        if ($timeString.split(":").count -eq 2)
-        {
-            $timeString = "00:$timeString"
-        }
-        return [TimeSpan]$timeString
-    }
-}
-
-# SIG # Begin signature block
-# MIInzAYJKoZIhvcNAQcCoIInvTCCJ7kCAQExDzANBglghkgBZQMEAgEFADB5Bgor
-# ...
-# x+GhsHxy2QDYkrJBh8Rlcw==
-# SIG # End signature block
+begin end
+100 100L 100D 200Kb
+0xF1FA
+.5 10.5e8

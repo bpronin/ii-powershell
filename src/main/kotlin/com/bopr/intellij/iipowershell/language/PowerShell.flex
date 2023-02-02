@@ -4,6 +4,7 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes;
+import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
 
 %%
 
@@ -15,30 +16,32 @@ import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes;
 %eof{  return;
 %eof}
 
-CRLF=\R
-WHITE_SPACE=[\ \n\t\f]
-FIRST_VALUE_CHARACTER=[^ \n\f\\] | "\\"{CRLF} | "\\".
-VALUE_CHARACTER=[^\n\f\\] | "\\"{CRLF} | "\\".
-END_OF_LINE_COMMENT=("#"|"!")[^\r\n]*
-SEPARATOR=[:=]
-KEY_CHARACTER=[^:=\ \n\t\f\\] | "\\ "
-
-%state WAITING_VALUE
-
+LINE_TERMINATOR = [\r\n] | \r\n
+INPUT_CHARACTER = [^\r\n]
+WHITE_SPACE = [\p{Zs}\p{Zl}\p{Zp}\t\f\u000B] | [`]?{LINE_TERMINATOR}
+DASH = [-\u2013\u2014\u2015]
+NUMBER_SIGN = \+ | {DASH}
+INTEGER_SUFFIX = [dDlL]
+NUMBER_MULTIPLIER = ([kK]|[mM]|[gG]|[tT]|[pP])[bB]
+REAL_EXPONENT = [eE]{NUMBER_SIGN}?\d+{INTEGER_SUFFIX}?{NUMBER_MULTIPLIER}?
+LINE_COMMENT = #{INPUT_CHARACTER}*
+BLOCK_COMMENT = <#({INPUT_CHARACTER}|{LINE_TERMINATOR})*#>
+DECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}?\d+{INTEGER_SUFFIX}?{NUMBER_MULTIPLIER}?
+HEXADECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}?0x[\da-fA-F]+{INTEGER_SUFFIX}?{NUMBER_MULTIPLIER}?
+REAL_LITERAL = {NUMBER_SIGN}?\d*\.\d+{REAL_EXPONENT}?
+KEYWORD = begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit
+            |filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process
+            |return|switch|throw|trap|try|until|using|var|while|workflow
 %%
 
-<YYINITIAL> {END_OF_LINE_COMMENT}                           { yybegin(YYINITIAL); return PowerShellTypes.COMMENT; }
+<YYINITIAL> {
+    {WHITE_SPACE}                   { return TokenType.WHITE_SPACE; }
+    {LINE_COMMENT}                  { return SINGLE_LINE_COMMENT; }
+    {BLOCK_COMMENT}                 { return DELIMITED_COMMENT; }
+    {KEYWORD}                       { return KEYWORD; }
+    {DECIMAL_INTEGER_LITERAL}       { return DECIMAL_INTEGER_LITERAL; }
+    {HEXADECIMAL_INTEGER_LITERAL}   { return HEXADECIMAL_INTEGER_LITERAL; }
+    {REAL_LITERAL}                  { return REAL_LITERAL; }
+}
 
-<YYINITIAL> {KEY_CHARACTER}+                                { yybegin(YYINITIAL); return PowerShellTypes.KEY; }
-
-<YYINITIAL> {SEPARATOR}                                     { yybegin(WAITING_VALUE); return PowerShellTypes.SEPARATOR; }
-
-<WAITING_VALUE> {CRLF}({CRLF}|{WHITE_SPACE})+               { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
-
-<WAITING_VALUE> {WHITE_SPACE}+                              { yybegin(WAITING_VALUE); return TokenType.WHITE_SPACE; }
-
-<WAITING_VALUE> {FIRST_VALUE_CHARACTER}{VALUE_CHARACTER}*   { yybegin(YYINITIAL); return PowerShellTypes.VALUE; }
-
-({CRLF}|{WHITE_SPACE})+                                     { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
-
-[^]                                                         { return TokenType.BAD_CHARACTER; }
+[^]                             { return TokenType.BAD_CHARACTER; }

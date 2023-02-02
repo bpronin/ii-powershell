@@ -1,12 +1,13 @@
 package com.bopr.intellij.iipowershell.language.psi
 
+import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*
 import com.intellij.psi.tree.TokenSet
 
 interface PowerShellTokenSets {
 
     companion object {
 
-        val KEYWORDS = TokenSet.create(PowerShellTypes.KEYWORD)
-        val COMMENTS = TokenSet.create(PowerShellTypes.COMMENT)
+        val COMMENTS = TokenSet.create(SINGLE_LINE_COMMENT, DELIMITED_COMMENT)
+        val STRINGS = TokenSet.create(STRING_LITERAL)
     }
 }

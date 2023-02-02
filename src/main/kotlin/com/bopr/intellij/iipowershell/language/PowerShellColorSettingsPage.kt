@@ -1,5 +1,13 @@
 package com.bopr.intellij.iipowershell.language
 
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.DECIMAL_INTEGER_NUMBER_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
+import com.bopr.intellij.iipowershell.util.Resources.string
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.options.colors.AttributesDescriptor
@@ -39,13 +47,14 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
 
     companion object {
 
-        /* NOTE: It is supported to group related attributes like operators or braces by separating the nodes with /
-        * like ' "Operators//Plus", "Operators//Minus" '*/
         private val DESCRIPTORS = arrayOf(
-            AttributesDescriptor("Key", PowerShellSyntaxHighlighter.KEY),
-            AttributesDescriptor("Separator", PowerShellSyntaxHighlighter.SEPARATOR),
-            AttributesDescriptor("Value", PowerShellSyntaxHighlighter.VALUE),
-            AttributesDescriptor("Bad value", PowerShellSyntaxHighlighter.BAD_CHARACTER)
+            AttributesDescriptor(string("bad_value"), BAD_CHARACTER_KEY),
+            AttributesDescriptor(string("keyword"), KEYWORD_KEY),
+            AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT_KEY),
+            AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT_KEY),
+            AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER_KEY),
+            AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER_KEY),
+            AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER_KEY)
         )
     }
 }
