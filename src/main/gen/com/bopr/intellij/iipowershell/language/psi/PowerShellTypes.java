@@ -30,6 +30,12 @@ public interface PowerShellTypes {
   IElementType TYPE_NAME = new PowerShellElementType("TYPE_NAME");
   IElementType VARIABLE = new PowerShellElementType("VARIABLE");
 
+  IElementType BRACES = new PowerShellTokenType("BRACES");
+  IElementType BRACKETS = new PowerShellTokenType("BRACKETS");
+  IElementType COMMA = new PowerShellTokenType(",");
+  IElementType DOT = new PowerShellTokenType(".");
+  IElementType PARENTHESES = new PowerShellTokenType("PARENTHESES");
+  IElementType SEMICOLON = new PowerShellTokenType(";");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {

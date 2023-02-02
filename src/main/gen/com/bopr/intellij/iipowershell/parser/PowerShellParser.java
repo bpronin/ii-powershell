@@ -114,12 +114,12 @@ public class PowerShellParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, "!");
     if (!r) r = consumeToken(b, "++");
     if (!r) r = consumeToken(b, "&");
-    if (!r) r = consumeToken(b, ".");
-    if (!r) r = consumeToken(b, ",");
+    if (!r) r = consumeToken(b, DOT);
+    if (!r) r = consumeToken(b, COMMA);
     if (!r) r = consumeToken(b, "&&");
     if (!r) r = consumeToken(b, "||");
     if (!r) r = consumeToken(b, "|");
-    if (!r) r = consumeToken(b, ";");
+    if (!r) r = consumeToken(b, SEMICOLON);
     if (!r) r = consumeToken(b, "regexp:[-\\u2013\\u2014\\u2015]");
     if (!r) r = consumeToken(b, "regexp:[-\\u2013\\u2014\\u2015]{2}");
     if (!r) r = consumeToken(b, "regexp:[-\\u2013\\u2014\\u2015](?i)(shl|shr)");
@@ -166,7 +166,7 @@ public class PowerShellParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // ','
   static boolean dimension(PsiBuilder b, int l) {
-    return consumeToken(b, ",");
+    return consumeToken(b, COMMA);
   }
 
   /* ********************************************************** */
@@ -241,7 +241,7 @@ public class PowerShellParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "generic_type_arguments_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, ",");
+    r = consumeToken(b, COMMA);
     r = r && generic_type_arguments_2_0_1(b, l + 1);
     r = r && type_spec(b, l + 1);
     exit_section_(b, m, null, r);
@@ -630,7 +630,7 @@ public class PowerShellParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "type_name_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, ".");
+    r = consumeToken(b, DOT);
     r = r && type_identifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -718,13 +718,13 @@ public class PowerShellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C]'
+  // 'regexp:[\p{Zs}\p{Zl}\p{Zp}\t\f\u000B]'
   //   | '`' new-line-character
   static boolean whitespace(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "whitespace")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, "regexp:[\\p{Zs}\\p{Zl}\\p{Zp}\\u0009\\u000B\\u000C]");
+    r = consumeToken(b, "regexp:[\\p{Zs}\\p{Zl}\\p{Zp}\\t\\f\\u000B]");
     if (!r) r = whitespace_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;

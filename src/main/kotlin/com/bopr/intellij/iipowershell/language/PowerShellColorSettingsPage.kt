@@ -2,11 +2,17 @@ package com.bopr.intellij.iipowershell.language
 
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER_KEY
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BRACES_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BRACKETS_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.COMMA_KEY
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.DECIMAL_INTEGER_NUMBER_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.DOT_KEY
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER_KEY
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER_KEY
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
 import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.PARENTHESES_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.SEMICOLON_KEY
 import com.bopr.intellij.iipowershell.util.Resources.string
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
@@ -49,6 +55,12 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
 
         private val DESCRIPTORS = arrayOf(
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER_KEY),
+            AttributesDescriptor(string("braces_and_operators//dot"), DOT_KEY),
+            AttributesDescriptor(string("braces_and_operators//comma"), COMMA_KEY),
+            AttributesDescriptor(string("braces_and_operators//semicolon"), SEMICOLON_KEY),
+            AttributesDescriptor(string("braces_and_operators//braces"), BRACES_KEY),
+            AttributesDescriptor(string("braces_and_operators//parentheses"), PARENTHESES_KEY),
+            AttributesDescriptor(string("braces_and_operators//brackets"), BRACKETS_KEY),
             AttributesDescriptor(string("keyword"), KEYWORD_KEY),
             AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT_KEY),
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT_KEY),
