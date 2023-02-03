@@ -1,18 +1,20 @@
-package com.bopr.intellij.iipowershell.language
+package com.bopr.intellij.iipowershell.ui
 
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BRACES_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.BRACKETS_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.COMMA_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.DECIMAL_INTEGER_NUMBER_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.DOT_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.PARENTHESES_KEY
-import com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighter.Companion.SEMICOLON_KEY
+import com.bopr.intellij.iipowershell.language.PowerShellFileType
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACES_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACKETS_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.COMMA_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.DECIMAL_INTEGER_NUMBER_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.DOT_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESES_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING_KEY
 import com.bopr.intellij.iipowershell.util.Resources.string
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
@@ -66,7 +68,8 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT_KEY),
             AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER_KEY),
             AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER_KEY),
-            AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER_KEY)
+            AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER_KEY),
+            AttributesDescriptor(string("string_text"), STRING_KEY)
         )
     }
 }

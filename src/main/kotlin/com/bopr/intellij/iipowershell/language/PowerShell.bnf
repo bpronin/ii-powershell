@@ -21,8 +21,7 @@
 //        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
 //        BLANK_SPACE = 'regexp:\s+'
         LINE_COMMENT = 'regexp:#.*'
-        BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
-
+        BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'  // NOTE: In generated flex file change to <#([^]|\n)*#>
         DECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
         HEXADECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?0x[\da-fA-F]+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
         REAL_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?(\d*\.\d?|\d+)([eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB]))?'
@@ -41,13 +40,13 @@
         BRACES = 'regexp:[{}]'
         BRACKETS = 'regexp:[\[\]]]'
         PARENTHESES = 'regexp:[()]'
-        DASH = 'regexp:[-\u2013\u2014\u2015]'
-        QUOTE = 'regexp:["\u201C\u201D\u201E]'
-        NUMBER_SIGN = 'regexp:[+\-\u2013\u2014\u2015]'
-        HEX_DIGITS='regexp:[\da-fA-F]'
-        INTEGER_NUMBER_SUFFIX = 'regexp:[lLdD]'
-        REAL_NUMBER_EXPONENT = 'regexp:[eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])'
-        NUMBER_MULTIPLIER = 'regexp:([kK]|[mM]|[gG]|[tT]|[pP])[bB]'
+//        DASH = 'regexp:[-\u2013\u2014\u2015]'
+//        QUOTE = 'regexp:["\u201C\u201D\u201E]'
+//        NUMBER_SIGN = 'regexp:[+\-\u2013\u2014\u2015]'
+//        HEX_DIGITS='regexp:[\da-fA-F]'
+//        INTEGER_NUMBER_SUFFIX = 'regexp:[lLdD]'
+//        REAL_NUMBER_EXPONENT = 'regexp:[eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])'
+//        NUMBER_MULTIPLIER = 'regexp:([kK]|[mM]|[gG]|[tT]|[pP])[bB]'
 //        STRING_CONTENT = 'regexp:([^$`"\u201C\u201D\u201E]|""|)*\$?'
     ]
 }

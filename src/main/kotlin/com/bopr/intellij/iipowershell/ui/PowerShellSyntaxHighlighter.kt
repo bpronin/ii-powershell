@@ -1,5 +1,6 @@
-package com.bopr.intellij.iipowershell.language
+package com.bopr.intellij.iipowershell.ui
 
+import com.bopr.intellij.iipowershell.language.PowerShellLexerAdapter
 import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors.*
@@ -31,6 +32,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             PowerShellTypes.DECIMAL_INTEGER_NUMBER -> DECIMAL_INTEGER_NUMBER_KEYS
             PowerShellTypes.HEXADECIMAL_INTEGER_NUMBER -> HEXADECIMAL_INTEGER_NUMBER_KEYS
             PowerShellTypes.REAL_NUMBER -> FLOATING_POINT_NUMBER_KEYS
+            PowerShellTypes.STRING -> STRING_KEYS
             else -> EMPTY_KEYS
         }
     }
@@ -50,6 +52,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val DECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("POWERSHELL_DECIMAL_INTEGER_NUMBER", NUMBER)
         val HEXADECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("POWERSHELL_HEXADECIMAL_INTEGER_NUMBER", NUMBER)
         val FLOATING_POINT_NUMBER_KEY = createTextAttributesKey("POWERSHELL_FLOATING_POINT_NUMBER", NUMBER)
+        val STRING_KEY = createTextAttributesKey("POWERSHELL_STRING", STRING)
 
         private val EMPTY_KEYS = arrayOf<TextAttributesKey>()
         private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER_KEY)
@@ -65,5 +68,6 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         private val DECIMAL_INTEGER_NUMBER_KEYS = arrayOf(DECIMAL_INTEGER_NUMBER_KEY)
         private val HEXADECIMAL_INTEGER_NUMBER_KEYS = arrayOf(HEXADECIMAL_INTEGER_NUMBER_KEY)
         private val FLOATING_POINT_NUMBER_KEYS = arrayOf(FLOATING_POINT_NUMBER_KEY)
+        private val STRING_KEYS = arrayOf(STRING_KEY)
     }
 }

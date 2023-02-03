@@ -1,4 +1,4 @@
-package com.bopr.intellij.iipowershell.language
+package com.bopr.intellij.iipowershell.ui
 
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory

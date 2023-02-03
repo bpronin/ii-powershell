@@ -40,10 +40,10 @@
 
         <lang.syntaxHighlighterFactory
                 language="PowerShell"
-                implementationClass="com.bopr.intellij.iipowershell.language.PowerShellSyntaxHighlighterFactory"/>
+                implementationClass="com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighterFactory"/>
 
         <colorSettingsPage
-                implementation="com.bopr.intellij.iipowershell.language.PowerShellColorSettingsPage"/>
+                implementation="com.bopr.intellij.iipowershell.ui.PowerShellColorSettingsPage"/>
 
         <configurationType
                 implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationType"/>
