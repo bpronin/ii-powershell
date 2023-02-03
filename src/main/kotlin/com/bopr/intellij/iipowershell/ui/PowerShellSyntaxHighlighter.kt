@@ -37,6 +37,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             Types.REQUIRES_COMMENT -> REQUIRES_COMMENT_KEYS
             Types.VARIABLE_NAME -> VARIABLE_KEYS
             Types.ASSIGNMENT_OPERATORS -> ASSIGNMENT_OPERATORS_KEYS
+            Types.FILE_REDIRECTION_OPERATORS -> FILE_REDIRECTION_OPERATORS_KEYS
             Types.COMMA -> COMMA_KEYS
             TokenType.BAD_CHARACTER -> BAD_CHARACTER_KEYS
             else -> EMPTY_KEYS
@@ -63,6 +64,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val STRING_KEY = createTextAttributesKey("PWSH_STRING", Colors.STRING)
         val VARIABLE_KEY = createTextAttributesKey("PWSH_VARIABLE", Colors.LOCAL_VARIABLE)
         val ASSIGNMENT_OPERATORS_KEY = createTextAttributesKey("PWSH_ASSIGNMENT_OPERATORS", Colors.OPERATION_SIGN)
+        val FILE_REDIRECTION_OPERATORS_KEY = createTextAttributesKey("PWSH_FILE_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN)
 
         private val EMPTY_KEYS = arrayOf<TextAttributesKey>()
         private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER_KEY)
@@ -83,5 +85,6 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         private val REQUIRES_COMMENT_KEYS = arrayOf(REQUIRES_COMMENT_KEY)
 //        private val SIGNATURE_KEYS = arrayOf(SIGNATURE_KEY)
         private val ASSIGNMENT_OPERATORS_KEYS = arrayOf(ASSIGNMENT_OPERATORS_KEY)
+        private val FILE_REDIRECTION_OPERATORS_KEYS = arrayOf(FILE_REDIRECTION_OPERATORS_KEY)
     }
 }
