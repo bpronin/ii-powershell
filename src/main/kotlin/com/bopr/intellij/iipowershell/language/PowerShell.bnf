@@ -37,7 +37,8 @@
         STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
 
         ASSIGNMENT_OPERATORS = 'regexp:[+*/%\-\u2013\u2014\u2015]?='
-        FILE_REDIRECTION_OPERATORS= 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
+        FILE_REDIRECTION_OPERATORS = 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
+        MERGING_REDIRECTION_OPERATORS = 'regexp:(\*>&1)|(2>&1)|(3>&1)|(4>&1)|(5>&1)|(6>&1)|(\*>&2)|(1>&2)|(3>&2)|(4>&2)|(5>&2)|(6>&2)'
 
         DOT = '.'
         COMMA = ','
@@ -175,7 +176,7 @@ private file-redirection-operator ::=
     FILE_REDIRECTION_OPERATORS
 
 private merging-redirection-operator ::=
-    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|'*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
+    MERGING_REDIRECTION_OPERATORS
 
 private comparison-operator ::=
     'regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)' |

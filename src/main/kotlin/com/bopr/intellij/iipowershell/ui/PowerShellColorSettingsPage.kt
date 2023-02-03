@@ -14,6 +14,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.F
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.MERGING_REDIRECTION_OPERATORS_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESES_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.REQUIRES_COMMENT_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON_KEY
@@ -64,6 +65,7 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER_KEY),
             AttributesDescriptor(string("braces_and_operators//assignment_operators"), ASSIGNMENT_OPERATORS_KEY),
             AttributesDescriptor(string("braces_and_operators//file_redirection_operators"), FILE_REDIRECTION_OPERATORS_KEY),
+            AttributesDescriptor(string("braces_and_operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATORS_KEY),
             AttributesDescriptor(string("braces_and_operators//braces"), BRACES_KEY),
             AttributesDescriptor(string("braces_and_operators//brackets"), BRACKETS_KEY),
             AttributesDescriptor(string("braces_and_operators//comma"), COMMA_KEY),
