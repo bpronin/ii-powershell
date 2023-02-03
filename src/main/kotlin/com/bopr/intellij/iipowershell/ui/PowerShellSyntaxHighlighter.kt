@@ -1,15 +1,15 @@
 package com.bopr.intellij.iipowershell.ui
 
 import com.bopr.intellij.iipowershell.language.PowerShellLexerAdapter
-import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes
 import com.intellij.lexer.Lexer
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors.*
-import com.intellij.openapi.editor.HighlighterColors.BAD_CHARACTER
+import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
+import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes as Types
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors as Colors
 
 class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
 
@@ -19,40 +19,43 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
 
     override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
         return when (tokenType) {
+            Types.BLOCK_COMMENT -> BLOCK_COMMENT_KEYS
+            Types.BRACED_VARIABLE_NAME -> VARIABLE_KEYS
+            Types.BRACES -> BRACES_KEYS
+            Types.BRACKETS -> BRACKETS_KEYS
+            Types.COMMA -> COMMA_KEYS
+            Types.DECIMAL_INTEGER_NUMBER -> DECIMAL_INTEGER_NUMBER_KEYS
+            Types.DOT -> DOT_KEYS
+            Types.HEXADECIMAL_INTEGER_NUMBER -> HEXADECIMAL_INTEGER_NUMBER_KEYS
+            Types.KEYWORD -> KEYWORD_KEYS
+            Types.LINE_COMMENT -> LINE_COMMENT_KEYS
+            Types.PARENTHESES -> PARENTHESES_KEYS
+            Types.REAL_NUMBER -> FLOATING_POINT_NUMBER_KEYS
+            Types.SEMICOLON -> SEMICOLON_KEYS
+            Types.STRING -> STRING_KEYS
+            Types.VARIABLE_NAME -> VARIABLE_KEYS
             TokenType.BAD_CHARACTER -> BAD_CHARACTER_KEYS
-            PowerShellTypes.KEYWORD -> KEYWORD_KEYS
-            PowerShellTypes.BRACES -> BRACES_KEYS
-            PowerShellTypes.DOT -> DOT_KEYS
-            PowerShellTypes.SEMICOLON -> SEMICOLON_KEYS
-            PowerShellTypes.COMMA -> COMMA_KEYS
-            PowerShellTypes.PARENTHESES -> PARENTHESES_KEYS
-            PowerShellTypes.BRACKETS -> BRACKETS_KEYS
-            PowerShellTypes.LINE_COMMENT -> LINE_COMMENT_KEYS
-            PowerShellTypes.BLOCK_COMMENT -> BLOCK_COMMENT_KEYS
-            PowerShellTypes.DECIMAL_INTEGER_NUMBER -> DECIMAL_INTEGER_NUMBER_KEYS
-            PowerShellTypes.HEXADECIMAL_INTEGER_NUMBER -> HEXADECIMAL_INTEGER_NUMBER_KEYS
-            PowerShellTypes.REAL_NUMBER -> FLOATING_POINT_NUMBER_KEYS
-            PowerShellTypes.STRING -> STRING_KEYS
             else -> EMPTY_KEYS
         }
     }
 
     companion object {
 
-        val BAD_CHARACTER_KEY = createTextAttributesKey("POWERSHELL_BAD_CHARACTER", BAD_CHARACTER)
-        val KEYWORD_KEY = createTextAttributesKey("POWERSHELL_KEYWORD", KEYWORD)
-        val BRACES_KEY = createTextAttributesKey("POWERSHELL_BRACES", BRACES)
-        val DOT_KEY = createTextAttributesKey("POWERSHELL_DOT", DOT)
-        val SEMICOLON_KEY = createTextAttributesKey("POWERSHELL_SEMICOLON", SEMICOLON)
-        val COMMA_KEY = createTextAttributesKey("POWERSHELL_COMMA", COMMA)
-        val PARENTHESES_KEY = createTextAttributesKey("POWERSHELL_PARENTHESES", PARENTHESES)
-        val BRACKETS_KEY = createTextAttributesKey("POWERSHELL_BRACKETS", BRACKETS)
-        val LINE_COMMENT_KEY = createTextAttributesKey("POWERSHELL_LINE_COMMENT", LINE_COMMENT)
-        val BLOCK_COMMENT_KEY = createTextAttributesKey("POWERSHELL_BLOCK_COMMENT", BLOCK_COMMENT)
-        val DECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("POWERSHELL_DECIMAL_INTEGER_NUMBER", NUMBER)
-        val HEXADECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("POWERSHELL_HEXADECIMAL_INTEGER_NUMBER", NUMBER)
-        val FLOATING_POINT_NUMBER_KEY = createTextAttributesKey("POWERSHELL_FLOATING_POINT_NUMBER", NUMBER)
-        val STRING_KEY = createTextAttributesKey("POWERSHELL_STRING", STRING)
+        val BAD_CHARACTER_KEY = createTextAttributesKey("PWSH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
+        val KEYWORD_KEY = createTextAttributesKey("PWSH_KEYWORD", Colors.KEYWORD)
+        val BRACES_KEY = createTextAttributesKey("PWSH_BRACES", Colors.BRACES)
+        val DOT_KEY = createTextAttributesKey("PWSH_DOT", Colors.DOT)
+        val SEMICOLON_KEY = createTextAttributesKey("PWSH_SEMICOLON", Colors.SEMICOLON)
+        val COMMA_KEY = createTextAttributesKey("PWSH_COMMA", Colors.COMMA)
+        val PARENTHESES_KEY = createTextAttributesKey("PWSH_PARENTHESES", Colors.PARENTHESES)
+        val BRACKETS_KEY = createTextAttributesKey("PWSH_BRACKETS", Colors.BRACKETS)
+        val LINE_COMMENT_KEY = createTextAttributesKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT)
+        val BLOCK_COMMENT_KEY = createTextAttributesKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT)
+        val DECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("PWSH_DECIMAL_INTEGER_NUMBER", Colors.NUMBER)
+        val HEXADECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER)
+        val FLOATING_POINT_NUMBER_KEY = createTextAttributesKey("PWSH_FLOATING_POINT_NUMBER", Colors.NUMBER)
+        val STRING_KEY = createTextAttributesKey("PWSH_STRING", Colors.STRING)
+        val VARIABLE_KEY = createTextAttributesKey("PWSH_VARIABLE", Colors.LOCAL_VARIABLE)
 
         private val EMPTY_KEYS = arrayOf<TextAttributesKey>()
         private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER_KEY)
@@ -69,5 +72,6 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         private val HEXADECIMAL_INTEGER_NUMBER_KEYS = arrayOf(HEXADECIMAL_INTEGER_NUMBER_KEY)
         private val FLOATING_POINT_NUMBER_KEYS = arrayOf(FLOATING_POINT_NUMBER_KEY)
         private val STRING_KEYS = arrayOf(STRING_KEY)
+        private val VARIABLE_KEYS = arrayOf(VARIABLE_KEY)
     }
 }

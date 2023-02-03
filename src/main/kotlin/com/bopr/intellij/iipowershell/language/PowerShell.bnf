@@ -19,19 +19,20 @@
 
     tokens = [
 //        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
-//        BLANK_SPACE = 'regexp:\s+'
+        BLANK_SPACE = 'regexp:\s+'
         LINE_COMMENT = 'regexp:#.*'
         BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'  // NOTE: In generated flex file change to <#([^]|\n)*#>
-        DECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
+        REAL_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?\d*\.\d+([eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?)?'
+        DECIMAL_INTEGER_NUMBER = 'regexp:[+\-\u2013\u2014\u2015]?\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
         HEXADECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?0x[\da-fA-F]+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
-        REAL_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?(\d*\.\d?|\d+)([eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB]))?'
-        STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
         KEYWORD = 'regexp:begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow'
         RESERVED_VARIABLE_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
         VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
 //        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
 //        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
+        STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
+
         SIGNATURE_BEGIN = '# SIG # Begin signature block'
         SIGNATURE_END = '# SIG # End signature block'
         DOT = '.'

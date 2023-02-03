@@ -15,6 +15,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.L
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESES_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.VARIABLE_KEY
 import com.bopr.intellij.iipowershell.util.Resources.string
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
@@ -50,25 +51,26 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
     }
 
     override fun getDemoText(): String {
-          return  javaClass.getResource("/values/powershell-demo-text.ps1")!!.readText(Charsets.UTF_8)
+        return javaClass.getResource("/values/powershell-demo-text.ps1")!!.readText(Charsets.UTF_8)
     }
 
     companion object {
 
         private val DESCRIPTORS = arrayOf(
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER_KEY),
-            AttributesDescriptor(string("braces_and_operators//dot"), DOT_KEY),
-            AttributesDescriptor(string("braces_and_operators//comma"), COMMA_KEY),
-            AttributesDescriptor(string("braces_and_operators//semicolon"), SEMICOLON_KEY),
             AttributesDescriptor(string("braces_and_operators//braces"), BRACES_KEY),
-            AttributesDescriptor(string("braces_and_operators//parentheses"), PARENTHESES_KEY),
             AttributesDescriptor(string("braces_and_operators//brackets"), BRACKETS_KEY),
-            AttributesDescriptor(string("keyword"), KEYWORD_KEY),
-            AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT_KEY),
+            AttributesDescriptor(string("braces_and_operators//comma"), COMMA_KEY),
+            AttributesDescriptor(string("braces_and_operators//dot"), DOT_KEY),
+            AttributesDescriptor(string("braces_and_operators//parentheses"), PARENTHESES_KEY),
+            AttributesDescriptor(string("braces_and_operators//semicolon"), SEMICOLON_KEY),
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT_KEY),
+            AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT_KEY),
+            AttributesDescriptor(string("keyword"), KEYWORD_KEY),
             AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER_KEY),
-            AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER_KEY),
             AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER_KEY),
+            AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER_KEY),
+            AttributesDescriptor(string("variable"), VARIABLE_KEY),
             AttributesDescriptor(string("string_text"), STRING_KEY)
         )
     }
