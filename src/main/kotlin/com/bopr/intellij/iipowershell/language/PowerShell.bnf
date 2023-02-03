@@ -36,6 +36,8 @@
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
         STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
 
+        ASSIGNMENT_OPERATORS = 'regexp:[+*/%\-\u2013\u2014\u2015]?='
+
         DOT = '.'
         COMMA = ','
         SEMICOLON = ';'
@@ -92,7 +94,7 @@ private token ::=
 //  | command-argument-token
   | literal
 //  | type-literal
-//  | operator-or-punctuator
+  | operator-or-punctuator
 
 /* B.1.1 Line terminators */
 
@@ -150,37 +152,37 @@ private string-literal ::=
 
 /* B.1.12 Operators and punctuators */
 
-//private operator-or-punctuator ::=
-//    common-operator
-//  | assignment-operator
-//  | merging-redirection-operator
-//  | file-redirection-operator
-//  | comparison-operator
-//  | format-operator
-//
-//common-operator ::=
-//    '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
-//    'regexp:[-\u2013\u2014\u2015]'|
-//    'regexp:[-\u2013\u2014\u2015]{2}'|
-//    'regexp:[-\u2013\u2014\u2015](?i)(shl|shr)'|
-//    'regexp:[-\u2013\u2014\u2015](?i)b?(and|or|xor|not)'
-//
-//assignment-operator ::=
-//    '='|'+='|'*='|'/='|'%='|'regexp:[-\u2013\u2014\u2015]='
-//
-//file-redirection-operator ::=
-//    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|'5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
-//
-//merging-redirection-operator ::=
-//    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|'*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
-//
-//comparison-operator ::=
-//    'regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)' |
-//    'regexp:[-\u2013\u2014\u2015](?i)[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
-//
-//format-operator ::=
-//    'regexp:[-\u2013\u2014\u2015](?i)f'
-//
+private operator-or-punctuator ::=
+    common-operator
+  | assignment-operator
+  | merging-redirection-operator
+  | file-redirection-operator
+  | comparison-operator
+  | format-operator
+
+private common-operator ::=
+    '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
+    'regexp:[-\u2013\u2014\u2015]'|
+    'regexp:[-\u2013\u2014\u2015]{2}'|
+    'regexp:[-\u2013\u2014\u2015](?i)(shl|shr)'|
+    'regexp:[-\u2013\u2014\u2015](?i)b?(and|or|xor|not)'
+
+private assignment-operator ::=
+    ASSIGNMENT_OPERATORS
+
+private file-redirection-operator ::=
+    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|'5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
+
+private merging-redirection-operator ::=
+    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|'*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
+
+private comparison-operator ::=
+    'regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)' |
+    'regexp:[-\u2013\u2014\u2015](?i)[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
+
+private format-operator ::=
+    'regexp:[-\u2013\u2014\u2015](?i)f'
+
 ///* B.1.8 Parameters */
 //
 //command-parameter ::=

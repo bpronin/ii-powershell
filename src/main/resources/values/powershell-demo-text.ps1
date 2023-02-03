@@ -18,6 +18,8 @@ $variable  ${braced variable}
 
 . , ; {} () []
 
+= += -= *= /= %=
+
 # SIG # Begin signature block
 # x+GhsHxy2QDYkrJBh8Rlcw==
 # SIG # End signature block
