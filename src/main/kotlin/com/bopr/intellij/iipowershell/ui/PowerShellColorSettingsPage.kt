@@ -11,6 +11,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.D
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.DOT_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FILE_REDIRECTION_OPERATORS_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FORMAT_OPERATOR_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
@@ -63,15 +64,16 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
         private val DESCRIPTORS = arrayOf(
 //            AttributesDescriptor(string("comments//signature"), SIGNATURE_KEY),
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER_KEY),
-            AttributesDescriptor(string("braces_and_operators//assignment_operators"), ASSIGNMENT_OPERATORS_KEY),
-            AttributesDescriptor(string("braces_and_operators//file_redirection_operators"), FILE_REDIRECTION_OPERATORS_KEY),
-            AttributesDescriptor(string("braces_and_operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATORS_KEY),
-            AttributesDescriptor(string("braces_and_operators//braces"), BRACES_KEY),
-            AttributesDescriptor(string("braces_and_operators//brackets"), BRACKETS_KEY),
-            AttributesDescriptor(string("braces_and_operators//comma"), COMMA_KEY),
-            AttributesDescriptor(string("braces_and_operators//dot"), DOT_KEY),
-            AttributesDescriptor(string("braces_and_operators//parentheses"), PARENTHESES_KEY),
-            AttributesDescriptor(string("braces_and_operators//semicolon"), SEMICOLON_KEY),
+            AttributesDescriptor(string("operators//assignment_operators"), ASSIGNMENT_OPERATORS_KEY),
+            AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATORS_KEY),
+            AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATORS_KEY),
+            AttributesDescriptor(string("operators//format_operator"), FORMAT_OPERATOR_KEY),
+            AttributesDescriptor(string("braces//braces"), BRACES_KEY),
+            AttributesDescriptor(string("braces//brackets"), BRACKETS_KEY),
+            AttributesDescriptor(string("operators//comma"), COMMA_KEY),
+            AttributesDescriptor(string("operators//dot"), DOT_KEY),
+            AttributesDescriptor(string("braces//parentheses"), PARENTHESES_KEY),
+            AttributesDescriptor(string("operators//semicolon"), SEMICOLON_KEY),
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT_KEY),
             AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT_KEY),
             AttributesDescriptor(string("comments//requires_comment"), REQUIRES_COMMENT_KEY),
