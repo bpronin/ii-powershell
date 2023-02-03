@@ -1,8 +1,9 @@
 /**
 * PowerShell grammar.
 *
-* @author Boris Pronin
 * @see grammar reference: https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-15?view=powershell-7.3
+*
+* @author Boris Pronin
 */
 
 {
@@ -17,45 +18,56 @@
     tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
 
     tokens = [
+//        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
+//        BLANK_SPACE = 'regexp:\s+'
+        LINE_COMMENT = 'regexp:#.*'
+        BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
+
+        DECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
+        HEXADECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?0x[\da-fA-F]+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
+        REAL_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?(\d*\.\d?|\d+)([eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB]))?'
+        STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
+        KEYWORD = 'regexp:begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow'
+        RESERVED_VARIABLE_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
+        VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
+//        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
+//        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
+        BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
+        SIGNATURE_BEGIN = '# SIG # Begin signature block'
+        SIGNATURE_END = '# SIG # End signature block'
         DOT = '.'
         COMMA = ','
         SEMICOLON = ';'
-        BRACES='regexp:[{}]'
-        BRACKETS='regexp:[\[\]]]'
-        PARENTHESES='regexp:[()]'
-
-//        NEW_LINE = 'regexp:[\r\n]|\r\n'
-//        WHITE_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C]'
-//        NEW_LINE = 'regexp:[\r\n]|\r\n'
-//        DASH = 'regexp:[-\u2013\u2014\u2015]'
-//        QUOTE = 'regexp:["\u201C\u201D\u201E]'
-//        LINE_COMMENT = 'regexp:#.[^\r\n]|\r\n'
-//        BLOCK_COMMENT = 'regexp:<#.*#>'
-//        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
-//        STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|""|)*\$?["\u201C\u201D\u201E]'
-//        VARIABLE = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
-//        DECIMAL_INTEGER = 'regexp:\d+[ld]?(kb|mb|gb|tb|pb)?'
-//        HEXADECIMAL_INTEGER = 'regexp:0x[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
-//        REAL = 'regexp:(\d*\.\d+e?|\d+e)\d+[ld]?(kb|mb|gb|tb|pb)?'
-//        KEY_WORD = 'regeexp:begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow'
+        BRACES = 'regexp:[{}]'
+        BRACKETS = 'regexp:[\[\]]]'
+        PARENTHESES = 'regexp:[()]'
+        DASH = 'regexp:[-\u2013\u2014\u2015]'
+        QUOTE = 'regexp:["\u201C\u201D\u201E]'
+        NUMBER_SIGN = 'regexp:[+\-\u2013\u2014\u2015]'
+        HEX_DIGITS='regexp:[\da-fA-F]'
+        INTEGER_NUMBER_SUFFIX = 'regexp:[lLdD]'
+        REAL_NUMBER_EXPONENT = 'regexp:[eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])'
+        NUMBER_MULTIPLIER = 'regexp:([kK]|[mM]|[gG]|[tT]|[pP])[bB]'
+//        STRING_CONTENT = 'regexp:([^$`"\u201C\u201D\u201E]|""|)*\$?'
     ]
 }
 
 /* B.1 Lexical grammar */
 
-input ::=
-    input-element* signature-block?
+root ::=
+    element* signature-block?
 
-private input-element ::=
+private element ::=
     token
   | comment
-  | whitespace
+//  | whitespace
 
-signature-block ::=
-    '# SIG # Begin signature block' signature '# SIG # End signature block'
+private signature-block ::=
+//    '# SIG # Begin signature block' signature '# SIG # End signature block'
+    SIGNATURE_BEGIN signature SIGNATURE_END
 
-signature ::=
-    'regexp:#.*'*
+private signature ::=
+    LINE_COMMENT*
 
 /* B.1.2 Comments */
 
@@ -64,11 +76,11 @@ private comment ::=
 //  | requires-comment
   | delimited-comment
 
-single-line-comment ::=
-    'regexp:#.*'
+private single-line-comment ::=
+    LINE_COMMENT
 
-delimited-comment ::=
-    'regexp:<#(?s).*#>'
+private delimited-comment ::=
+    BLOCK_COMMENT
 
 /* B.1.4 Tokens */
 
@@ -76,39 +88,37 @@ private token ::=
     keyword
   | variable
 //  | command
-  | command-parameter  //interferes with negative number literals
+//  | command-parameter  //interferes with negative number literals
 //  | command-argument-token
   | literal
-  | type-literal
-  | operator-or-punctuator
+//  | type-literal
+//  | operator-or-punctuator
 
 /* B.1.1 Line terminators */
 
-private new-line-character ::=
-     'regexp:[\r\n]|\r\n'
-
-private new-lines ::=
-    new-line-character*
+//private new-line-character ::=
+//     'regexp:[\r\n]|\r\n'
+//
+//private new-lines ::=
+//    new-line-character*
 
 /* B.1.3 White space */
 
-private whitespace ::=
-    'regexp:[\p{Zs}\p{Zl}\p{Zp}\t\f\u000B]'
-  | '`' new-line-character
+//whitespace ::=
+//    BLANK_SPACE
+//  | '`' new-line-character
 
 /* B.1.5 Keywords */
 
-keyword ::=
-    'begin'|'break'|'catch'|'class'|'continue'|'data'|'define'|'do'|'dynamicparam'|'else'|'elseif'|'end'|'exit'|
-    'filter'|'finally'|'for'|'foreach'|'from'|'function'|'if'|'in'|'inlinescript'|'parallel'|'param'|'process'|
-    'return'|'switch'|'throw'|'trap'|'try'|'until'|'using'|'var'|'while'|'workflow'
+private keyword ::=
+    KEYWORD
 
 /* B.1.6 Variables */
 
 variable ::=
-    'regexp:\$\$|\$\?|\$\^|\$_'
-  | 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
-  | 'regexp:\$\{[^}]+}'
+    RESERVED_VARIABLE_NAME
+  | VARIABLE_NAME
+  | BRACED_VARIABLE_NAME
 
 /* B.1.9 Literals */
 
@@ -119,95 +129,92 @@ private literal ::=
 
 /* B.1.9.1 Integer Literals */
 
-private sign ::=
-    '+' | 'regexp:[-\u2013\u2014\u2015]'
-
 private integer-literal ::=
-    sign? (decimal-integer-literal | hexadecimal-integer-literal)
+    decimal-integer-literal | hexadecimal-integer-literal
 
-decimal-integer-literal ::=
-    'regexp:\d+(?i)[ld]?(kb|mb|gb|tb|pb)?'
+private decimal-integer-literal ::=
+    DECIMAL_INTEGER_NUMBER
 
-hexadecimal-integer-literal ::=
-    'regexp:0x(?i)[\da-f]+[ld]?(kb|mb|gb|tb|pb)?'
+private hexadecimal-integer-literal ::=
+    HEXADECIMAL_INTEGER_NUMBER
 
 /* B.1.9.2 Real Literals */
 
-real-literal ::=
-    sign? ('regexp:(?i)(\d*\.\d+e?|\d+e)\d+[ld]?(kb|mb|gb|tb|pb)?')
+private real-literal ::=
+    REAL_NUMBER
 
 /* B.1.9.3 String Literals */
 
-string-literal ::=
-    'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|""|)*\$?["\u201C\u201D\u201E]'
+private string-literal ::=
+    STRING
 
 /* B.1.12 Operators and punctuators */
 
-private operator-or-punctuator ::=
-    common-operator
-  | assignment-operator
-  | merging-redirection-operator
-  | file-redirection-operator
-  | comparison-operator
-  | format-operator
-
-common-operator ::=
-    '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
-    'regexp:[-\u2013\u2014\u2015]'|
-    'regexp:[-\u2013\u2014\u2015]{2}'|
-    'regexp:[-\u2013\u2014\u2015](?i)(shl|shr)'|
-    'regexp:[-\u2013\u2014\u2015](?i)b?(and|or|xor|not)'
-
-assignment-operator ::=
-    '='|'+='|'*='|'/='|'%='|'regexp:[-\u2013\u2014\u2015]='
-
-file-redirection-operator ::=
-    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|'5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
-
-merging-redirection-operator ::=
-    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|'*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
-
-comparison-operator ::=
-    'regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)' |
-    'regexp:[-\u2013\u2014\u2015](?i)[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
-
-format-operator ::=
-    'regexp:[-\u2013\u2014\u2015](?i)f'
-
-/* B.1.8 Parameters */
-
-command-parameter ::=
-    'regexp:[-\u2013\u2014\u2015]\w?[\w?]+'
-
+//private operator-or-punctuator ::=
+//    common-operator
+//  | assignment-operator
+//  | merging-redirection-operator
+//  | file-redirection-operator
+//  | comparison-operator
+//  | format-operator
+//
+//common-operator ::=
+//    '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
+//    'regexp:[-\u2013\u2014\u2015]'|
+//    'regexp:[-\u2013\u2014\u2015]{2}'|
+//    'regexp:[-\u2013\u2014\u2015](?i)(shl|shr)'|
+//    'regexp:[-\u2013\u2014\u2015](?i)b?(and|or|xor|not)'
+//
+//assignment-operator ::=
+//    '='|'+='|'*='|'/='|'%='|'regexp:[-\u2013\u2014\u2015]='
+//
+//file-redirection-operator ::=
+//    '>'|'>>'|'2>'|'2>>'|'3>'|'3>>'|'4>'|'4>>'|'5>'|'5>>'|'6>'|'6>>'|'*>'|'*>>'|'<'
+//
+//merging-redirection-operator ::=
+//    '*>&1'|'2>&1'|'3>&1'|'4>&1'|'5>&1'|'6>&1'|'*>&2'|'1>&2'|'3>&2'|'4>&2'|'5>&2'|'6>&2'
+//
+//comparison-operator ::=
+//    'regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)' |
+//    'regexp:[-\u2013\u2014\u2015](?i)[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
+//
+//format-operator ::=
+//    'regexp:[-\u2013\u2014\u2015](?i)f'
+//
+///* B.1.8 Parameters */
+//
+//command-parameter ::=
+//    'regexp:[-\u2013\u2014\u2015]\w?[\w?]+'
+//
 /* B.1.11 Type Names */
-
-type-name ::=
-    type-identifier ('.' type-identifier)*
-
-private type-identifier ::=
-    type-characters
-
-private type-characters ::=
-    'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
-
-array-type-name ::=
-    type-name '['
-
-generic-type-name ::=
-    type-name '['
-
-/* B.2.3 Expressions */
-
-type-literal ::=
-    '[' type-spec ']'
-
-private type-spec ::=
-    array-type-name new-lines? dimension* ']'
-  | generic-type-name new-lines? generic-type-arguments ']'
-  | type-name
-
-private dimension ::=
-    ','
-
-private generic-type-arguments ::=
-    type-spec new-lines? (',' new-lines? type-spec)*
+//
+//private type-name ::=
+//    type-identifier ('.' type-identifier)*
+//
+//private type-identifier ::=
+//    type-characters
+//
+//private type-characters ::=
+//    TYPE_NAME
+//
+//private array-type-name ::=
+//    type-name '['
+//
+//private generic-type-name ::=
+//    type-name '['
+//
+///* B.2.3 Expressions */
+//
+//type-literal ::=
+//    '[' type-spec ']'
+//
+//private type-spec ::=
+//    array-type-name new-lines? dimension* ']'
+//  | generic-type-name new-lines? generic-type-arguments ']'
+//  | type-name
+//
+//private dimension ::=
+//    ','
+//
+//private generic-type-arguments ::=
+//    type-spec new-lines? (',' new-lines? type-spec)*

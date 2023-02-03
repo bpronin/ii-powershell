@@ -7,7 +7,7 @@ interface PowerShellTokenSets {
 
     companion object {
 
-        val COMMENTS = TokenSet.create(SINGLE_LINE_COMMENT, DELIMITED_COMMENT)
-        val STRINGS = TokenSet.create(STRING_LITERAL)
+        val COMMENTS = TokenSet.create(LINE_COMMENT, BLOCK_COMMENT)
+        val STRINGS = TokenSet.create(STRING)
     }
 }

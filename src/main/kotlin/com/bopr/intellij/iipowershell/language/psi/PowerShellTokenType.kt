@@ -5,7 +5,7 @@ import com.bopr.intellij.iipowershell.language.PowerShellLanguage
 
 class PowerShellTokenType(debugName: String) : IElementType(debugName, PowerShellLanguage.INSTANCE) {
 
-    override fun toString(): String {
-        return "PowerShellTokenType." + super.toString()
-    }
+//    override fun toString(): String {
+//        return "PowerShellTokenType." + super.toString()
+//    }
 }

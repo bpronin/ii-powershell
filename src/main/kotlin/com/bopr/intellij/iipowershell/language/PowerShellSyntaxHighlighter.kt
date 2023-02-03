@@ -26,11 +26,11 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             PowerShellTypes.COMMA -> COMMA_KEYS
             PowerShellTypes.PARENTHESES -> PARENTHESES_KEYS
             PowerShellTypes.BRACKETS -> BRACKETS_KEYS
-            PowerShellTypes.SINGLE_LINE_COMMENT -> LINE_COMMENT_KEYS
-            PowerShellTypes.DELIMITED_COMMENT -> BLOCK_COMMENT_KEYS
-            PowerShellTypes.DECIMAL_INTEGER_LITERAL -> DECIMAL_INTEGER_NUMBER_KEYS
-            PowerShellTypes.HEXADECIMAL_INTEGER_LITERAL -> HEXADECIMAL_INTEGER_NUMBER_KEYS
-            PowerShellTypes.REAL_LITERAL -> FLOATING_POINT_NUMBER_KEYS
+            PowerShellTypes.LINE_COMMENT -> LINE_COMMENT_KEYS
+            PowerShellTypes.BLOCK_COMMENT -> BLOCK_COMMENT_KEYS
+            PowerShellTypes.DECIMAL_INTEGER_NUMBER -> DECIMAL_INTEGER_NUMBER_KEYS
+            PowerShellTypes.HEXADECIMAL_INTEGER_NUMBER -> HEXADECIMAL_INTEGER_NUMBER_KEYS
+            PowerShellTypes.REAL_NUMBER -> FLOATING_POINT_NUMBER_KEYS
             else -> EMPTY_KEYS
         }
     }
@@ -39,7 +39,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
 
         val BAD_CHARACTER_KEY = createTextAttributesKey("POWERSHELL_BAD_CHARACTER", BAD_CHARACTER)
         val KEYWORD_KEY = createTextAttributesKey("POWERSHELL_KEYWORD", KEYWORD)
-        val BRACES_KEY = createTextAttributesKey("POWERSHELL_BRACES", BRACES);
+        val BRACES_KEY = createTextAttributesKey("POWERSHELL_BRACES", BRACES)
         val DOT_KEY = createTextAttributesKey("POWERSHELL_DOT", DOT)
         val SEMICOLON_KEY = createTextAttributesKey("POWERSHELL_SEMICOLON", SEMICOLON)
         val COMMA_KEY = createTextAttributesKey("POWERSHELL_COMMA", COMMA)

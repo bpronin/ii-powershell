@@ -2,4 +2,4 @@ package com.bopr.intellij.iipowershell.language
 
 import com.intellij.lexer.FlexAdapter
 
-class PowerShellLexerAdapter : FlexAdapter(PowerShellLexer(null))
+class PowerShellLexerAdapter : FlexAdapter(_PowerShellLexer(null))
