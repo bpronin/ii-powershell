@@ -1,5 +1,7 @@
 # Single line comment
 
+#Requires requirements
+
 <#---------------#
  # Block comment #
  #---------------#>
@@ -15,3 +17,7 @@ $variable  ${braced variable}
 "" "string text"
 
 . , ; {} () []
+
+# SIG # Begin signature block
+# x+GhsHxy2QDYkrJBh8Rlcw==
+# SIG # End signature block

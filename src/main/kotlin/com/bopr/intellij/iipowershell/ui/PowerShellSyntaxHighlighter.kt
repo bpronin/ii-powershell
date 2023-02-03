@@ -33,6 +33,8 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             Types.REAL_NUMBER -> FLOATING_POINT_NUMBER_KEYS
             Types.SEMICOLON -> SEMICOLON_KEYS
             Types.STRING -> STRING_KEYS
+            Types.SIGNATURE -> SIGNATURE_KEYS
+            Types.REQUIRES_COMMENT -> REQUIRES_COMMENT_KEYS
             Types.VARIABLE_NAME -> VARIABLE_KEYS
             TokenType.BAD_CHARACTER -> BAD_CHARACTER_KEYS
             else -> EMPTY_KEYS
@@ -51,6 +53,8 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val BRACKETS_KEY = createTextAttributesKey("PWSH_BRACKETS", Colors.BRACKETS)
         val LINE_COMMENT_KEY = createTextAttributesKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT)
         val BLOCK_COMMENT_KEY = createTextAttributesKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT)
+        val REQUIRES_COMMENT_KEY = createTextAttributesKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT)
+        val SIGNATURE_KEY = createTextAttributesKey("PWSH_SIGNATURE", Colors.LINE_COMMENT)
         val DECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("PWSH_DECIMAL_INTEGER_NUMBER", Colors.NUMBER)
         val HEXADECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER)
         val FLOATING_POINT_NUMBER_KEY = createTextAttributesKey("PWSH_FLOATING_POINT_NUMBER", Colors.NUMBER)
@@ -73,5 +77,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         private val FLOATING_POINT_NUMBER_KEYS = arrayOf(FLOATING_POINT_NUMBER_KEY)
         private val STRING_KEYS = arrayOf(STRING_KEY)
         private val VARIABLE_KEYS = arrayOf(VARIABLE_KEY)
+        private val REQUIRES_COMMENT_KEYS = arrayOf(REQUIRES_COMMENT_KEY)
+        private val SIGNATURE_KEYS = arrayOf(SIGNATURE_KEY)
     }
 }

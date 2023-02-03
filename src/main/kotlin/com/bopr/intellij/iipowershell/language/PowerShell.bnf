@@ -17,11 +17,14 @@
     elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
     tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
 
+   /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
     tokens = [
 //        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
         BLANK_SPACE = 'regexp:\s+'
+        SIGNATURE = 'regexp:# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
+        REQUIRES_COMMENT = 'regexp:#\s*[rR]equires\s+.*'
         LINE_COMMENT = 'regexp:#.*'
-        BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'  // NOTE: In generated flex file change to <#([^]|\n)*#>
+        BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
         REAL_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?\d*\.\d+([eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?)?'
         DECIMAL_INTEGER_NUMBER = 'regexp:[+\-\u2013\u2014\u2015]?\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
         HEXADECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?0x[\da-fA-F]+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
@@ -33,8 +36,6 @@
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
         STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
 
-        SIGNATURE_BEGIN = '# SIG # Begin signature block'
-        SIGNATURE_END = '# SIG # End signature block'
         DOT = '.'
         COMMA = ','
         SEMICOLON = ';'
@@ -55,25 +56,21 @@
 /* B.1 Lexical grammar */
 
 root ::=
-    element* signature-block?
+    element* signature?
 
 private element ::=
     token
   | comment
 //  | whitespace
 
-private signature-block ::=
-//    '# SIG # Begin signature block' signature '# SIG # End signature block'
-    SIGNATURE_BEGIN signature SIGNATURE_END
-
 private signature ::=
-    LINE_COMMENT*
+    SIGNATURE
 
 /* B.1.2 Comments */
 
 private comment ::=
     single-line-comment
-//  | requires-comment
+  | requires-comment
   | delimited-comment
 
 private single-line-comment ::=
@@ -81,6 +78,9 @@ private single-line-comment ::=
 
 private delimited-comment ::=
     BLOCK_COMMENT
+
+private requires-comment ::=
+    REQUIRES_COMMENT
 
 /* B.1.4 Tokens */
 

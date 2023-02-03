@@ -13,7 +13,9 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.H
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.KEYWORD_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESES_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.REQUIRES_COMMENT_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON_KEY
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SIGNATURE_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING_KEY
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.VARIABLE_KEY
 import com.bopr.intellij.iipowershell.util.Resources.string
@@ -66,6 +68,8 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("braces_and_operators//semicolon"), SEMICOLON_KEY),
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT_KEY),
             AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT_KEY),
+            AttributesDescriptor(string("comments//requires_comment"), REQUIRES_COMMENT_KEY),
+//            AttributesDescriptor(string("comments//signature"), SIGNATURE_KEY),
             AttributesDescriptor(string("keyword"), KEYWORD_KEY),
             AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER_KEY),
             AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER_KEY),
