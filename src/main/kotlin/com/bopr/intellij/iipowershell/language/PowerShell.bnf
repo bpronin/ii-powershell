@@ -7,14 +7,15 @@
 */
 
 {
-    parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
+    elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
+    elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
     psiClassPrefix="PowerShell"
     psiImplClassSuffix="Impl"
-    psiPackage="com.bopr.intellij.iipowershell.psi"
     psiImplPackage="com.bopr.intellij.iipowershell.language.psi.impl"
-    elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
-    elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
+    psiImplUtilClass="com.bopr.intellij.iipowershell.language.psi.PowerShellPsiUtil"
+    psiPackage="com.bopr.intellij.iipowershell.psi"
     tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
 
    /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
