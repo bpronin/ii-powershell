@@ -2,7 +2,7 @@ package com.bopr.intellij.iipowershell.language.psi
 
 object PowerShellPsiUtil {
 
-    /* see https://plugins.jetbrains.com/docs/intellij/psi-helper-and-utilities.html#update-grammar-and-regenerate-the-parser */
+/* Read more: https://plugins.jetbrains.com/docs/intellij/psi-helper-and-utilities.html#update-grammar-and-regenerate-the-parser */
 
 //    fun getKey(element: SimpleProperty): String? {
 //        val keyNode: ASTNode = element.getNode().findChildByType(SimpleTypes.KEY)

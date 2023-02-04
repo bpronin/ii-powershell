@@ -23,6 +23,7 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -52,8 +53,11 @@
                 implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationProducer"/>
 
         <lang.commenter
-            language="PowerShell"
-            implementationClass="com.bopr.intellij.iipowershell.commenter.PowerShellCommenter"/>
+                language="PowerShell"
+                implementationClass="com.bopr.intellij.iipowershell.commenter.PowerShellCommenter"/>
+
+        <annotator language="JAVA"
+                   implementationClass="com.bopr.intellij.iipowershell.annotator.PowerShellAnnotator"/>
     </extensions>
 
     <actions>
