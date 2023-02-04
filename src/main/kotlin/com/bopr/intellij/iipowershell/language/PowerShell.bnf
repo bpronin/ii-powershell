@@ -22,39 +22,44 @@
 //        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
         BLANK_SPACE = 'regexp:\s+'
         SIGNATURE = 'regexp:# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
-        REQUIRES_COMMENT = 'regexp:#\s*[rR]equires\s+.*'
+        REQUIRES_COMMENT = 'regexp:(?i)#\s*requires\s+.*'
         LINE_COMMENT = 'regexp:#.*'
         BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
-        REAL_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?\d*\.\d+([eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?)?'
-        DECIMAL_INTEGER_NUMBER = 'regexp:[+\-\u2013\u2014\u2015]?\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
-        HEXADECIMAL_INTEGER_NUMBER = 'regexp:[+-\u2013\u2014\u2015]?0x[\da-fA-F]+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])?'
-        KEYWORD = 'regexp:begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow'
+        REAL_NUMBER = 'regexp:(?i)[+-–—―]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
+        DECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+-–—―]?\d+[ld]?([kmgtp]b)?'
+        HEXADECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+-–—―]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
         RESERVED_VARIABLE_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
         VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
 //        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
-//        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
-        STRING = 'regexp:["\u201C\u201D\u201E]([^$`"\u201C\u201D\u201E]|"")*\$?["\u201C\u201D\u201E]'
-
-        ASSIGNMENT_OPERATORS = 'regexp:[+*/%\-\u2013\u2014\u2015]?='
-        FILE_REDIRECTION_OPERATORS = 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
-        MERGING_REDIRECTION_OPERATORS = 'regexp:(\*>&1)|(2>&1)|(3>&1)|(4>&1)|(5>&1)|(6>&1)|(\*>&2)|(1>&2)|(3>&2)|(4>&2)|(5>&2)|(6>&2)'
-        FORMAT_OPERATOR = 'regexp:[-\u2013\u2014\u2015][fF]'
-
+        STRING = 'regexp:["“”„]([^$`"“”„]|"")*\$?["“”„]'
+        KEYWORD = 'regexp:(?i)(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
+        ASSIGNMENT_OPERATOR = 'regexp:[+*/%\-–—―]?=|([-–—―]{2})|(\+\+)'
+        FILE_REDIRECTION_OPERATOR = 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
+        MERGING_REDIRECTION_OPERATOR = 'regexp:(\*>&1)|(2>&1)|(3>&1)|(4>&1)|(5>&1)|(6>&1)|(\*>&2)|(1>&2)|(3>&2)|(4>&2)|(5>&2)|(6>&2)'
+        FORMAT_OPERATOR = 'regexp:(?i)[-–—―]f'
+        PREFIXED_OPERATOR = 'regexp:(?i)[-–—―](shl|shr|in|notin|isnot|is|as)'
+        IC_PREFIXED_OPERATOR = 'regexp:(?i)[-–—―][ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
+        B_PREFIXED_OPERATOR = 'regexp:(?i)[-–—―]b?(and|or|xor|not)'
+        ARITHMETIC_OPERATOR = 'regexp:[-–—―+*/%]'
+        OTHER_OPERATOR = 'regexp:[!&|]|(\.\.)|(::)|(&&)|(\|\|)'
+        BRACE = 'regexp:[{}]|(@\{)'
+        BRACKET = 'regexp:[\[\]]'
+        PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
         DOT = '.'
         COMMA = ','
         SEMICOLON = ';'
-        BRACES = 'regexp:[{}]'
-        BRACKETS = 'regexp:[\[\]]]'
-        PARENTHESES = 'regexp:[()]'
-//        DASH = 'regexp:[-\u2013\u2014\u2015]'
-//        QUOTE = 'regexp:["\u201C\u201D\u201E]'
-//        NUMBER_SIGN = 'regexp:[+\-\u2013\u2014\u2015]'
+
+//        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
+//        DASH = 'regexp:[-–—―]'
+//        DASH_DASH = 'regexp:[-–—―]{2}'
+//        QUOTE = 'regexp:["“”„]'
+//        NUMBER_SIGN = 'regexp:[+\-–—―]'
 //        HEX_DIGITS='regexp:[\da-fA-F]'
 //        INTEGER_NUMBER_SUFFIX = 'regexp:[lLdD]'
 //        REAL_NUMBER_EXPONENT = 'regexp:[eE]\d+[lLdD]?(([kK]|[mM]|[gG]|[tT]|[pP])[bB])'
 //        NUMBER_MULTIPLIER = 'regexp:([kK]|[mM]|[gG]|[tT]|[pP])[bB]'
-//        STRING_CONTENT = 'regexp:([^$`"\u201C\u201D\u201E]|""|)*\$?'
+//        STRING_CONTENT = 'regexp:([^$`"“”„]|""|)*\$?'
     ]
 }
 
@@ -156,40 +161,39 @@ private string-literal ::=
 /* B.1.12 Operators and punctuators */
 
 private operator-or-punctuator ::=
-    common-operator
+    braces
+  | arithmetic-operator
+  | other-operator
   | assignment-operator
   | merging-redirection-operator
   | file-redirection-operator
-  | comparison-operator
-  | format-operator
+  | prefixed-operator
 
-private common-operator ::=
-    '{'|'@{'|'}'|'('|'$('|'@('|')'|'['|']'|'..'|'::'|'+'|'*'|'/'|'%'|'!'|'++'|'&'|'.'|','|'&&'|'||'|'|'|';'|
-    'regexp:[-\u2013\u2014\u2015]'|
-    'regexp:[-\u2013\u2014\u2015]{2}'|
-    'regexp:[-\u2013\u2014\u2015](?i)(shl|shr)'|
-    'regexp:[-\u2013\u2014\u2015](?i)b?(and|or|xor|not)'
+private braces ::=
+    BRACE | BRACKET | PARENTHESIS
+
+private arithmetic-operator ::=
+    ARITHMETIC_OPERATOR
 
 private assignment-operator ::=
-    ASSIGNMENT_OPERATORS
+    ASSIGNMENT_OPERATOR
 
 private file-redirection-operator ::=
-    FILE_REDIRECTION_OPERATORS
+    FILE_REDIRECTION_OPERATOR
 
 private merging-redirection-operator ::=
-    MERGING_REDIRECTION_OPERATORS
+    MERGING_REDIRECTION_OPERATOR
 
-private comparison-operator ::=
-    'regexp:[-\u2013\u2014\u2015](?i)(in|notin|isnot|is|as)' |
-    'regexp:[-\u2013\u2014\u2015](?i)[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
+private prefixed-operator ::=
+    IC_PREFIXED_OPERATOR| B_PREFIXED_OPERATOR | PREFIXED_OPERATOR | FORMAT_OPERATOR
 
-private format-operator ::=
-    FORMAT_OPERATOR
+private other-operator ::=
+    DOT | COMMA | SEMICOLON | OTHER_OPERATOR
 
 ///* B.1.8 Parameters */
 //
 //command-parameter ::=
-//    'regexp:[-\u2013\u2014\u2015]\w?[\w?]+'
+//    'regexp:[-–—―]\w?[\w?]+'
 //
 /* B.1.11 Type Names */
 //

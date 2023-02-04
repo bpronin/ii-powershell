@@ -9,9 +9,7 @@
 #########################>
 
 # Operators and punctuators
-{   }   [   ]   (   )   @(   @{   $(   ;
-&&  ||  &   |   ,   ++  ..   ::   .
-!   *   /   %   + - --
+{   }   [   ]   (   )   @(   @{   $(  ; &&  ||  &   |   ,   ++  ..   ::   .  !   *   /   %   + - --
 
 = -= += *= /= %=
 
@@ -19,10 +17,9 @@
 
 *>&1  2>&1  3>&1  4>&1  5>&1  6>&1 *>&2  1>&2  3>&2  4>&2  5>&2  6>&2
 
--f -F
+-f
 
--and -band -bnot -bor
--bxor -not -or -xor
+-and -band -bnot -bor -bxor -not -or -xor
 
 -as           -ccontains      -ceq
 -cge          -cgt            -cle

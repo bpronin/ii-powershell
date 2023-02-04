@@ -18,79 +18,80 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
     }
 
     override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
-        return when (tokenType) {
-            TokenType.BAD_CHARACTER -> BAD_CHARACTER_KEYS
-            Types.BLOCK_COMMENT -> BLOCK_COMMENT_KEYS
-            Types.BRACED_VARIABLE_NAME -> VARIABLE_KEYS
-            Types.BRACES -> BRACES_KEYS
-            Types.BRACKETS -> BRACKETS_KEYS
-            Types.COMMA -> COMMA_KEYS
-            Types.DECIMAL_INTEGER_NUMBER -> DECIMAL_INTEGER_NUMBER_KEYS
-            Types.DOT -> DOT_KEYS
-            Types.HEXADECIMAL_INTEGER_NUMBER -> HEXADECIMAL_INTEGER_NUMBER_KEYS
-            Types.KEYWORD -> KEYWORD_KEYS
-            Types.LINE_COMMENT -> LINE_COMMENT_KEYS
-            Types.PARENTHESES -> PARENTHESES_KEYS
-            Types.REAL_NUMBER -> FLOATING_POINT_NUMBER_KEYS
-            Types.SEMICOLON -> SEMICOLON_KEYS
-            Types.STRING -> STRING_KEYS
-            Types.COMMA -> COMMA_KEYS
-//            Types.SIGNATURE -> SIGNATURE_KEYS
-            Types.REQUIRES_COMMENT -> REQUIRES_COMMENT_KEYS
-            Types.VARIABLE_NAME -> VARIABLE_KEYS
-            Types.ASSIGNMENT_OPERATORS -> ASSIGNMENT_OPERATORS_KEYS
-            Types.FILE_REDIRECTION_OPERATORS -> FILE_REDIRECTION_OPERATORS_KEYS
-            Types.MERGING_REDIRECTION_OPERATORS -> MERGING_REDIRECTION_OPERATORS_KEYS
-            Types.FORMAT_OPERATOR -> FORMAT_OPERATOR_KEYS
-            else -> EMPTY_KEYS
-        }
+        return KEYS[tokenType] ?: EMPTY_KEYS
     }
 
     companion object {
 
-        val BAD_CHARACTER_KEY = createTextAttributesKey("PWSH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
-        val KEYWORD_KEY = createTextAttributesKey("PWSH_KEYWORD", Colors.KEYWORD)
-        val BRACES_KEY = createTextAttributesKey("PWSH_BRACES", Colors.BRACES)
-        val DOT_KEY = createTextAttributesKey("PWSH_DOT", Colors.DOT)
-        val SEMICOLON_KEY = createTextAttributesKey("PWSH_SEMICOLON", Colors.SEMICOLON)
-        val COMMA_KEY = createTextAttributesKey("PWSH_COMMA", Colors.COMMA)
-        val PARENTHESES_KEY = createTextAttributesKey("PWSH_PARENTHESES", Colors.PARENTHESES)
-        val BRACKETS_KEY = createTextAttributesKey("PWSH_BRACKETS", Colors.BRACKETS)
-        val LINE_COMMENT_KEY = createTextAttributesKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT)
-        val BLOCK_COMMENT_KEY = createTextAttributesKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT)
-        val REQUIRES_COMMENT_KEY = createTextAttributesKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT)
-//        val SIGNATURE_KEY = createTextAttributesKey("PWSH_SIGNATURE", Colors.LINE_COMMENT)
-        val DECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("PWSH_DECIMAL_INTEGER_NUMBER", Colors.NUMBER)
-        val HEXADECIMAL_INTEGER_NUMBER_KEY = createTextAttributesKey("PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER)
-        val FLOATING_POINT_NUMBER_KEY = createTextAttributesKey("PWSH_FLOATING_POINT_NUMBER", Colors.NUMBER)
-        val STRING_KEY = createTextAttributesKey("PWSH_STRING", Colors.STRING)
-        val VARIABLE_KEY = createTextAttributesKey("PWSH_VARIABLE", Colors.LOCAL_VARIABLE)
-        val ASSIGNMENT_OPERATORS_KEY = createTextAttributesKey("PWSH_ASSIGNMENT_OPERATORS", Colors.OPERATION_SIGN)
-        val FILE_REDIRECTION_OPERATORS_KEY = createTextAttributesKey("PWSH_FILE_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN)
-        val MERGING_REDIRECTION_OPERATORS_KEY = createTextAttributesKey("PWSH_MERGING_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN)
-        val FORMAT_OPERATOR_KEY = createTextAttributesKey("PWSH_FORMAT_OPERATOR", Colors.OPERATION_SIGN)
-
         private val EMPTY_KEYS = arrayOf<TextAttributesKey>()
-        private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER_KEY)
-        private val DOT_KEYS = arrayOf(DOT_KEY)
-        private val BRACES_KEYS = arrayOf(BRACES_KEY)
-        private val SEMICOLON_KEYS = arrayOf(SEMICOLON_KEY)
-        private val COMMA_KEYS = arrayOf(COMMA_KEY)
-        private val PARENTHESES_KEYS = arrayOf(PARENTHESES_KEY)
-        private val BRACKETS_KEYS = arrayOf(BRACKETS_KEY)
-        private val LINE_COMMENT_KEYS = arrayOf(LINE_COMMENT_KEY)
-        private val BLOCK_COMMENT_KEYS = arrayOf(BLOCK_COMMENT_KEY)
-        private val KEYWORD_KEYS = arrayOf(KEYWORD_KEY)
-        private val DECIMAL_INTEGER_NUMBER_KEYS = arrayOf(DECIMAL_INTEGER_NUMBER_KEY)
-        private val HEXADECIMAL_INTEGER_NUMBER_KEYS = arrayOf(HEXADECIMAL_INTEGER_NUMBER_KEY)
-        private val FLOATING_POINT_NUMBER_KEYS = arrayOf(FLOATING_POINT_NUMBER_KEY)
-        private val STRING_KEYS = arrayOf(STRING_KEY)
-        private val VARIABLE_KEYS = arrayOf(VARIABLE_KEY)
-        private val REQUIRES_COMMENT_KEYS = arrayOf(REQUIRES_COMMENT_KEY)
-//        private val SIGNATURE_KEYS = arrayOf(SIGNATURE_KEY)
-        private val ASSIGNMENT_OPERATORS_KEYS = arrayOf(ASSIGNMENT_OPERATORS_KEY)
-        private val FILE_REDIRECTION_OPERATORS_KEYS = arrayOf(FILE_REDIRECTION_OPERATORS_KEY)
-        private val MERGING_REDIRECTION_OPERATORS_KEYS = arrayOf(MERGING_REDIRECTION_OPERATORS_KEY)
-        private val FORMAT_OPERATOR_KEYS = arrayOf(FORMAT_OPERATOR_KEY)
+        private val KEYS: MutableMap<IElementType, Array<TextAttributesKey>> = mutableMapOf()
+
+        private fun createKey(
+            externalName: String, fallbackKey: TextAttributesKey, vararg elementTypes: IElementType
+        ): TextAttributesKey {
+            val key = createTextAttributesKey(externalName, fallbackKey)
+            for (type in elementTypes) {
+                KEYS[type] = arrayOf(key)
+            }
+            return key
+        }
+
+        //        val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
+        val BAD_CHARACTER = createKey("PWSH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
+        val BLOCK_COMMENT = createKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT, Types.BLOCK_COMMENT)
+        val BRACE = createKey("PWSH_BRACES", Colors.BRACES, Types.BRACE)
+        val BRACKET = createKey("PWSH_BRACKETS", Colors.BRACKETS, Types.BRACKET)
+        val COMMA = createKey("PWSH_COMMA", Colors.COMMA, Types.COMMA)
+        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.DOT)
+        val FLOATING_POINT_NUMBER = createKey("PWSH_FLOATING_POINT_NUMBER", Colors.NUMBER, Types.REAL_NUMBER)
+        val KEYWORD = createKey("PWSH_KEYWORD", Colors.KEYWORD, Types.KEYWORD)
+        val LINE_COMMENT = createKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT, Types.LINE_COMMENT)
+        val PARENTHESIS = createKey("PWSH_PARENTHESIS", Colors.PARENTHESES, Types.PARENTHESIS)
+        val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
+        val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
+        val STRING = createKey("PWSH_STRING", Colors.STRING, Types.STRING)
+        val ASSIGNMENT_OPERATOR =
+            createKey(
+                "PWSH_ASSIGNMENT_OPERATORS", Colors.OPERATION_SIGN,
+                Types.ASSIGNMENT_OPERATOR
+            )
+        val DECIMAL_INTEGER_NUMBER =
+            createKey(
+                "PWSH_DECIMAL_INTEGER_NUMBER", Colors.NUMBER,
+                Types.DECIMAL_INTEGER_NUMBER
+            )
+        val VARIABLE =
+            createKey(
+                "PWSH_VARIABLE", Colors.LOCAL_VARIABLE, Types.VARIABLE_NAME,
+                Types.BRACED_VARIABLE_NAME
+            )
+        val FILE_REDIRECTION_OPERATOR =
+            createKey(
+                "PWSH_FILE_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN,
+                Types.FILE_REDIRECTION_OPERATOR
+            )
+        val HEXADECIMAL_INTEGER_NUMBER =
+            createKey(
+                "PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER,
+                Types.HEXADECIMAL_INTEGER_NUMBER
+            )
+        val MERGING_REDIRECTION_OPERATOR =
+            createKey(
+                "PWSH_MERGING_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN,
+                Types.MERGING_REDIRECTION_OPERATOR
+            )
+        val ARITHMETIC_OPERATOR =
+            createKey(
+                "PWSH_ARITHMETIC_OPERATORS", Colors.OPERATION_SIGN,
+                Types.ARITHMETIC_OPERATOR
+            )
+        val OTHER_OPERATOR =
+            createKey(
+                "PWSH_OTHER_OPERATORS", Colors.OPERATION_SIGN,
+                Types.FORMAT_OPERATOR,
+                Types.PREFIXED_OPERATOR,
+                Types.IC_PREFIXED_OPERATOR,
+                Types.B_PREFIXED_OPERATOR
+            )
     }
 }
