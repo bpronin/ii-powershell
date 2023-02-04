@@ -2,6 +2,7 @@ package com.bopr.intellij.iipowershell.language
 
 import com.bopr.intellij.iipowershell.language.psi.PowerShellFile
 import com.bopr.intellij.iipowershell.language.psi.PowerShellTokenSets
+import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes
 import com.bopr.intellij.iipowershell.parser.PowerShellParser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ParserDefinition
@@ -45,8 +46,8 @@ class PowerShellParserDefinition : ParserDefinition {
     }
 
     override fun createElement(node: ASTNode): PsiElement {
-//        return PowerShellTypes.Factory.createElement(node)
-        throw RuntimeException("Cannot create element")
+        return PowerShellTypes.Factory.createElement(node)
+//        throw RuntimeException("Cannot create element")
     }
 
     companion object {

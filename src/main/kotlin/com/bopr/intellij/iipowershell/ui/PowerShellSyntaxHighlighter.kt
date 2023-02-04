@@ -36,20 +36,20 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             return key
         }
 
+//        val COMMA = createKey("PWSH_COMMA", Colors.COMMA, Types.COMMA)
+//        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.DOT)
+//        val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
         val BAD_CHARACTER = createKey("PWSH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
         val BLOCK_COMMENT = createKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT, Types.BLOCK_COMMENT)
         val BRACE = createKey("PWSH_BRACES", Colors.BRACES, Types.BRACE)
         val BRACKET = createKey("PWSH_BRACKETS", Colors.BRACKETS, Types.BRACKET)
-        val COMMA = createKey("PWSH_COMMA", Colors.COMMA, Types.COMMA)
-        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.DOT)
         val FLOATING_POINT_NUMBER = createKey("PWSH_FLOATING_POINT_NUMBER", Colors.NUMBER, Types.REAL_NUMBER)
-        val KEYWORD = createKey("PWSH_KEYWORD", Colors.KEYWORD, Types.KEYWORD)
+        val KEYWORD = createKey("PWSH_KEYWORD", Colors.KEYWORD, Types.KEYWORD_NAME)
         val LINE_COMMENT = createKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT, Types.LINE_COMMENT)
         val PARENTHESIS = createKey("PWSH_PARENTHESIS", Colors.PARENTHESES, Types.PARENTHESIS)
         val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
-        val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
         val STRING = createKey("PWSH_STRING", Colors.STRING, Types.STRING)
-        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_NAME)
+        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_LITERAL)
         val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
         val ASSIGNMENT_OPERATOR =
             createKey(
@@ -89,6 +89,8 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val OTHER_OPERATOR =
             createKey(
                 "PWSH_OTHER_OPERATORS", Colors.OPERATION_SIGN,
+                Types.INCREMENT_OPERATOR,
+                Types.SYMBOLIC_OPERATOR,
                 Types.FORMAT_OPERATOR,
                 Types.PREFIXED_OPERATOR,
                 Types.IC_PREFIXED_OPERATOR,

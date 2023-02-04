@@ -86,6 +86,12 @@ ${ this is also a `variable?` }
 [int[,,,]]
 [int[string,string[int]]]
 
+#Commands
+Command-1
+Command-Two_ -parameter 100 $v -Hello
+Command-3 -parameter
+Command-4? 100
+
 # Expressions
 if $token return $token
 

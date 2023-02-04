@@ -20,36 +20,34 @@
 
    /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
     tokens = [
-//        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
-        BLANK_SPACE = 'regexp:\s+'
-        SIGNATURE = 'regexp:(?i)# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
+        SIGNATURE_CONTENT = 'regexp:(?i)# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
         REQUIRES_COMMENT = 'regexp:(?i)#\s*requires\s+.*'
         LINE_COMMENT = 'regexp:#.*'
         BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
-        REAL_NUMBER = 'regexp:(?i)[+-–—―]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
-        DECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+-–—―]?\d+[ld]?([kmgtp]b)?'
-        HEXADECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+-–—―]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
+        REAL_NUMBER = 'regexp:(?i)[+\-–—―]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
+        DECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+\-–—―]?\d+[ld]?([kmgtp]b)?'
+        HEXADECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+\-–—―]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
         RESERVED_VARIABLE_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
-        KEYWORD = 'regexp:(?i)(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
+        KEYWORD_NAME = 'regexp:(?i)(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
         VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
-        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_]+'
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
+//        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_]+'
         STRING = 'regexp:["“”„]([^$`"“”„]|"")*\$?["“”„]'
-        ASSIGNMENT_OPERATOR = 'regexp:[+*/%\-–—―]?=|([-–—―]{2})|(\+\+)'
+        ASSIGNMENT_OPERATOR = 'regexp:[+*/%\-–—―]?='
+        INCREMENT_OPERATOR = 'regexp:([\-–—―]{2})|(\+\+)'
         FILE_REDIRECTION_OPERATOR = 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
         MERGING_REDIRECTION_OPERATOR = 'regexp:(\*>&1)|(2>&1)|(3>&1)|(4>&1)|(5>&1)|(6>&1)|(\*>&2)|(1>&2)|(3>&2)|(4>&2)|(5>&2)|(6>&2)'
-        FORMAT_OPERATOR = 'regexp:(?i)[-–—―]f'
-        PREFIXED_OPERATOR = 'regexp:(?i)[-–—―](shl|shr|in|notin|isnot|is|as)'
-        IC_PREFIXED_OPERATOR = 'regexp:(?i)[-–—―][ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
-        B_PREFIXED_OPERATOR = 'regexp:(?i)[-–—―]b?(and|or|xor|not)'
-        ARITHMETIC_OPERATOR = 'regexp:[-–—―+*/%]'
-        OTHER_OPERATOR = 'regexp:[!&|]|(\.\.)|(::)|(&&)|(\|\|)'
+        FORMAT_OPERATOR = 'regexp:(?i)[\-–—―]f'
+        PREFIXED_OPERATOR = 'regexp:(?i)[\-–—―](shl|shr|in|notin|isnot|is|as)'
+        IC_PREFIXED_OPERATOR = 'regexp:(?i)[\-–—―][ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
+        B_PREFIXED_OPERATOR = 'regexp:(?i)[\-–—―]b?(and|or|xor|not)'
+        COMMAND_PARAMETER_NAME = 'regexp:[\-–—―]\w+[?\w]+;?'
+        GENERIC_TOKEN = "regexp:\w+[\-–—―?\w]+"
+        ARITHMETIC_OPERATOR = 'regexp:[\-–—―+*/%]'
+        SYMBOLIC_OPERATOR = 'regexp:[!&|;,.]|(\.\.)|(::)|(&&)|(\|\|)'
         BRACE = 'regexp:[{}]|(@\{)'
         BRACKET = 'regexp:[\[\]]'
         PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
-        DOT = '.'
-        COMMA = ','
-        SEMICOLON = ';'
 
 //        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
 //        DASH = 'regexp:[-–—―]'
@@ -72,25 +70,25 @@ root ::=
 private element ::=
     token
   | comment
-//  | whitespace
+  | whitespace
 
-private signature ::=
-    SIGNATURE
+signature ::=
+    SIGNATURE_CONTENT
 
 /* B.1.1 Line terminators */
 
 private new-line ::=
      'regexp:[\r\n]|\r\n'
 
-//private new-line-character ::=
-//     'regexp:[\r\n]|\r\n'
-//
-//private new-lines ::=
-//    new-line-character*
+//private dash ::=
+//    'regexp:[-–—―]'
+
+//private dash-dash ::=
+//    dash dash
 
 /* B.1.2 Comments */
 
-private comment ::=
+comment ::=
     single-line-comment
   | requires-comment
   | delimited-comment
@@ -106,9 +104,10 @@ private requires-comment ::=
 
 /* B.1.3 White space */
 
-//whitespace ::=
+private whitespace ::=
 //    BLANK_SPACE
-//  | '`' new-line-character
+    'regexp:\s+'
+  | '`' new-line
 
 /* B.1.4 Tokens */
 
@@ -124,49 +123,43 @@ private token ::=
 
 /* B.1.5 Keywords */
 
-private keyword ::=
-    KEYWORD
+keyword ::=
+    KEYWORD_NAME
 
 /* B.1.6 Variables */
 
-private variable ::=
+variable ::=
     RESERVED_VARIABLE_NAME
   | VARIABLE_NAME
   | BRACED_VARIABLE_NAME
 
 /* B.1.7 Commands */
 
-//generic-token:
-//    generic-token-parts
-//
-//generic-token-parts:
-//    generic-token-part
-//    generic-token-parts generic-token-part
-//
-//generic-token-part:
+private generic-token ::=
+    generic-token-part
+
+private generic-token-part ::=
 //    expandable-string-literal
-//    verbatim-here-string-literal
-//    variable
-//    generic-token-char
-//
-//generic-token-char:
+//  | verbatim-here-string-literal
+   variable
+  | generic-token-chars
+
+private generic-token-chars ::=
+    GENERIC_TOKEN
 //    Any Unicode character except
-//        {   }   (   )   ;   ,   |   &   $
-//        ` (The backtick character U+0060)
-//        double-quote-character
-//        single-quote-character
+//        { } ( ) ; , | & . [
+//        colon
 //        whitespace
 //        new-line-character
-//        escaped-character
-//
-//generic-token-with-subexpr-start:
-//    generic-token-parts $(
+
+//private generic-token-with-subexpr-start ::=
+//    generic-token-part+ '$('
 
 /* B.1.8 Parameters*/
 
-// command-parameter:
-//     dash first-parameter-char parameter-chars colon~opt~
-//
+command-parameter ::=
+    COMMAND_PARAMETER_NAME
+
 // first-parameter-char:
 //     A Unicode character of classes Lu, Ll, Lt, Lm, or Lo
 //     _ (The underscore character U+005F)
@@ -211,6 +204,7 @@ private variable ::=
 // non-double-quote-char:
 //     Any Unicode character except
 //         double-quote-character
+
 /* B.1.9 Literals */
 
 private literal ::=
@@ -220,7 +214,7 @@ private literal ::=
 
 /* B.1.9.1 Integer Literals */
 
-private integer-literal ::=
+integer-literal ::=
     decimal-integer-literal | hexadecimal-integer-literal
 
 private decimal-integer-literal ::=
@@ -231,12 +225,12 @@ private hexadecimal-integer-literal ::=
 
 /* B.1.9.2 Real Literals */
 
-private real-literal ::=
+real-literal ::=
     REAL_NUMBER
 
 /* B.1.9.3 String Literals */
 
-private string-literal ::=
+string-literal ::=
     STRING
 
 //string-literal:
@@ -348,6 +342,7 @@ private string-literal ::=
 private operator-or-punctuator ::=
     braces
   | arithmetic-operator
+  | increment-operator
   | symbolic-operator
   | assignment-operator
   | merging-redirection-operator
@@ -372,14 +367,12 @@ private merging-redirection-operator ::=
 private prefixed-operator ::=
     IC_PREFIXED_OPERATOR| B_PREFIXED_OPERATOR | PREFIXED_OPERATOR | FORMAT_OPERATOR
 
-private symbolic-operator ::=
-    DOT | COMMA | SEMICOLON | OTHER_OPERATOR
+private increment-operator ::=
+    INCREMENT_OPERATOR
 
-///* B.1.8 Parameters */
-//
-//command-parameter ::=
-//    'regexp:[-–—―]\w?[\w?]+'
-//
+private symbolic-operator ::=
+    SYMBOLIC_OPERATOR
+
 /* B.1.11 Type Names */
 
 private type-name ::=
@@ -389,7 +382,8 @@ private type-identifier ::=
     type-characters
 
 private type-characters ::=
-    TYPE_NAME
+//    TYPE_NAME
+    generic-token
 
 private array-type-name ::=
     type-name '['
@@ -641,67 +635,63 @@ private generic-type-name ::=
 //
 //sequence-statement:
 //    sequence statement-block
-//
-//pipeline:
+
+//private pipeline ::=
 //    assignment-expression
-//    expression redirections~opt~ pipeline-tail~opt~
-//    command verbatim-command-argument~opt~ pipeline-tail~opt~
+////  | expression redirections~opt~ pipeline-tail?
+////  | command verbatim-command-argument~opt~ pipeline-tail?
 //
-//assignment-expression:
+//private assignment-expression ::=
 //    expression assignment-operator statement
-//
-//pipeline-tail:
-//    | new-lines~opt~ command
-//    | new-lines~opt~ command pipeline-tail
-//
-//command:
-//    command-name command-elements~opt~
-//    command-invocation-operator command-module~opt~ command-name-expr command-elements~opt~
-//
-//command-invocation-operator: one of
-//    &   .
-//
-//command-module:
+
+//pipeline-tail ::=
+//    '|' new-line* command
+//  | '|' new-line* command pipeline-tail
+
+command ::=
+    command-name command-element*
+//  | command-invocation-operator command-module? command-name-expr command-element*
+
+//command-invocation-operator ::=
+//    '&'| '.'
+
+//command-module ::=
 //    primary-expression
-//
-//command-name:
-//    generic-token
-//    generic-token-with-subexpr
-//
-//generic-token-with-subexpr:
+
+command-name ::=
+    generic-token
+//  | generic-token-with-subexpr
+
+//generic-token-with-subexpr ::=
 //    No whitespace is allowed between ) and command-name.
 //    generic-token-with-subexpr-start statement-list~opt~ ) command-name
-//
-//command-name-expr:
+
+private command-name-expr ::=
 //    command-name
-//    primary-expression
-//
-//command-elements:
-//    command-element
-//    command-elements command-element
-//
-//command-element:
-//    command-parameter
-//    command-argument
-//    redirection
-//
-//command-argument:
-//    command-name-expr
-//
+    primary-expression
+
+private command-element ::=
+    command-parameter
+  | command-argument
+//  | redirection
+
+command-argument ::=
+    command-name-expr
+
 //verbatim-command-argument:
 //    --% verbatim-command-argument-chars
 //
-//redirections:
-//    redirection
-//    redirections redirection
+
+//redirections ::=
+//    redirection*
 //
-//redirection:
+//redirection ::=
 //    merging-redirection-operator
-//    file-redirection-operator redirected-file-name
+//  | file-redirection-operator redirected-file-name
 //
-//redirected-file-name:
+//redirected-file-name ::=
 //    command-argument
-//    primary-expression
+//  | primary-expression
 
 /* B.2.3 Expressions */
 
@@ -777,27 +767,28 @@ private generic-type-name ::=
 //attributed-expression:
 //    type-literal variable
 //
-//primary-expression:
-//    value
-//    member-access
-//    element-access
-//    invocation-expression
-//    post-increment-expression
-//    post-decrement-expression
-//
-//value:
-//    parenthesized-expression
-//    sub-expression
-//    array-expression
-//    script-block-expression
-//    hash-literal-expression
-//    literal
-//    type-literal
-//    variable
-//
-//parenthesized-expression:
-//    ( new-lines~opt~ pipeline new-lines~opt~ )
-//
+
+private primary-expression ::=
+    value
+//  | member-access
+//  | element-access
+//  | invocation-expression
+//  | post-increment-expression
+//  | post-decrement-expression
+
+private value ::=
+    parenthesized-expression
+//  | sub-expression
+//  | array-expression
+//  | script-block-expression
+//  | hash-literal-expression
+  | literal
+  | type-literal
+  | variable
+
+private parenthesized-expression ::=
+    '(' new-line* pipeline new-line* ')'
+
 //sub-expression:
 //    $( new-lines~opt~ statement-list~opt~ new-lines~opt~ )
 //
@@ -920,7 +911,7 @@ private generic-type-name ::=
 //    sub-expression
 //    expandable-here-string-part
 
-private type-literal ::=
+type-literal ::=
     '[' type-spec ']'
 
 private type-spec ::=

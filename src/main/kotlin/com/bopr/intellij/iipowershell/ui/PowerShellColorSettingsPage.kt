@@ -7,9 +7,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.B
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACKET
-import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.COMMA
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.DECIMAL_INTEGER_NUMBER
-import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.DOT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FILE_REDIRECTION_OPERATOR
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER
@@ -19,7 +17,6 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.M
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.OTHER_OPERATOR
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESIS
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.REQUIRES_COMMENT
-import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SIGNATURE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.TYPE
@@ -79,12 +76,12 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER),
             AttributesDescriptor(string("operators//arithmetic_operators"), ARITHMETIC_OPERATOR),
             AttributesDescriptor(string("operators//assignment_operators"), ASSIGNMENT_OPERATOR),
-            AttributesDescriptor(string("operators//comma"), COMMA),
-            AttributesDescriptor(string("operators//dot"), DOT),
+//            AttributesDescriptor(string("operators//comma"), COMMA),
+//            AttributesDescriptor(string("operators//dot"), DOT),
             AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//other_operators"), OTHER_OPERATOR),
-            AttributesDescriptor(string("operators//semicolon"), SEMICOLON),
+//            AttributesDescriptor(string("operators//semicolon"), SEMICOLON),
             AttributesDescriptor(string("string_text"), STRING),
             AttributesDescriptor(string("type"), TYPE),
             AttributesDescriptor(string("variable"), VARIABLE),
