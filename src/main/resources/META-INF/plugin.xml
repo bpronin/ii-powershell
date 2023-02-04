@@ -50,6 +50,10 @@
 
         <runConfigurationProducer
                 implementation="com.bopr.intellij.iipowershell.run.PowerShellRunConfigurationProducer"/>
+
+        <lang.commenter
+            language="PowerShell"
+            implementationClass="com.bopr.intellij.iipowershell.commenter.PowerShellCommenter"/>
     </extensions>
 
     <actions>
