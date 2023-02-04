@@ -21,7 +21,7 @@
     tokens = [
 //        BLANK_SPACE = 'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C\n\r]+'
         BLANK_SPACE = 'regexp:\s+'
-        SIGNATURE = 'regexp:# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
+        SIGNATURE = 'regexp:(?i)# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
         REQUIRES_COMMENT = 'regexp:(?i)#\s*requires\s+.*'
         LINE_COMMENT = 'regexp:#.*'
         BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'

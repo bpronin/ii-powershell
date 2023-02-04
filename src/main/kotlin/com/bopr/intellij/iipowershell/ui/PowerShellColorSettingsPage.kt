@@ -20,6 +20,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.O
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESIS
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.REQUIRES_COMMENT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SIGNATURE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.TYPE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.VARIABLE
@@ -64,7 +65,7 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
     companion object {
 
         private val DESCRIPTORS = arrayOf(
-//            AttributesDescriptor(string("comments//signature"), SIGNATURE),
+            AttributesDescriptor(string("comments//signature"), SIGNATURE),
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER),
             AttributesDescriptor(string("braces//braces"), BRACE),
             AttributesDescriptor(string("braces//brackets"), BRACKET),

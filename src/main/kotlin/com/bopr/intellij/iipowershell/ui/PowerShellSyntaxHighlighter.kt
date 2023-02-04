@@ -36,7 +36,6 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             return key
         }
 
-        //        val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
         val BAD_CHARACTER = createKey("PWSH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
         val BLOCK_COMMENT = createKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT, Types.BLOCK_COMMENT)
         val BRACE = createKey("PWSH_BRACES", Colors.BRACES, Types.BRACE)
@@ -51,6 +50,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
         val STRING = createKey("PWSH_STRING", Colors.STRING, Types.STRING)
         val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_NAME)
+        val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
         val ASSIGNMENT_OPERATOR =
             createKey(
                 "PWSH_ASSIGNMENT_OPERATORS", Colors.OPERATION_SIGN,
