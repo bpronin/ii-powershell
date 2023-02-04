@@ -21,6 +21,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.P
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.REQUIRES_COMMENT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.TYPE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.VARIABLE
 import com.bopr.intellij.iipowershell.util.Resources.string
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -65,17 +66,9 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
         private val DESCRIPTORS = arrayOf(
 //            AttributesDescriptor(string("comments//signature"), SIGNATURE),
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER),
-            AttributesDescriptor(string("operators//assignment_operators"), ASSIGNMENT_OPERATOR),
-            AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATOR),
-            AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATOR),
-            AttributesDescriptor(string("operators//arithmetic_operators"), ARITHMETIC_OPERATOR),
-            AttributesDescriptor(string("operators//other_operators"), OTHER_OPERATOR),
             AttributesDescriptor(string("braces//braces"), BRACE),
             AttributesDescriptor(string("braces//brackets"), BRACKET),
-            AttributesDescriptor(string("operators//comma"), COMMA),
-            AttributesDescriptor(string("operators//dot"), DOT),
             AttributesDescriptor(string("braces//parentheses"), PARENTHESIS),
-            AttributesDescriptor(string("operators//semicolon"), SEMICOLON),
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT),
             AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT),
             AttributesDescriptor(string("comments//requires_comment"), REQUIRES_COMMENT),
@@ -83,8 +76,17 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER),
             AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER),
             AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER),
-            AttributesDescriptor(string("variable"), VARIABLE),
+            AttributesDescriptor(string("operators//arithmetic_operators"), ARITHMETIC_OPERATOR),
+            AttributesDescriptor(string("operators//assignment_operators"), ASSIGNMENT_OPERATOR),
+            AttributesDescriptor(string("operators//comma"), COMMA),
+            AttributesDescriptor(string("operators//dot"), DOT),
+            AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATOR),
+            AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATOR),
+            AttributesDescriptor(string("operators//other_operators"), OTHER_OPERATOR),
+            AttributesDescriptor(string("operators//semicolon"), SEMICOLON),
             AttributesDescriptor(string("string_text"), STRING),
+            AttributesDescriptor(string("type"), TYPE),
+            AttributesDescriptor(string("variable"), VARIABLE),
         )
     }
 }

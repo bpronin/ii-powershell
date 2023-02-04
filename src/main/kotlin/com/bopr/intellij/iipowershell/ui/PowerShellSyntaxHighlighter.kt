@@ -50,6 +50,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
         val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
         val STRING = createKey("PWSH_STRING", Colors.STRING, Types.STRING)
+        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_NAME)
         val ASSIGNMENT_OPERATOR =
             createKey(
                 "PWSH_ASSIGNMENT_OPERATORS", Colors.OPERATION_SIGN,

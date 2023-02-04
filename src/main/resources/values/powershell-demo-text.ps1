@@ -8,6 +8,7 @@ begin end
 0xF1FA .5 10.5e8
 $variable  ${braced variable}
 "" "string text"
+[string] [type.member] [int[]] [int[,,,]]  [int[string,string[int]]]
 . , ; {} () []
 = += -= *= /= %=
 >  >>  2>  2>>  3>  3>>  4>  4>> 5>  5>>  6>  6>>  *>  *>>  <
