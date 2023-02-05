@@ -397,7 +397,7 @@ private generic-type-name ::=
 
 /* B.1.12 Operators and punctuators */
 
-operator-or-punctuator ::=
+private operator-or-punctuator ::=
     BRACE
   | BRACKET
   | PARENTHESIS
@@ -413,28 +413,12 @@ operator-or-punctuator ::=
   | comparison-operator
   | format-operator
 
-comparison-operator ::=
+private comparison-operator ::=
     PREFIXED_OPERATOR
   | IC_PREFIXED_OPERATOR
 
-format-operator ::=
+private format-operator ::=
     T_FORMAT_OPERATOR
-
-//private operator-or-punctuator ::=
-//    braces
-//  | arithmetic-operator
-//  | increment-operator
-//  | symbolic-operator
-//  | assignment-operator
-//  | merging-redirection-operator
-//  | file-redirection-operator
-//  | prefixed-operator
-
-//private braces ::=
-//    BRACE | BRACKET | PARENTHESIS
-
-//private arithmetic-operator ::=
-//    ARITHMETIC_OPERATOR
 
 private assignment-operator ::=
     ASSIGNMENT_OPERATOR
@@ -444,15 +428,6 @@ private file-redirection-operator ::=
 
 private merging-redirection-operator ::=
     MERGING_REDIRECTION_OPERATOR
-
-//private prefixed-operator ::=
-//    IC_PREFIXED_OPERATOR| B_PREFIXED_OPERATOR | PREFIXED_OPERATOR | FORMAT_OPERATOR
-//
-//private increment-operator ::=
-//    INCREMENT_OPERATOR
-//
-//private symbolic-operator ::=
-//    SYMBOLIC_OPERATOR
 
 /** B.2 Syntactic grammar **/
 
@@ -545,8 +520,8 @@ labeled-statement ::=
     switch-statement
   | foreach-statement
 //  | for-statement
-//  | while-statement
-//  | do-statement
+  | while-statement
+  | do-statement
 
 switch-statement ::=
     'switch' new-lines switch-parameters? switch-condition switch-body
@@ -584,38 +559,30 @@ switch-clause-condition ::=
 foreach-statement ::=
     'foreach' new-lines '(' new-lines variable new-lines 'in' new-lines pipeline new-lines ')' statement-block
 
-//for-statement:
-//    for new-lines (
-//        new-lines for-initializer? statement-terminator
-//        new-lines for-condition? statement-terminator
-//        new-lines for-iterator?
-//        new-lines ) statement-block
-//    for new-lines (
-//        new-lines for-initializer? statement-terminator
-//        new-lines for-condition?
-//        new-lines ) statement-block
-//    for new-lines (
-//        new-lines for-initializer?
-//        new-lines ) statement-block
-//
-//for-initializer:
-//    pipeline
-//
-//for-condition:
-//    pipeline
-//
-//for-iterator:
-//    pipeline
-//
-//while-statement:
-//    while new-lines ( new-lines while-condition new-lines ) statement-block
-//
-//do-statement:
-//    do statement-block new-lines while new-lines ( while-condition new-lines )
-//    do statement-block new-lines until new-lines ( while-condition new-lines )
-//
-//while-condition:
-//    new-lines pipeline
+for-statement ::=
+    'for' new-lines '(' new-lines for-initializer? statement-terminator
+        new-lines for-condition? statement-terminator new-lines for-iterator? new-lines ')' statement-block
+  | 'for' new-lines '(' new-lines for-initializer? statement-terminator
+        new-lines for-condition? new-lines ')' statement-block
+  | 'for' new-lines '(' new-lines for-initializer? new-lines ')' statement-block
+
+for-initializer ::=
+    pipeline
+
+for-condition ::=
+    pipeline
+
+for-iterator ::=
+    pipeline
+
+while-statement ::=
+    'while' new-lines '(' new-lines while-condition new-lines ')' statement-block
+
+do-statement ::=
+    'do' statement-block new-lines ('while' | 'until') new-lines '(' while-condition new-lines ')'
+
+while-condition ::=
+    new-lines pipeline
 
 function-statement ::=
     'function' new-lines function-name function-parameter-declaration? '{' script-block '}'
@@ -691,15 +658,6 @@ assignment-expression ::=
 
 pipeline-tail ::=
     '|' new-lines command ('|' new-lines command)*
-//    '|' new-lines command
-//  | '|' new-lines command pipeline-tail
-
-/*
-<command-name> -<Required Parameter Name> <Required Parameter Value>
-    [-<Optional Parameter Name> <Optional Parameter Value>]
-    [-<Optional Switch Parameters>]
-    [-<Optional Parameter Name>] <Required Parameter Value>
-*/
 
 command ::=
     command-name command-element*
@@ -751,49 +709,28 @@ private expression ::=
     logical-expression
 
 logical-expression ::=
-    bitwise-expression  (LOGICAL_OPERATOR new-lines bitwise-expression)*
-//  | logical-expression '-and' new-lines bitwise-expression
-//  | logical-expression '-or' new-lines bitwise-expression
-//  | logical-expression '-xor' new-lines bitwise-expression
+    bitwise-expression (LOGICAL_OPERATOR new-lines bitwise-expression)*
 
 bitwise-expression ::=
-    comparison-expression  (BITWISE_LOGICAL_OPERATOR new-lines comparison-expression)*
-//  | bitwise-expression '-band' new-lines comparison-expression
-//  | bitwise-expression '-bor' new-lines comparison-expression
-//  | bitwise-expression '-bxor' new-lines comparison-expression
+    comparison-expression (BITWISE_LOGICAL_OPERATOR new-lines comparison-expression)*
 
 comparison-expression ::=
-    additive-expression  (comparison-operator new-lines additive-expression)*
-//    additive-expression
-//  | comparison-expression comparison-operator new-lines additive-expression
+    additive-expression (comparison-operator new-lines additive-expression)*
 
 additive-expression ::=
-    multiplicative-expression  (('+'|dash) new-lines multiplicative-expression)*
-//    multiplicative-expression
-//  | additive-expression '+' new-lines multiplicative-expression
-//  | additive-expression dash new-lines multiplicative-expression
+    multiplicative-expression (('+'|dash) new-lines multiplicative-expression)*
 
 multiplicative-expression ::=
-    format-expression (('\'|'/'|'%') new-lines format-expression)*
-//    format-expression
-//  | multiplicative-expression '\' new-lines format-expression
-//  | multiplicative-expression '/' new-lines format-expression
-//  | multiplicative-expression '%' new-lines format-expression
+    format-expression (('\*'|'/'|'%') new-lines format-expression)*
 
 format-expression ::=
     range-expression (format-operator new-lines range-expression)*
-//    range-expression
-//  | format-expression format-operator new-lines range-expression
 
 range-expression ::=
-    array-literal-expression  ('..' new-lines array-literal-expression)*
-//    array-literal-expression
-//  | range-expression '..' new-lines array-literal-expression
+    array-literal-expression ('..' new-lines array-literal-expression)*
 
 array-literal-expression ::=
-    unary-expression  (',' new-lines unary-expression)*
-//    unary-expression
-//  | unary-expression ',' new-lines array-literal-expression
+    unary-expression (',' new-lines unary-expression)*
 
 unary-expression ::=
     primary-expression
@@ -821,7 +758,7 @@ pre-decrement-expression ::=
 cast-expression ::=
     type-literal unary-expression
 
-attributed-expression ::=
+private attributed-expression ::=
     type-literal variable
 
 private primary-expression ::=
@@ -867,79 +804,67 @@ key-expression ::=
     simple-name
   | unary-expression
 
-//post-increment-expression ::=
-//    primary-expression ++
-//
-//post-decrement-expression ::=
-//    primary-expression dashdash
-//
-//member-access ::= Note no whitespace is allowed after
-//    primary-expression.
-//    primary-expression . member-name
-//    primary-expression  ::= ::= member-name
-//
-//element-access ::= Note no whitespace is allowed between primary-expression and [.
-//    primary-expression [ new-lines expression new-lines ]
+post-increment-expression ::=
+    primary-expression '++'
 
-//invocation-expression ::=
-    //    Note no whitespace is allowed after
-//    primary-expression.
-//   | primary-expression '.' member-name argument-list
-//   | primary-expression  '::' member-name argument-list
+post-decrement-expression ::=
+    primary-expression dashdash
 
-//argument-list ::=
-//    ( argument-expression-list? new-lines )
-//
-//argument-expression-list ::=
-//    argument-expression
-//    argument-expression new-lines , argument-expression-list
-//
-//argument-expression ::=
-//    new-lines logical-argument-expression
-//
-//logical-argument-expression ::=
-//    bitwise-argument-expression
-//    logical-argument-expression -and new-lines bitwise-argument-expression
-//    logical-argument-expression -or  new-lines bitwise-argument-expression
-//    logical-argument-expression -xor new-lines bitwise-argument-expression
-//
-//bitwise-argument-expression ::=
-//    comparison-argument-expression
-//    bitwise-argument-expression -band new-lines comparison-argument-expression
-//    bitwise-argument-expression -bor  new-lines comparison-argument-expression
-//    bitwise-argument-expression -bxor new-lines comparison-argument-expression
-//
-//comparison-argument-expression ::=
-//    additive-argument-expression
-//    comparison-argument-expression comparison-operator
-//        new-lines additive-argument-expression
-//
-//additive-argument-expression ::=
-//    multiplicative-argument-expression
-//    additive-argument-expression +    new-lines multiplicative-argument-expression
-//    additive-argument-expression dash new-lines multiplicative-argument-expression
-//
-//multiplicative-argument-expression ::=
-//    format-argument-expression
-//    multiplicative-argument-expression \ new-lines format-argument-expression
-//    multiplicative-argument-expression / new-lines format-argument-expression
-//    multiplicative-argument-expression % new-lines format-argument-expression
-//
-//format-argument-expression ::=
-//    range-argument-expression
-//    format-argument-expression format-operator new-lines range-argument-expression
-//
-//range-argument-expression ::=
-//    unary-expression
-//    range-expression .. new-lines unary-expression
-//
-//member-name ::=
-//    simple-name
-//    string-literal
-//    string-literal-with-subexpression
-//    expression-with-unary-operator
-//    value
-//
+member-access ::=
+// Note no whitespace is allowed after
+//    primary-expression.
+    primary-expression '.' member-name
+    primary-expression  '::' member-name
+
+element-access ::=
+    //Note no whitespace is allowed between primary-expression and [.
+    primary-expression '[' new-lines expression new-lines ']'
+
+invocation-expression ::=
+//        Note no whitespace is allowed after
+//    primary-expression.
+//   |
+   primary-expression '.' member-name argument-list
+   | primary-expression  '::' member-name argument-list
+
+argument-list ::=
+    '(' argument-expression-list? new-lines ')'
+
+argument-expression-list ::=
+    argument-expression (new-lines ',' argument-expression)*
+
+argument-expression ::=
+    new-lines logical-argument-expression
+
+logical-argument-expression ::=
+   bitwise-argument-expression (LOGICAL_OPERATOR new-lines bitwise-argument-expression)*
+
+bitwise-argument-expression ::=
+    comparison-argument-expression (BITWISE_LOGICAL_OPERATOR new-lines comparison-argument-expression)*
+
+comparison-argument-expression ::=
+    additive-argument-expression (comparison-operator new-lines additive-argument-expression)*
+
+additive-argument-expression ::=
+    multiplicative-argument-expression (('+'|dash) new-lines multiplicative-argument-expression)*
+
+multiplicative-argument-expression ::=
+    format-argument-expression (('/*'|'/'|'%') new-lines format-argument-expression)*
+
+format-argument-expression ::=
+    range-argument-expression (format-operator new-lines range-argument-expression)*
+
+range-argument-expression ::=
+    unary-expression
+  | range-expression '..' new-lines unary-expression
+
+member-name ::=
+    simple-name
+  | string-literal
+//  | string-literal-with-subexpression
+  | expression-with-unary-operator
+  | value
+
 //string-literal-with-subexpression ::=
 //    expandable-string-literal-with-subexpr
 //    expandable-here-string-literal-with-subexpr
