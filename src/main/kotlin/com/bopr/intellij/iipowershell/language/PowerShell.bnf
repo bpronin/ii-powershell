@@ -31,6 +31,7 @@
         KEYWORD_NAME = 'regexp:(?i)(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
         VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
+        LABEL_NAME = 'regexp:(?i):\w+'
         STRING = 'regexp:["“”„]([^$`"“”„]|"")*\$?["“”„]'
         ASSIGNMENT_OPERATOR = 'regexp:[+*/%\-–—―]?='
         INCREMENT_OPERATOR = 'regexp:([\-–—―]{2})|(\+\+)'
@@ -45,7 +46,9 @@
         BITWISE_LOGICAL_NOT_OPERATOR = 'regexp:(?i)[\-–—―]bnot'
         SPLIT_OPERATOR = 'regexp:(?i)[\-–—―]split'
         JOIN_OPERATOR = 'regexp:(?i)[\-–—―]join'
+        FILE_PARAM = 'regexp:(?i)[\-–—―]file'
         SUPPORTED_COMMAND_PARAM = 'regexp:(?i)[\-–—―]supportedcommand'
+        SWITCH_PARAM = 'regexp:(?i)[\-–—―](regex|wildcard|exact|casesensitive|parallel)'
         COMMAND_PARAMETER_NAME = 'regexp:(?i)[\-–—―]\w+[?\w]+;?'
         GENERIC_TOKEN = "regexp:(?i)\w+[\-–—―?\w]+"
         ARITHMETIC_OPERATOR = 'regexp:[\-–—―+*/%]'
@@ -505,9 +508,9 @@ private statement-list ::=
 
 private statement ::=
     if-statement
-//  | label? labeled-statement
+  | label? labeled-statement
 //  | function-statement
-//  | flow-control-statement statement-terminator
+  | flow-control-statement statement-terminator?
   | trap-statement
 //  | try-statement
 //  | data-statement
@@ -535,49 +538,49 @@ elseif-clause ::=
 else-clause ::=
     new-lines? 'else' statement-block
 
-//labeled-statement:
-//    switch-statement
-//    foreach-statement
-//    for-statement
-//    while-statement
-//    do-statement
-//
-//switch-statement:
-//    switch new-lines? switch-parameters? switch-condition switch-body
-//
-//switch-parameters:
-//    switch-parameter
-//    switch-parameters switch-parameter
-//
-//switch-parameter:
-//    -regex
-//    -wildcard
-//    -exact
-//    -casesensitive
-//    -parallel
-//
-//switch-condition:
-//    ( new-lines? pipeline new-lines? )
-//    -file new-lines? switch-filename
-//
-//switch-filename:
-//    command-argument
-//    primary-expression
-//
-//switch-body:
-//    new-lines? { new-lines? switch-clauses }
-//
-//switch-clauses:
-//    switch-clause
-//    switch-clauses switch-clause
-//
-//switch-clause:
-//    switch-clause-condition statement-block statement-terimators?
-//
-//switch-clause-condition:
-//    command-argument
-//    primary-expression
-//
+label ::=
+    LABEL_NAME
+
+labeled-statement ::=
+    switch-statement
+//  | foreach-statement
+//  | for-statement
+//  | while-statement
+//  | do-statement
+
+switch-statement ::=
+    'switch' new-lines? switch-parameters? switch-condition switch-body
+
+switch-parameters ::=
+    switch-parameter+
+
+switch-parameter ::=
+    SWITCH_PARAM
+
+switch-condition ::=
+    '(' new-lines? pipeline new-lines? ')'
+   | FILE_PARAM new-lines? switch-filename
+
+switch-filename ::=
+    command-argument
+  | primary-expression
+
+switch-body ::=
+    new-lines? '{' new-lines? switch-clauses switch-default-clause? '}'
+
+private switch-clauses ::=
+    switch-clause+
+
+switch-clause ::=
+    switch-clause-condition statement-block statement-terminators?
+
+switch-default-clause ::=
+    'default' statement-block statement-terminators?
+
+switch-clause-condition ::=
+    command-argument
+  | primary-expression
+
 //foreach-statement:
 //    foreach new-lines? foreach-parameter? new-lines?
 //        ( new-lines? variable new-lines? in new-lines? pipeline
@@ -629,17 +632,17 @@ else-clause ::=
 //
 //function-parameter-declaration:
 //    new-lines? ( parameter-list new-lines? )
-//
-//flow-control-statement:
-//    break label-expression?
-//    continue label-expression?
-//    throw pipeline?
-//    return pipeline?
-//    exit pipeline?
-//
-//label-expression:
-//    simple-name
-//    unary-expression
+
+flow-control-statement ::=
+    'break' label-expression?
+  | 'continue' label-expression?
+  | 'throw' pipeline?
+  | 'return' pipeline?
+  | 'exit' pipeline?
+
+label-expression ::=
+    simple-name
+  | unary-expression
 
 trap-statement ::=
     'trap' new-lines? type-literal? new-lines? statement-block
@@ -823,8 +826,8 @@ pre-decrement-expression ::=
 cast-expression ::=
     type-literal unary-expression
 
-//attributed-expression ::=
-//    type-literal variable
+attributed-expression ::=
+    type-literal variable
 
 private primary-expression ::=
     value
@@ -838,7 +841,7 @@ private value ::=
     parenthesized-expression
 //  | sub-expression
 //  | array-expression
-//  | script-block-expression
+  | script-block-expression
 //  | hash-literal-expression
   | literal
   | type-literal
@@ -847,125 +850,125 @@ private value ::=
 private parenthesized-expression ::=
     '(' new-lines? pipeline new-lines? ')'
 
-//sub-expression:
+//sub-expression ::=
 //    $( new-lines? statement-list? new-lines? )
 //
-//array-expression:
+//array-expression ::=
 //    @( new-lines? statement-list? new-lines? )
-//
-//script-block-expression:
-//    { new-lines? script-block new-lines? }
-//
-//hash-literal-expression:
+
+script-block-expression ::=
+    '{' new-lines? script-block new-lines? '}'
+
+//hash-literal-expression ::=
 //    @{ new-lines? hash-literal-body? new-lines? }
 //
-//hash-literal-body:
+//hash-literal-body ::=
 //    hash-entry
 //    hash-literal-body statement-terminators hash-entry
 //
-//hash-entry:
+//hash-entry ::=
 //    key-expression = new-lines? statement
 //
-//key-expression:
+//key-expression ::=
 //    simple-name
 //    unary-expression
 //
-//post-increment-expression:
+//post-increment-expression ::=
 //    primary-expression ++
 //
-//post-decrement-expression:
+//post-decrement-expression ::=
 //    primary-expression dashdash
 //
-//member-access: Note no whitespace is allowed after
+//member-access ::= Note no whitespace is allowed after
 //    primary-expression.
 //    primary-expression . member-name
-//    primary-expression :: member-name
+//    primary-expression  ::= ::= member-name
 //
-//element-access: Note no whitespace is allowed between primary-expression and [.
+//element-access ::= Note no whitespace is allowed between primary-expression and [.
 //    primary-expression [ new-lines? expression new-lines? ]
 //
-//invocation-expression: Note no whitespace is allowed after
+//invocation-expression ::= Note no whitespace is allowed after
 //    primary-expression.
 //    primary-expression . member-name argument-list
-//    primary-expression :: member-name argument-list
+//    primary-expression  ::= ::= member-name argument-list
 //
-//argument-list:
+//argument-list ::=
 //    ( argument-expression-list? new-lines? )
 //
-//argument-expression-list:
+//argument-expression-list ::=
 //    argument-expression
 //    argument-expression new-lines? , argument-expression-list
 //
-//argument-expression:
+//argument-expression ::=
 //    new-lines? logical-argument-expression
 //
-//logical-argument-expression:
+//logical-argument-expression ::=
 //    bitwise-argument-expression
 //    logical-argument-expression -and new-lines? bitwise-argument-expression
 //    logical-argument-expression -or  new-lines? bitwise-argument-expression
 //    logical-argument-expression -xor new-lines? bitwise-argument-expression
 //
-//bitwise-argument-expression:
+//bitwise-argument-expression ::=
 //    comparison-argument-expression
 //    bitwise-argument-expression -band new-lines? comparison-argument-expression
 //    bitwise-argument-expression -bor  new-lines? comparison-argument-expression
 //    bitwise-argument-expression -bxor new-lines? comparison-argument-expression
 //
-//comparison-argument-expression:
+//comparison-argument-expression ::=
 //    additive-argument-expression
 //    comparison-argument-expression comparison-operator
 //        new-lines? additive-argument-expression
 //
-//additive-argument-expression:
+//additive-argument-expression ::=
 //    multiplicative-argument-expression
 //    additive-argument-expression +    new-lines? multiplicative-argument-expression
 //    additive-argument-expression dash new-lines? multiplicative-argument-expression
 //
-//multiplicative-argument-expression:
+//multiplicative-argument-expression ::=
 //    format-argument-expression
 //    multiplicative-argument-expression \ new-lines? format-argument-expression
 //    multiplicative-argument-expression / new-lines? format-argument-expression
 //    multiplicative-argument-expression % new-lines? format-argument-expression
 //
-//format-argument-expression:
+//format-argument-expression ::=
 //    range-argument-expression
 //    format-argument-expression format-operator new-lines? range-argument-expression
 //
-//range-argument-expression:
+//range-argument-expression ::=
 //    unary-expression
 //    range-expression .. new-lines? unary-expression
 //
-//member-name:
+//member-name ::=
 //    simple-name
 //    string-literal
 //    string-literal-with-subexpression
 //    expression-with-unary-operator
 //    value
 //
-//string-literal-with-subexpression:
+//string-literal-with-subexpression ::=
 //    expandable-string-literal-with-subexpr
 //    expandable-here-string-literal-with-subexpr
 //
-//expandable-string-literal-with-subexpr:
+//expandable-string-literal-with-subexpr ::=
 //    expandable-string-with-subexpr-start statement-list? )
 //        expandable-string-with-subexpr-characters expandable-string-with-subexpr-end
 //    expandable-here-string-with-subexpr-start statement-list? )
 //        expandable-here-string-with-subexpr-characters
 //        expandable-here-string-with-subexpr-end
 //
-//expandable-string-with-subexpr-characters:
+//expandable-string-with-subexpr-characters ::=
 //    expandable-string-with-subexpr-part
 //    expandable-string-with-subexpr-characters expandable-string-with-subexpr-part
 //
-//expandable-string-with-subexpr-part:
+//expandable-string-with-subexpr-part ::=
 //    sub-expression
 //    expandable-string-part
 //
-//expandable-here-string-with-subexpr-characters:
+//expandable-here-string-with-subexpr-characters ::=
 //    expandable-here-string-with-subexpr-part
 //    expandable-here-string-with-subexpr-characters expandable-here-string-with-subexpr-part
 //
-//expandable-here-string-with-subexpr-part:
+//expandable-here-string-with-subexpr-part ::=
 //    sub-expression
 //    expandable-here-string-part
 
