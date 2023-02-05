@@ -91,10 +91,10 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
                 "PWSH_OTHER_OPERATORS", Colors.OPERATION_SIGN,
                 Types.INCREMENT_OPERATOR,
                 Types.SYMBOLIC_OPERATOR,
-                Types.FORMAT_OPERATOR,
+                Types.T_FORMAT_OPERATOR,
                 Types.PREFIXED_OPERATOR,
                 Types.IC_PREFIXED_OPERATOR,
-                Types.B_PREFIXED_OPERATOR
+                Types.LOGICAL_OPERATOR
             )
     }
 }

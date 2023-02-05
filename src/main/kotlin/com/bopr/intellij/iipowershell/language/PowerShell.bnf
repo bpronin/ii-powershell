@@ -31,16 +31,15 @@
         KEYWORD_NAME = 'regexp:(?i)(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
         VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
-//        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_]+'
         STRING = 'regexp:["“”„]([^$`"“”„]|"")*\$?["“”„]'
         ASSIGNMENT_OPERATOR = 'regexp:[+*/%\-–—―]?='
         INCREMENT_OPERATOR = 'regexp:([\-–—―]{2})|(\+\+)'
         FILE_REDIRECTION_OPERATOR = 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
         MERGING_REDIRECTION_OPERATOR = 'regexp:(\*>&1)|(2>&1)|(3>&1)|(4>&1)|(5>&1)|(6>&1)|(\*>&2)|(1>&2)|(3>&2)|(4>&2)|(5>&2)|(6>&2)'
-        FORMAT_OPERATOR = 'regexp:(?i)[\-–—―]f'
+        T_FORMAT_OPERATOR = 'regexp:(?i)[\-–—―]f'
         PREFIXED_OPERATOR = 'regexp:(?i)[\-–—―](shl|shr|in|notin|isnot|is|as)'
         IC_PREFIXED_OPERATOR = 'regexp:(?i)[\-–—―][ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
-        B_PREFIXED_OPERATOR = 'regexp:(?i)[\-–—―]b?(and|or|xor|not)'
+        LOGICAL_OPERATOR = 'regexp:(?i)[\-–—―]b?(and|or|xor|not)'
         COMMAND_PARAMETER_NAME = 'regexp:[\-–—―]\w+[?\w]+;?'
         GENERIC_TOKEN = "regexp:\w+[\-–—―?\w]+"
         ARITHMETIC_OPERATOR = 'regexp:[\-–—―+*/%]'
@@ -62,8 +61,11 @@
     ]
 }
 
-/** B.1 Lexical grammar **/
+//script-file ::=
+//    script-block
 
+/** B.1 Lexical grammar **/
+    
 root ::=
     element* signature?
 
@@ -80,11 +82,14 @@ signature ::=
 private new-line ::=
      'regexp:[\r\n]|\r\n'
 
-//private dash ::=
-//    'regexp:[-–—―]'
+private new-lines ::=
+     new-line+
 
-//private dash-dash ::=
-//    dash dash
+private dash ::=
+    'regexp:[-–—―]'
+
+private dashdash ::=
+    dash dash
 
 /* B.1.2 Comments */
 
@@ -152,8 +157,8 @@ private generic-token-chars ::=
 //        whitespace
 //        new-line-character
 
-//private generic-token-with-subexpr-start ::=
-//    generic-token-part+ '$('
+private generic-token-with-subexpr-start ::=
+    generic-token-part+ '$('
 
 /* B.1.8 Parameters*/
 
@@ -337,41 +342,26 @@ string-literal ::=
 //    new-line-character  Any Unicode character except single-quote-character
 //    new-line-character  single-quote-character  Any Unicode character except @
 
-/* B.1.12 Operators and punctuators */
+/* B.1.10 Simple Names */
 
-private operator-or-punctuator ::=
-    braces
-  | arithmetic-operator
-  | increment-operator
-  | symbolic-operator
-  | assignment-operator
-  | merging-redirection-operator
-  | file-redirection-operator
-  | prefixed-operator
+private simple-name ::=
+    GENERIC_TOKEN
+//        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
 
-private braces ::=
-    BRACE | BRACKET | PARENTHESIS
-
-private arithmetic-operator ::=
-    ARITHMETIC_OPERATOR
-
-private assignment-operator ::=
-    ASSIGNMENT_OPERATOR
-
-private file-redirection-operator ::=
-    FILE_REDIRECTION_OPERATOR
-
-private merging-redirection-operator ::=
-    MERGING_REDIRECTION_OPERATOR
-
-private prefixed-operator ::=
-    IC_PREFIXED_OPERATOR| B_PREFIXED_OPERATOR | PREFIXED_OPERATOR | FORMAT_OPERATOR
-
-private increment-operator ::=
-    INCREMENT_OPERATOR
-
-private symbolic-operator ::=
-    SYMBOLIC_OPERATOR
+//simple-name:
+//    simple-name-first-char simple-name-chars
+//
+//simple-name-first-char:
+//    A Unicode character of classes Lu, Ll, Lt, Lm, or Lo
+//    _ (The underscore character U+005F)
+//
+//simple-name-chars:
+//    simple-name-char
+//    simple-name-chars simple-name-char
+//
+//simple-name-char:
+//    A Unicode character of classes Lu, Ll, Lt, Lm, Lo, or Nd
+//    _ (The underscore character U+005F)
 
 /* B.1.11 Type Names */
 
@@ -382,8 +372,8 @@ private type-identifier ::=
     type-characters
 
 private type-characters ::=
-//    TYPE_NAME
-    generic-token
+    GENERIC_TOKEN
+//  TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_]+'
 
 private array-type-name ::=
     type-name '['
@@ -391,97 +381,155 @@ private array-type-name ::=
 private generic-type-name ::=
     type-name '['
 
+/* B.1.12 Operators and punctuators */
+
+operator-or-punctuator ::=
+    BRACE
+  | BRACKET
+  | PARENTHESIS
+  | SYMBOLIC_OPERATOR
+  | INCREMENT_OPERATOR
+  | ARITHMETIC_OPERATOR
+  | LOGICAL_OPERATOR
+  | assignment-operator
+  | merging-redirection-operator
+  | file-redirection-operator
+  | comparison-operator
+  | format-operator
+
+comparison-operator ::=
+    PREFIXED_OPERATOR
+  | IC_PREFIXED_OPERATOR
+
+format-operator ::=
+    T_FORMAT_OPERATOR
+
+//private operator-or-punctuator ::=
+//    braces
+//  | arithmetic-operator
+//  | increment-operator
+//  | symbolic-operator
+//  | assignment-operator
+//  | merging-redirection-operator
+//  | file-redirection-operator
+//  | prefixed-operator
+
+//private braces ::=
+//    BRACE | BRACKET | PARENTHESIS
+
+//private arithmetic-operator ::=
+//    ARITHMETIC_OPERATOR
+
+private assignment-operator ::=
+    ASSIGNMENT_OPERATOR
+
+private file-redirection-operator ::=
+    FILE_REDIRECTION_OPERATOR
+
+private merging-redirection-operator ::=
+    MERGING_REDIRECTION_OPERATOR
+
+//private prefixed-operator ::=
+//    IC_PREFIXED_OPERATOR| B_PREFIXED_OPERATOR | PREFIXED_OPERATOR | FORMAT_OPERATOR
+//
+//private increment-operator ::=
+//    INCREMENT_OPERATOR
+//
+//private symbolic-operator ::=
+//    SYMBOLIC_OPERATOR
+
 /** B.2 Syntactic grammar **/
 
 /* B.2.1 Basic concepts */
 
-//script-file:
+//script-file ::=
+//    script-block
+
+//module-file ::=
 //    script-block
 //
-//module-file:
+//interactive-input ::=
 //    script-block
 //
-//interactive-input:
-//    script-block
-//
-//data-file:
+//data-file ::=
 //    statement-list
 
 /* B.2.2 Statements */
 
-//script-block:
-//    param-block~opt~ statement-terminators~opt~ script-block-body~opt~
-//
-//param-block:
-//    new-lines~opt~ attribute-list~opt~ new-lines~opt~ param new-lines~opt~
-//        ( parameter-list~opt~ new-lines~opt~ )
-//
-//parameter-list:
-//    script-parameter
-//    parameter-list new-lines~opt~ , script-parameter
-//
-//script-parameter:
-//    new-lines~opt~ attribute-list~opt~ new-lines~opt~ variable script-parameter-default~opt~
-//
-//script-parameter-default:
-//    new-lines~opt~ = new-lines~opt~ expression
-//
-//script-block-body:
-//    named-block-list
-//    statement-list
-//
-//named-block-list:
+script-block ::=
+    param-block? statement-terminators? script-block-body?
+
+param-block ::=
+    new-lines? attribute-list? new-lines? 'param' new-lines? '(' parameter-list? new-lines? ')'
+
+parameter-list ::=
+    script-parameter (new-lines? ',' script-parameter)*
+
+script-parameter ::=
+    new-lines? attribute-list? new-lines? variable script-parameter-default?
+
+script-parameter-default ::=
+    new-lines? '=' new-lines? expression
+
+script-block-body ::=
+    named-block-list
+  | statement-list
+
+named-block-list ::=
+    named-block+
 //    named-block
-//    named-block-list named-block
-//
-//named-block:
-//    block-name statement-block statement-terminators~opt~
-//
-//block-name: one of
-//    dynamicparam begin process end
-//
-//statement-block:
-//    new-lines~opt~ { statement-list~opt~ new-lines~opt~ }
-//
-//statement-list:
-//    statement
-//    statement-list statement
-//
-//statement:
-//    if-statement
-//    label~opt~ labeled-statement
-//    function-statement
-//    flow-control-statement statement-terminator
-//    trap-statement
-//    try-statement
-//    data-statement
-//    inlinescript-statement
-//    parallel-statement
-//    sequence-statement
-//    pipeline statement-terminator
-//
-//statement-terminator:
-//    ;
-//    new-line-character
-//
-//statement-terminators:
-//    statement-terminator
+//  | named-block-list named-block
+
+named-block ::=
+    block-name statement-block statement-terminators?
+
+block-name ::=
+    'dynamicparam'
+  | 'begin'
+  | 'process'
+  | 'end'
+
+statement-block ::=
+    new-line* { statement-list? new-line* }
+
+private statement-list ::=
+    statement+
+
+statement ::=
+    if-statement
+//  | label~opt~ labeled-statement
+//  | function-statement
+//  | flow-control-statement statement-terminator
+//  | trap-statement
+//  | try-statement
+//  | data-statement
+//  | inlinescript-statement
+//  | parallel-statement
+//  | sequence-statement
+//  | pipeline statement-terminator
+
+private statement-terminator ::=
+    ';'
+  | new-line
+
+statement-terminators ::=
+    statement-terminator+
 //    statement-terminators statement-terminator
-//
-//if-statement:
-//    if new-lines~opt~ ( new-lines~opt~ pipeline new-lines~opt~ ) statement-block
-//        elseif-clauses~opt~ else-clause~opt~
-//
-//elseif-clauses:
-//    elseif-clause
+
+if-statement ::=
+    if new-line* ( new-line* pipeline new-line* ) statement-block
+        elseif-clauses? else-clause?
+
+elseif-clauses ::=
+    elseif-clause+
 //    elseif-clauses elseif-clause
-//
-//elseif-clause:
-//    new-lines~opt~ elseif new-lines~opt~ ( new-lines~opt~ pipeline new-lines~opt~ ) statement-block
-//
-//else-clause:
-//    new-lines~opt~ else statement-block
-//
+
+elseif-clause ::=
+    new-line* 'elseif' new-line* ( new-line* pipeline new-line* ) statement-block
+
+else-clause ::=
+    new-line* 'else' statement-block
+
 //labeled-statement:
 //    switch-statement
 //    foreach-statement
@@ -653,18 +701,18 @@ command ::=
 //  | command-invocation-operator command-module? command-name-expr command-element*
 
 //command-invocation-operator ::=
-//    '&'| '.'
-
+//    '&' | '.'
+//
 //command-module ::=
 //    primary-expression
 
 command-name ::=
     generic-token
-//  | generic-token-with-subexpr
+  | generic-token-with-subexpr
 
-//generic-token-with-subexpr ::=
+generic-token-with-subexpr ::=
 //    No whitespace is allowed between ) and command-name.
-//    generic-token-with-subexpr-start statement-list~opt~ ) command-name
+    generic-token-with-subexpr-start statement-list? ')' command-name
 
 private command-name-expr ::=
 //    command-name
@@ -695,78 +743,77 @@ redirected-file-name ::=
 
 /* B.2.3 Expressions */
 
-//expression:
-//    logical-expression
-//
-//logical-expression:
-//    bitwise-expression
-//    logical-expression -and new-lines~opt~ bitwise-expression
-//    logical-expression -or new-lines~opt~ bitwise-expression
-//    logical-expression -xor new-lines~opt~ bitwise-expression
-//
-//bitwise-expression:
-//    comparison-expression
-//    bitwise-expression -band new-lines~opt~ comparison-expression
-//    bitwise-expression -bor new-lines~opt~ comparison-expression
-//    bitwise-expression -bxor new-lines~opt~ comparison-expression
-//
-//comparison-expression:
-//    additive-expression
-//    comparison-expression comparison-operator new-lines~opt~
-//    additive-expression
-//
-//additive-expression:
-//    multiplicative-expression
-//    additive-expression + new-lines~opt~ multiplicative-expression
-//    additive-expression dash new-lines~opt~ multiplicative-expression
-//
-//multiplicative-expression:
-//    format-expression
-//    multiplicative-expression \ new-lines~opt~ format-expression
-//    multiplicative-expression / new-lines~opt~ format-expression
-//    multiplicative-expression % new-lines~opt~ format-expression
-//
-//format-expression:
-//    range-expression
-//    format-expression format-operator new-lines~opt~ range-expression
-//
-//range-expression:
-//    array-literal-expression
-//    range-expression .. new-lines~opt~ array-literal-expression
-//
-//array-literal-expression:
-//    unary-expression
-//    unary-expression , new-lines~opt~ array-literal-expression
-//
-//unary-expression:
-//    primary-expression
-//    expression-with-unary-operator
-//
-//expression-with-unary-operator:
-//    , new-lines~opt~ unary-expression
-//    -not new-lines~opt~ unary-expression
-//    ! new-lines~opt~ unary-expression
-//    -bnot new-lines~opt~ unary-expression
-//    + new-lines~opt~ unary-expression
-//    dash new-lines~opt~ unary-expression
-//    pre-increment-expression
-//    pre-decrement-expression
-//    cast-expression
-//    -split new-lines~opt~ unary-expression
-//    -join new-lines~opt~ unary-expression
-//
-//pre-increment-expression:
-//    ++ new-lines~opt~ unary-expression
-//
-//pre-decrement-expression:
-//    dashdash new-lines~opt~ unary-expression
-//
-//cast-expression:
-//    type-literal unary-expression
-//
-//attributed-expression:
-//    type-literal variable
-//
+expression ::=
+    logical-expression
+
+logical-expression ::=
+    bitwise-expression
+  | logical-expression '-and' new-lines? bitwise-expression
+  | logical-expression '-or' new-lines? bitwise-expression
+  | logical-expression '-xor' new-lines? bitwise-expression
+
+bitwise-expression ::=
+    comparison-expression
+  | bitwise-expression '-band' new-lines? comparison-expression
+  | bitwise-expression '-bor' new-lines? comparison-expression
+  | bitwise-expression '-bxor' new-lines? comparison-expression
+
+comparison-expression ::=
+    additive-expression
+  | comparison-expression comparison-operator new-lines?
+  | additive-expression
+
+additive-expression ::=
+    multiplicative-expression
+  | additive-expression + new-lines? multiplicative-expression
+  | additive-expression dash new-lines? multiplicative-expression
+
+multiplicative-expression ::=
+  | format-expression
+  | multiplicative-expression '\' new-lines? format-expression
+  | multiplicative-expression '/' new-lines? format-expression
+  | multiplicative-expression '%' new-lines? format-expression
+
+format-expression ::=
+    range-expression
+  | format-expression format-operator new-lines? range-expression
+
+range-expression ::=
+    array-literal-expression
+  | range-expression '..' new-lines? array-literal-expression
+
+array-literal-expression ::=
+    unary-expression
+  | unary-expression ',' new-lines? array-literal-expression
+
+unary-expression ::=
+    primary-expression
+  | expression-with-unary-operator
+
+expression-with-unary-operator ::=
+    ',' new-lines? unary-expression
+  | '-not' new-lines? unary-expression
+  | '!' new-lines? unary-expression
+  | '-bnot' new-lines? unary-expression
+  | '+' new-lines? unary-expression
+  | dash new-lines? unary-expression
+  | pre-increment-expression
+  | pre-decrement-expression
+  | cast-expression
+  | '-split' new-lines? unary-expression
+  | '-join' new-lines? unary-expression
+
+pre-increment-expression ::=
+    '++' new-lines? unary-expression
+
+pre-decrement-expression ::=
+    dashdash new-lines? unary-expression
+
+cast-expression ::=
+    type-literal unary-expression
+
+attributed-expression ::=
+    type-literal variable
 
 private primary-expression ::=
     value
@@ -927,22 +974,23 @@ private generic-type-arguments ::=
 
 /* B.2.4 Attributes */
 
-//attribute-list:
+attribute-list ::=
+    attribute+
 //    attribute
-//    attribute-list new-lines~opt~ attribute
-//
-//attribute:
-//    [ new-lines~opt~ attribute-name ( attribute-arguments new-lines~opt~ ) new-lines~opt~ ]
-//    type-literal
-//
-//attribute-name:
-//    type-spec
-//
-//attribute-arguments:
-//    attribute-argument
-//    attribute-argument new-lines~opt~ , attribute-arguments
-//
-//attribute-argument:
-//    new-lines~opt~ expression
-//    new-lines~opt~ simple-name
-//    new-lines~opt~ simple-name = new-lines~opt~ expression
+//  | attribute-list new-lines? attribute
+
+attribute ::=
+    '[' new-lines? attribute-name '(' attribute-arguments new-lines? ')' new-lines? ']'
+  | type-literal
+
+attribute-name ::=
+    type-spec
+
+attribute-arguments ::=
+    attribute-argument
+  | attribute-argument new-lines? ',' attribute-arguments
+
+attribute-argument ::=
+    new-lines? expression
+  | new-lines? simple-name
+  | new-lines? simple-name '=' new-lines? expression

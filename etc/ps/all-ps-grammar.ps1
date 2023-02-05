@@ -95,7 +95,10 @@ Command-4? 100
 Command -Param 3>&1 3>&1 > "filename"
 
 # Expressions
-if $token return $token
+
+if ($a -eq 10) {
+    Write-Host "Hello"
+}
 
 # SIG # Begin signature block
 # MIInzAYJKoZIhvcNAQcCoIInvTCCJ7kCAQExDzANBglghkgBZQMEAgEFADB5Bgor
