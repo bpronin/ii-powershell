@@ -52,7 +52,7 @@
         COMMAND_PARAMETER_NAME = 'regexp:(?i)[\-–—―]\w+[?\w]+;?'
         GENERIC_TOKEN = "regexp:(?i)\w+[\-–—―?\w]+"
         ARITHMETIC_OPERATOR = 'regexp:[\-–—―+*/%]'
-        SYMBOLIC_OPERATOR = 'regexp:[!&|;,.]|(\.\.)|(::)|(&&)|(\|\|)'
+        SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.]'
         BRACE = 'regexp:[{}]|(@\{)'
         BRACKET = 'regexp:[\[\]]'
         PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
@@ -543,7 +543,7 @@ label ::=
 
 labeled-statement ::=
     switch-statement
-//  | foreach-statement
+  | foreach-statement
 //  | for-statement
 //  | while-statement
 //  | do-statement
@@ -581,14 +581,9 @@ switch-clause-condition ::=
     command-argument
   | primary-expression
 
-//foreach-statement:
-//    foreach new-lines foreach-parameter? new-lines
-//        ( new-lines variable new-lines in new-lines pipeline
-//        new-lines ) statement-block
-//
-//foreach-parameter:
-//    -parallel
-//
+foreach-statement ::=
+    'foreach' new-lines '(' new-lines variable new-lines 'in' new-lines pipeline new-lines ')' statement-block
+
 //for-statement:
 //    for new-lines (
 //        new-lines for-initializer? statement-terminator
@@ -839,10 +834,10 @@ private primary-expression ::=
 
 private value ::=
     parenthesized-expression
-//  | sub-expression
-//  | array-expression
+  | sub-expression
+  | array-expression
   | script-block-expression
-//  | hash-literal-expression
+  | hash-literal-expression
   | literal
   | type-literal
   | variable
@@ -850,29 +845,28 @@ private value ::=
 private parenthesized-expression ::=
     '(' new-lines pipeline new-lines ')'
 
-//sub-expression ::=
-//    $( new-lines statement-list? new-lines )
-//
-//array-expression ::=
-//    @( new-lines statement-list? new-lines )
+sub-expression ::=
+    '$(' new-lines statement-list? new-lines ')'
+
+array-expression ::=
+    '@(' new-lines statement-list? new-lines ')'
 
 script-block-expression ::=
     '{' new-lines script-block new-lines '}'
 
-//hash-literal-expression ::=
-//    @{ new-lines hash-literal-body? new-lines }
-//
-//hash-literal-body ::=
-//    hash-entry
-//    hash-literal-body statement-terminators hash-entry
-//
-//hash-entry ::=
-//    key-expression = new-lines statement
-//
-//key-expression ::=
-//    simple-name
-//    unary-expression
-//
+hash-literal-expression ::=
+    '@{' new-lines hash-literal-body? new-lines '}'
+
+hash-literal-body ::=
+    hash-entry (statement-terminators hash-entry)*
+
+hash-entry ::=
+    key-expression '=' new-lines statement
+
+key-expression ::=
+    simple-name
+  | unary-expression
+
 //post-increment-expression ::=
 //    primary-expression ++
 //
@@ -886,12 +880,13 @@ script-block-expression ::=
 //
 //element-access ::= Note no whitespace is allowed between primary-expression and [.
 //    primary-expression [ new-lines expression new-lines ]
-//
-//invocation-expression ::= Note no whitespace is allowed after
+
+//invocation-expression ::=
+    //    Note no whitespace is allowed after
 //    primary-expression.
-//    primary-expression . member-name argument-list
-//    primary-expression  ::= ::= member-name argument-list
-//
+//   | primary-expression '.' member-name argument-list
+//   | primary-expression  '::' member-name argument-list
+
 //argument-list ::=
 //    ( argument-expression-list? new-lines )
 //
