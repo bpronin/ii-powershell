@@ -94,7 +94,12 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
                 Types.T_FORMAT_OPERATOR,
                 Types.PREFIXED_OPERATOR,
                 Types.IC_PREFIXED_OPERATOR,
-                Types.LOGICAL_OPERATOR
+                Types.LOGICAL_OPERATOR,
+                Types.BITWISE_LOGICAL_OPERATOR,
+                Types.LOGICAL_NOT_OPERATOR,
+                Types.BITWISE_LOGICAL_NOT_OPERATOR,
+                Types.SPLIT_OPERATOR,
+                Types.JOIN_OPERATOR,
             )
     }
 }
