@@ -513,7 +513,7 @@ private statement ::=
   | flow-control-statement statement-terminator?
   | trap-statement
   | try-statement
-//  | data-statement
+  | data-statement
   | inlinescript-statement
   | parallel-statement
   | sequence-statement
@@ -673,8 +673,6 @@ data-commands-allowed ::=
 
 data-commands-list ::=
     new-lines data-command (',' new-lines data-command)*
-//    new-lines data-command
-//  | data-commands-list ',' new-lines data-command
 
 data-command ::=
     command-name-expr
@@ -701,6 +699,13 @@ pipeline-tail ::=
 //    '|' new-lines command
 //  | '|' new-lines command pipeline-tail
 
+/*
+<command-name> -<Required Parameter Name> <Required Parameter Value>
+    [-<Optional Parameter Name> <Optional Parameter Value>]
+    [-<Optional Switch Parameters>]
+    [-<Optional Parameter Name>] <Required Parameter Value>
+*/
+
 command ::=
     command-name command-element*
   | command-invocation-operator command-module? command-name-expr command-element*
@@ -720,7 +725,8 @@ generic-token-with-subexpr ::=
     generic-token-with-subexpr-start statement-list? ')' command-name
 
 private command-name-expr ::=
-    command-name primary-expression
+    command-name
+  | primary-expression
 
 private command-element ::=
     command-parameter
