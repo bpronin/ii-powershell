@@ -478,7 +478,7 @@ script-block ::=
 param-block ::=
     new-lines attribute-list? new-lines 'param' new-lines '(' parameter-list? new-lines ')'
 
-parameter-list ::=
+private parameter-list ::=
     script-parameter (new-lines ',' script-parameter)*
 
 script-parameter ::=
@@ -514,9 +514,9 @@ private statement ::=
   | trap-statement
   | try-statement
 //  | data-statement
-//  | inlinescript-statement
-//  | parallel-statement
-//  | sequence-statement
+  | inlinescript-statement
+  | parallel-statement
+  | sequence-statement
   | pipeline statement-terminator?
 
 private statement-terminator ::=
@@ -679,14 +679,14 @@ data-commands-list ::=
 data-command ::=
     command-name-expr
 
-//inlinescript-statement:
-//    inlinescript statement-block
-//
-//parallel-statement:
-//    parallel statement-block
-//
-//sequence-statement:
-//    sequence statement-block
+inlinescript-statement ::=
+    'inlinescript' statement-block
+
+parallel-statement ::=
+    'parallel' statement-block
+
+sequence-statement ::=
+    'sequence' statement-block
 
 private pipeline ::=
     assignment-expression
