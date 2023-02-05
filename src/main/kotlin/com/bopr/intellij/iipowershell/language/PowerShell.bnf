@@ -673,7 +673,7 @@ private command-name-expr ::=
 private command-element ::=
     command-parameter
   | command-argument
-//  | redirection
+  | redirections
 
 command-argument ::=
     command-name-expr
@@ -682,16 +682,16 @@ command-argument ::=
 //    --% verbatim-command-argument-chars
 //
 
-//redirections ::=
-//    redirection*
-//
-//redirection ::=
-//    merging-redirection-operator
-//  | file-redirection-operator redirected-file-name
-//
-//redirected-file-name ::=
-//    command-argument
-//  | primary-expression
+redirections ::=
+    redirection+
+
+redirection ::=
+    merging-redirection-operator
+  | file-redirection-operator redirected-file-name
+
+redirected-file-name ::=
+    command-argument
+  | primary-expression
 
 /* B.2.3 Expressions */
 
