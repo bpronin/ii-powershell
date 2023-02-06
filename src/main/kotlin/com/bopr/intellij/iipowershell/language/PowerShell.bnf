@@ -29,6 +29,8 @@
         HEXADECIMAL_INTEGER_NUMBER = 'regexp:(?i)[+\-–—―]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
         RESERVED_VARIABLE_NAME = 'regexp:\$\$|\$\?|\$\^|\$_'
         KEYWORD_NAME = 'regexp:(?i)(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
+//        VARIABLE_CHARS = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?]+'
+//        BRACED_VARIABLE_CHARS = 'regexp:[^}]+'
         VARIABLE_NAME = 'regexp:[$@][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
         BRACED_VARIABLE_NAME = 'regexp:\$\{[^}]+}'
         LABEL_NAME = 'regexp:(?i):\w+'
@@ -58,6 +60,7 @@
         BRACKET = 'regexp:[\[\]]'
         PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
 
+        DOLLAR = '$'
         DASH = 'regexp:[\-–—―]'
 //        DASH_DASH = 'regexp:[\-–—―][\-–—―]'
         NEW_LINE = 'regexp:[\r\n]|\r\n'
@@ -157,6 +160,36 @@ variable ::=
     RESERVED_VARIABLE_NAME
   | VARIABLE_NAME
   | BRACED_VARIABLE_NAME
+//   '$$' | '$?' | '$^'| '$_'
+//  | ('$' | '@') variable-scope? variable-characters
+
+variable-scope ::=
+    'global:'
+  | 'local:'
+  | 'private:'
+  | 'script:'
+  | 'using:'
+  | 'workflow:'
+  | variable-namespace
+
+braced-variable ::=
+    '${' variable-scope?  braced-variable-characters '}'
+
+variable-namespace ::=
+    variable-characters ':'
+
+private variable-characters ::=
+    VARIABLE_CHARS
+
+braced-variable-characters ::=
+    braced-variable-character+
+
+braced-variable-character ::=
+    !('}' | '`')
+  | escaped-character
+
+escaped-character ::=
+  '`'   //(The backtick character U+0060) followed by any Unicode character
 
 /* B.1.7 Commands */
 
@@ -204,26 +237,27 @@ command-parameter ::=
 // colon:
 //     : (The colon character U+003A)
 
-//verbatim-command-argument-chars ::=
-//     verbatim-command-argument-part+
-//
-//verbatim-command-argument-part ::=
-//     verbatim-command-string
-//     | '&' non-ampersand-character
-//     | non-vert-line-character
-//
-//non-ampersand-character ::=
-//     'regexp:[^&]'
-//
-//non-vert-line-character ::=
-//     'regexp:[^|]'
-//
-//verbatim-command-string ::=
-//     double-quote-character non-double-quote-chars
-//   | double-quote-character
-//
-//non-double-quote-chars ::=
-//     'regexp:[^"]+'
+verbatim-command-argument-chars ::=
+     verbatim-command-argument-part+
+
+verbatim-command-argument-part ::=
+     verbatim-command-string
+     | '&' non-ampersand-character
+     | non-vert-line-character
+
+non-ampersand-character ::=
+    !'&'
+
+non-vert-line-character ::=
+    !'|'
+
+verbatim-command-string ::=
+     double-quote-character non-double-quote-chars
+   | double-quote-character
+
+non-double-quote-chars ::=
+//todo: DOES NOT WORK
+    (!double-quote-character)+
 
 /* B.1.9 Literals */
 
@@ -252,64 +286,63 @@ real-literal ::=
 
 string-literal ::=
     STRING
-
-//string-literal:
 //    expandable-string-literal
-//    expandable-here-string-literal
+//  | expandable-here-string-literal
 //    verbatim-string-literal
 //    verbatim-here-string-literal
-//
-//expandable-string-literal:
-//    double-quote-character expandable-string-characters?  dollars? double-quote-character
 
-double-quote-character ::=
-   DOUBLE_QUOTE
+expandable-string-literal ::=
+    double-quote-character expandable-string-characters? dollars? double-quote-character
 
-//expandable-string-characters:
-//      expandable-string-part
-//      expandable-string-characters
-//      expandable-string-part
-//
-//expandable-string-part:
-//    Any Unicode character except
-//        $
-//        double-quote-character
-//        ` (The backtick character U+0060)
-//    braced-variable
-//    $ Any Unicode character except
-//        (
-//        {
-//        double-quote-character
-//        ` (The backtick character U+0060)*
-//    $ escaped-character
-//    escaped-character
-//    double-quote-character double-quote-character
-//
-//dollars:
-//    $
-//    dollars $
-//
-//expandable-here-string-literal:
-//    @  double-quote-character  whitespace?  new-line-character
-//        expandable-here-string-characters?  new-line-character  double-quote-character  @
-//
-//expandable-here-string-characters:
-//    expandable-here-string-part
-//    expandable-here-string-characters  expandable-here-string-part
-//
-//expandable-here-string-part:
-//    Any Unicode character except
-//        $
-//        new-line-character
-//    braced-variable
-//    $ Any Unicode character except
-//        (
-//        new-line-character
-//    $ new-line-character  Any Unicode character except double-quote-char
-//    $ new-line-character double-quote-char  Any Unicode character except @
-//    new-line-character  Any Unicode character except double-quote-char
-//    new-line-character double-quote-char  Any Unicode character except @
-//
+private double-quote-character ::=
+    '"' | '“' | '”' | '„'
+
+expandable-string-characters ::=
+    expandable-string-part+
+
+expandable-string-part ::=
+    !('$' | double-quote-character | '`')
+  | braced-variable
+  | '$' !('(' |'{' | double-quote-character | '`')
+  | '$' escaped-character
+  | escaped-character
+  | double-quote-character double-quote-character
+
+/*
+    Any Unicode character except
+        $
+        double-quote-character
+        ` (The backtick character U+0060)
+    braced-variable
+    $ Any Unicode character except
+        (
+        {
+        double-quote-character
+        ` (The backtick character U+0060)*
+    $ escaped-character
+    escaped-character
+    double-quote-character double-quote-character
+*/
+
+dollars ::=
+    '$'+
+
+expandable-here-string-literal ::=
+    '@' double-quote-character whitespace? new-line
+        expandable-here-string-characters? new-line double-quote-character '@'
+
+expandable-here-string-characters ::=
+    expandable-here-string-part+
+
+expandable-here-string-part ::=
+    !('$' | new-line)
+//  | braced-variable
+  | '$' !( '('| new-line)
+  | '$' new-line !double-quote-character
+  | '$' new-line double-quote-character !'@'
+  | new-line !double-quote-character
+  | new-line double-quote-character !'@'
+
 //expandable-string-with-subexpr-start:
 //    double-quote-character  expandable-string-chars?  $(
 //
@@ -653,7 +686,7 @@ sequence-statement ::=
 pipeline ::=
     assignment-expression
   | expression redirections? pipeline-tail?
-//  | command verbatim-command-argument? pipeline-tail?
+  | command verbatim-command-argument? pipeline-tail?
 
 assignment-expression ::=
     expression assignment-operator statement
@@ -691,8 +724,8 @@ private command-element ::=
 command-argument ::=
     command-name-expr
 
-//verbatim-command-argument ::=
-//    '--%' verbatim-command-argument-chars
+verbatim-command-argument ::=
+    '--%' verbatim-command-argument-chars
 
 redirections ::=
     redirection+
@@ -827,9 +860,9 @@ member-access ::=
 ////  | primary-expression '::' member-name
     value (('.' | '::') member)*
 
-member ::=
-    member-name
-  | value
+//member ::=
+//    member-name
+//  | value
 
 element-access ::=
 // Note no whitespace is allowed between primary-expression and [.
