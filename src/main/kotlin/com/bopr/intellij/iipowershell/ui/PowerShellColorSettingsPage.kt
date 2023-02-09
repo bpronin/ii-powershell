@@ -1,7 +1,6 @@
 package com.bopr.intellij.iipowershell.ui
 
 import com.bopr.intellij.iipowershell.language.PowerShellFileType
-import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.ARITHMETIC_OPERATOR
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.ASSIGNMENT_OPERATOR
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT
@@ -74,14 +73,10 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER),
             AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER),
             AttributesDescriptor(string("number//hexadecimal_integer"), HEXADECIMAL_INTEGER_NUMBER),
-            AttributesDescriptor(string("operators//arithmetic_operators"), ARITHMETIC_OPERATOR),
             AttributesDescriptor(string("operators//assignment_operators"), ASSIGNMENT_OPERATOR),
-//            AttributesDescriptor(string("operators//comma"), COMMA),
-//            AttributesDescriptor(string("operators//dot"), DOT),
             AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//other_operators"), OTHER_OPERATOR),
-//            AttributesDescriptor(string("operators//semicolon"), SEMICOLON),
             AttributesDescriptor(string("string_text"), STRING),
             AttributesDescriptor(string("type"), TYPE),
             AttributesDescriptor(string("variable"), VARIABLE),

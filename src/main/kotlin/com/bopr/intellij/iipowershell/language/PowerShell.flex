@@ -39,8 +39,9 @@ NEW_LINE = [\r\n]|\r\n
 WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [-–—―]
-//BRACE = "{" | "} " | "@{"
+BRACE = "{" | "} " | "@{"
 PARENTHESIS = "(" | ")" | "$(" | "@("
+LABEL = ":" \w+
 
 /* Comments */
 
@@ -50,6 +51,7 @@ SIGNATURE = "# SIG # Begin signature block" {NEW_LINE} {ANY}* "# SIG # End signa
 REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
+
 TYPE_NAME = \w+ (\w | {DASH} | "?")+
 NAMESPACE_NAME =  (\w | {DASH} | "?")+ ":"
 VARIABLE_NAME = (\w | {DASH} | "?")+
@@ -58,9 +60,9 @@ VARIABLE_NAME = (\w | {DASH} | "?")+
 
 NUMBER_SIGN = "+" | {DASH}
 INTEGER_SUFFIX = (l | d)? (kb | mb | gb | tb | pb)?
-DECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
-HEXADECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
-REAL_NUMBER = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
+DECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
+HEXADECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
+REAL_LITERAL = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
 
 /* Keywords */
 
@@ -69,6 +71,7 @@ KEYWORD = begin|break|catch|class|continue|data|define|do|dynamicparam|else|else
     |while|workflow
 
 /* Operators */
+
 EQUALITY_OPERATOR = {DASH} (ieq|ine|igt|ilt|ile|ige|ceq|cne|cgt|clt|cle|cge|eq|ne|gt|lt|le|ge)
 MATCHING_OPERATOR = {DASH} (imatch|inotmatch|ilike|inotlike|cmatch|cnotmatch|clike|cnotlike|match|notmatch|like|notlike)
 CONTAINMENT_OPERATOR = {DASH} (inotcontains|cnotcontains|notcontains|icontains|ccontains|contains|in|notin)
@@ -83,21 +86,25 @@ BITWISE_LOGICAL_NOT_OPERATOR = {DASH} bnot
 JOIN_OPERATOR = {DASH} join
 CAST_OPERATOR = {DASH} as
 FORMAT_OPERATOR = {DASH} f
+SYMBOLIC_OPERATOR = ".." | "::" | "&&" | "||" | "!" | "&" | "|" | ";" | "," | "." | "++" | {DASH} {DASH}
+    | "+" | "*" | "/" | "%" | {DASH}
+COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
+    |{SPLIT_OPERATOR}|{LOGICAL_OPERATOR}|{BITWISE_LOGICAL_OPERATOR}|{TYPE_OPERATOR}|{LOGICAL_NOT_OPERATOR}
+    |{BITWISE_LOGICAL_NOT_OPERATOR}|{JOIN_OPERATOR}|{CAST_OPERATOR}|{SHIFT_OPERATOR}
 ASSIGNMENT_OPERATOR = "+=" | "*=" | "/=" | "%=" | {DASH} "=" | "="
-SYMBOLIC_OPERATOR = ".." | "::" | "&&" | "||" | "!" | "&" | "|" | ";" | "," | "."
 FILE_REDIRECTION_OPERATOR = ">"|"<"|">>"|"2>"|"2>>"|"3>"|"3>>"|"4>"|"4>>"|"5>"|"5>>"|"6>"|"6>>"|"*>"|"*>>"
 MERGING_REDIRECTION_OPERATOR = "*>&1"|"2>&1"|"3>&1"|"4>&1"|"5>&1"|"6>&1"|"*>&2"|"1>&2"|"3>&2"|"4>&2"|"5>&2"|"6>&2"
-ARITHMETIC_OPERATOR = "++" | {DASH} {DASH} | "+" | "*" | "/" | "%" | {DASH}
 
 /* Predefined params */
 
 //FILE_PARAM = {DASH} file
 
 /* Variables */
+
 RESERVED_VARIABLE_NAME = "$$"|"$?"|"$^"|"$_"
-SCOPE = global:|local:|private:|script:|using:|workflow:|{NAMESPACE_NAME}
-VARIABLE = (("$"|"@") {SCOPE}? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
-BRACED_VARIABLE = "${" {SCOPE}? [^}]+ [^`] "}"
+VARIABLE_SCOPE = global:|local:|private:|script:|using:|workflow:|{NAMESPACE_NAME}
+REGULAR_VARIABLE = (("$"|"@") {VARIABLE_SCOPE}? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
+BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
 %state BRACKETS
 
@@ -105,43 +112,32 @@ BRACED_VARIABLE = "${" {SCOPE}? [^}]+ [^`] "}"
 
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
+
+    {BRACE}                              { return BRACE; }
+    {PARENTHESIS}                        { return PARENTHESIS; }
     "["                                  { yypushState(BRACKETS); return BRACKET; }
-    "{" | "}"                            { return BRACE; }
-    "(" | ")"                            { return PARENTHESIS; }
 
     {SIGNATURE}                          { return SIGNATURE; }
     {REQUIRES_COMMENT}                   { return REQUIRES_COMMENT; }
     {LINE_COMMENT}                       { return LINE_COMMENT; }
     {BLOCK_COMMENT}                      { return BLOCK_COMMENT; }
 
-    {SHIFT_OPERATOR}                     { return SHIFT_OPERATOR; }
-    {EQUALITY_OPERATOR}                  { return EQUALITY_OPERATOR; }
-    {MATCHING_OPERATOR}                  { return MATCHING_OPERATOR; }
-    {CONTAINMENT_OPERATOR}               { return CONTAINMENT_OPERATOR; }
-    {REPLACEMENT_OPERATOR}               { return REPLACEMENT_OPERATOR; }
-    {SPLIT_OPERATOR}                     { return SPLIT_OPERATOR; }
-    {LOGICAL_OPERATOR}                   { return LOGICAL_OPERATOR; }
-    {BITWISE_LOGICAL_OPERATOR}           { return BITWISE_LOGICAL_OPERATOR; }
-    {LOGICAL_NOT_OPERATOR}               { return LOGICAL_NOT_OPERATOR; }
-    {BITWISE_LOGICAL_NOT_OPERATOR}       { return BITWISE_LOGICAL_NOT_OPERATOR; }
-    {JOIN_OPERATOR}                      { return JOIN_OPERATOR; }
-    {CAST_OPERATOR}                      { return CAST_OPERATOR; }
-    {TYPE_OPERATOR}                      { return TYPE_OPERATOR; }
+    {COMPARISON_OPERATOR}                { return COMPARISON_OPERATOR; }
     {FORMAT_OPERATOR}                    { return FORMAT_OPERATOR; }
     {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
     {FILE_REDIRECTION_OPERATOR}          { return FILE_REDIRECTION_OPERATOR; }
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
     {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
-    {ARITHMETIC_OPERATOR}                { return ARITHMETIC_OPERATOR; }
 
-    {KEYWORD}                            { return KEYWORD_NAME; }
+    {KEYWORD}                            { return KEYWORD; }
+    {LABEL}                              { return LABEL; }
 
-    {DECIMAL_INTEGER_NUMBER}             { return DECIMAL_INTEGER_NUMBER; }
-    {HEXADECIMAL_INTEGER_NUMBER}         { return HEXADECIMAL_INTEGER_NUMBER; }
-    {REAL_NUMBER}                        { return REAL_NUMBER; }
+    {DECIMAL_INTEGER_LITERAL}            { return DECIMAL_INTEGER_LITERAL; }
+    {HEXADECIMAL_INTEGER_LITERAL}        { return HEXADECIMAL_INTEGER_LITERAL; }
+    {REAL_LITERAL}                       { return REAL_LITERAL; }
 
-    {VARIABLE}                           { return VARIABLE_NAME; }
-    {BRACED_VARIABLE}                    { return VARIABLE_NAME; }
+    {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE; }
+    {BRACED_VARIABLE}                    { return BRACED_VARIABLE; }
 }
 
 <BRACKETS> {
