@@ -2,7 +2,7 @@ package com.bopr.intellij.iipowershell.language;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-
+import com.intellij.util.containers.Stack;
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
 import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
@@ -12,6 +12,17 @@ import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
 %{
     public PowerShellLexer() {
         this((java.io.Reader)null);
+    }
+
+    private Stack<Integer> stateStack = new Stack<Integer>();
+
+    public void yypushState(int state) {
+        stateStack.push(yystate());
+        yybegin(state);
+    }
+
+    public void yypopState() {
+        yybegin(stateStack.pop());
     }
 %}
 
@@ -29,7 +40,6 @@ WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [-–—―]
 BRACE = "{" | "} " | "@{"
-BRACKET = "[" | "]"
 PARENTHESIS = "(" | ")" | "$(" | "@("
 
 /* Comments */
@@ -38,6 +48,9 @@ LINE_COMMENT = # .*
 BLOCK_COMMENT = <# {ANY}* #>
 SIGNATURE = "# SIG # Begin signature block" {NEW_LINE} {ANY}* "# SIG # End signature block"
 REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
+
+/* Identifiers */
+TYPE_IDENTIFIER = \w+ (\w | {DASH} | "?")+
 
 /* Literals */
 
@@ -81,11 +94,14 @@ ARITHMETIC_OPERATOR = "++" | {DASH} {DASH} | "+" | "*" | "/" | "%" | {DASH}
 /* Variables */
 RESERVED_VARIABLE = "$$"|"$?"|"$^"|"$_"
 
+%state BRACKETS
+
 %%
+
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
+    "["                                  { yypushState(BRACKETS); return BRACKET; }
     {BRACE}                              { return BRACE; }
-    {BRACKET}                            { return BRACKET; }
     {PARENTHESIS}                        { return PARENTHESIS; }
 
     {SIGNATURE}                          { return SIGNATURE; }
@@ -107,7 +123,6 @@ RESERVED_VARIABLE = "$$"|"$?"|"$^"|"$_"
     {CAST_OPERATOR}                      { return CAST_OPERATOR; }
     {TYPE_OPERATOR}                      { return TYPE_OPERATOR; }
     {FORMAT_OPERATOR}                    { return FORMAT_OPERATOR; }
-
     {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
     {FILE_REDIRECTION_OPERATOR}          { return FILE_REDIRECTION_OPERATOR; }
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
@@ -119,6 +134,12 @@ RESERVED_VARIABLE = "$$"|"$?"|"$^"|"$_"
     {DECIMAL_INTEGER_NUMBER}             { return DECIMAL_INTEGER_NUMBER; }
     {HEXADECIMAL_INTEGER_NUMBER}         { return HEXADECIMAL_INTEGER_NUMBER; }
     {REAL_NUMBER}                        { return REAL_NUMBER; }
+}
+
+<BRACKETS> {
+    "]"                                  { yypopState(); return BRACKET;}
+     {TYPE_IDENTIFIER}                   { return TYPE_LITERAL; }
+    "["                                  { yypushState(BRACKETS); return BRACKET;}
 }
 
 [^] { return BAD_CHARACTER; }
