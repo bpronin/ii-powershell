@@ -50,7 +50,9 @@ SIGNATURE = "# SIG # Begin signature block" {NEW_LINE} {ANY}* "# SIG # End signa
 REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
-TYPE_IDENTIFIER = \w+ (\w | {DASH} | "?")+
+TYPE_NAME = \w+ (\w | {DASH} | "?")+
+VARIABLE_NAME = (\w | {DASH} | "?")+
+NAMESPACE_NAME =  (\w | {DASH} | "?")+ ":"
 
 /* Literals */
 
@@ -65,10 +67,6 @@ REAL_NUMBER = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
 KEYWORD = begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for
     |foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var
     |while|workflow
-
-/* Predefined params */
-
-FILE_PARAM = {DASH} file
 
 /* Operators */
 EQUALITY_OPERATOR = {DASH} (ieq|ine|igt|ilt|ile|ige|ceq|cne|cgt|clt|cle|cge|eq|ne|gt|lt|le|ge)
@@ -91,8 +89,14 @@ FILE_REDIRECTION_OPERATOR = ">"|"<"|">>"|"2>"|"2>>"|"3>"|"3>>"|"4>"|"4>>"|"5>"|"
 MERGING_REDIRECTION_OPERATOR = "*>&1"|"2>&1"|"3>&1"|"4>&1"|"5>&1"|"6>&1"|"*>&2"|"1>&2"|"3>&2"|"4>&2"|"5>&2"|"6>&2"
 ARITHMETIC_OPERATOR = "++" | {DASH} {DASH} | "+" | "*" | "/" | "%" | {DASH}
 
+/* Predefined params */
+
+//FILE_PARAM = {DASH} file
+
 /* Variables */
-RESERVED_VARIABLE = "$$"|"$?"|"$^"|"$_"
+RESERVED_VARIABLE_NAME = "$$"|"$?"|"$^"|"$_"
+SCOPE = global:|local:|private:|script:|using:|workflow:|{NAMESPACE_NAME}
+VARIABLE = ("$" (SCOPE)? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
 
 %state BRACKETS
 
@@ -134,12 +138,16 @@ RESERVED_VARIABLE = "$$"|"$?"|"$^"|"$_"
     {DECIMAL_INTEGER_NUMBER}             { return DECIMAL_INTEGER_NUMBER; }
     {HEXADECIMAL_INTEGER_NUMBER}         { return HEXADECIMAL_INTEGER_NUMBER; }
     {REAL_NUMBER}                        { return REAL_NUMBER; }
+
+    {VARIABLE}                           { return VARIABLE_NAME; }
 }
 
 <BRACKETS> {
     "]"                                  { yypopState(); return BRACKET;}
-     {TYPE_IDENTIFIER}                   { return TYPE_LITERAL; }
+     {TYPE_NAME}                         { return TYPE_LITERAL; }
     "["                                  { yypushState(BRACKETS); return BRACKET;}
 }
+
+
 
 [^] { return BAD_CHARACTER; }
