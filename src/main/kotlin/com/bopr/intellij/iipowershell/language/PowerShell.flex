@@ -39,7 +39,7 @@ NEW_LINE = [\r\n]|\r\n
 WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [-–—―]
-BRACE = "{" | "} " | "@{"
+//BRACE = "{" | "} " | "@{"
 PARENTHESIS = "(" | ")" | "$(" | "@("
 
 /* Comments */
@@ -51,8 +51,8 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
 TYPE_NAME = \w+ (\w | {DASH} | "?")+
-VARIABLE_NAME = (\w | {DASH} | "?")+
 NAMESPACE_NAME =  (\w | {DASH} | "?")+ ":"
+VARIABLE_NAME = (\w | {DASH} | "?")+
 
 /* Literals */
 
@@ -96,7 +96,8 @@ ARITHMETIC_OPERATOR = "++" | {DASH} {DASH} | "+" | "*" | "/" | "%" | {DASH}
 /* Variables */
 RESERVED_VARIABLE_NAME = "$$"|"$?"|"$^"|"$_"
 SCOPE = global:|local:|private:|script:|using:|workflow:|{NAMESPACE_NAME}
-VARIABLE = ("$" (SCOPE)? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
+VARIABLE = (("$"|"@") {SCOPE}? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
+BRACED_VARIABLE = "${" {SCOPE}? [^}]+ [^`] "}"
 
 %state BRACKETS
 
@@ -105,8 +106,8 @@ VARIABLE = ("$" (SCOPE)? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
     "["                                  { yypushState(BRACKETS); return BRACKET; }
-    {BRACE}                              { return BRACE; }
-    {PARENTHESIS}                        { return PARENTHESIS; }
+    "{" | "}"                            { return BRACE; }
+    "(" | ")"                            { return PARENTHESIS; }
 
     {SIGNATURE}                          { return SIGNATURE; }
     {REQUIRES_COMMENT}                   { return REQUIRES_COMMENT; }
@@ -140,6 +141,7 @@ VARIABLE = ("$" (SCOPE)? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
     {REAL_NUMBER}                        { return REAL_NUMBER; }
 
     {VARIABLE}                           { return VARIABLE_NAME; }
+    {BRACED_VARIABLE}                    { return VARIABLE_NAME; }
 }
 
 <BRACKETS> {
@@ -147,7 +149,6 @@ VARIABLE = ("$" (SCOPE)? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
      {TYPE_NAME}                         { return TYPE_LITERAL; }
     "["                                  { yypushState(BRACKETS); return BRACKET;}
 }
-
 
 
 [^] { return BAD_CHARACTER; }
