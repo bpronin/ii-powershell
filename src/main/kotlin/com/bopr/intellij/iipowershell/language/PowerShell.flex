@@ -39,7 +39,8 @@ NEW_LINE = [\r\n]|\r\n
 WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [-–—―]
-BRACE = "{" | "} " | "@{"
+DOUBLE_QUOTE = [\"”„] //[\"“”„]
+BRACE = "{" | "}" | "@{"
 PARENTHESIS = "(" | ")" | "$(" | "@("
 LABEL = ":" \w+
 
@@ -52,7 +53,15 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
 
+GENERIC_TOKEN = \w+ (\w | {DASH} | "?")+
 TYPE_NAME = \w+ (\w | {DASH} | "?")+
+ARRAY_OR_GENERIC_TYPE_NAME = {TYPE_NAME} "["
+COMMAND_PARAMETER = {DASH} {GENERIC_TOKEN}
+
+//ARRAY_TYPE_SPEC = {TYPE_NAME} "[" ","* "]"
+//GENERIC_TYPE_SPEC = {TYPE_NAME} "[" {TYPE_SPEC} ("," {TYPE_SPEC})* "]"
+//TYPE_SPEC = {ARRAY_TYPE_SPEC} | {GENERIC_TYPE_SPEC} | {TYPE_NAME}
+
 NAMESPACE_NAME =  (\w | {DASH} | "?")+ ":"
 VARIABLE_NAME = (\w | {DASH} | "?")+
 
@@ -63,11 +72,14 @@ INTEGER_SUFFIX = (l | d)? (kb | mb | gb | tb | pb)?
 DECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
 HEXADECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
 REAL_LITERAL = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
+//STRING_LITERAL = {DOUBLE_QUOTE} (!{DOUBLE_QUOTE})* {DOUBLE_QUOTE}
+STRING_LITERAL = \" [^\"]* \"
 
 /* Keywords */
 
-KEYWORD = begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for
-    |foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var
+FUNCTION_KEYWORD = function|filter|workflow
+KEYWORD = begin|break|catch|class|continue|data|define|do|dynamicparam|elseif|else|end|exit|filter|finally
+    |foreach|for|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var
     |while|workflow
 
 /* Operators */
@@ -95,9 +107,9 @@ ASSIGNMENT_OPERATOR = "+=" | "*=" | "/=" | "%=" | {DASH} "=" | "="
 FILE_REDIRECTION_OPERATOR = ">"|"<"|">>"|"2>"|"2>>"|"3>"|"3>>"|"4>"|"4>>"|"5>"|"5>>"|"6>"|"6>>"|"*>"|"*>>"
 MERGING_REDIRECTION_OPERATOR = "*>&1"|"2>&1"|"3>&1"|"4>&1"|"5>&1"|"6>&1"|"*>&2"|"1>&2"|"3>&2"|"4>&2"|"5>&2"|"6>&2"
 
-/* Predefined params */
+/* Predefined statements params */
 
-//FILE_PARAM = {DASH} file
+STATEMENT_PARAMETER = {DASH} regex|wildcard|exact|casesensitive|parallel|file|supportedcommand
 
 /* Variables */
 
@@ -107,15 +119,19 @@ REGULAR_VARIABLE = (("$"|"@") {VARIABLE_SCOPE}? {VARIABLE_NAME}) | {RESERVED_VAR
 BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
 %state BRACKETS
+%state FUNCTION_DECLARATION
+//%state STRING
 
 %%
 
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
 
+    "["                                  { yypushState(BRACKETS); return BRACKET; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
-    "["                                  { yypushState(BRACKETS); return BRACKET; }
+//    {DOUBLE_QUOTE}                       { yybegin(STRING); }
+    {STRING_LITERAL}                     { return STRING_LITERAL; }
 
     {SIGNATURE}                          { return SIGNATURE; }
     {REQUIRES_COMMENT}                   { return REQUIRES_COMMENT; }
@@ -129,6 +145,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
     {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
 
+    {FUNCTION_KEYWORD}                   { yybegin(FUNCTION_DECLARATION); return KEYWORD; }
     {KEYWORD}                            { return KEYWORD; }
     {LABEL}                              { return LABEL; }
 
@@ -138,13 +155,28 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
     {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE; }
     {BRACED_VARIABLE}                    { return BRACED_VARIABLE; }
+
+    {STATEMENT_PARAMETER}                { return STATEMENT_PARAMETER; }
+    {COMMAND_PARAMETER}                  { return COMMAND_PARAMETER; }
+
+    {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
 }
 
 <BRACKETS> {
-    "]"                                  { yypopState(); return BRACKET;}
+    "]"                                  { yypopState(); return BRACKET; }
+//     {ARRAY_OR_GENERIC_TYPE_NAME}        { return TYPE_LITERAL; }
      {TYPE_NAME}                         { return TYPE_LITERAL; }
-    "["                                  { yypushState(BRACKETS); return BRACKET;}
+    "["                                  { yypushState(BRACKETS); return BRACKET; }
 }
+
+<FUNCTION_DECLARATION> {
+    {WHITE_SPACE}                        { return WHITE_SPACE; }
+    {GENERIC_TOKEN}                      { yybegin(YYINITIAL); return FUNCTION_NAME; }
+}
+
+//<STRING> {
+//    {DOUBLE_QUOTE}                       { yybegin(YYINITIAL); return STRING_LITERAL;}
+//}
 
 
 [^] { return BAD_CHARACTER; }

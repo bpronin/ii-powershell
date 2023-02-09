@@ -26,68 +26,71 @@
 
    /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
     tokens = [
-        SIGNATURE = 'regexp:# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
-        REQUIRES_COMMENT = 'regexp:#\s*requires\s+.*'
+        WHITE_SPACE = 'regexp:\s+'
         LINE_COMMENT = 'regexp:#.*'
+        REQUIRES_COMMENT = 'regexp:#\s*requires\s+.*'
         BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
-        DECIMAL_INTEGER_LITERAL = 'regexp:[+\-–—―]?\d+[ld]?([kmgtp]b)?'
-        HEXADECIMAL_INTEGER_LITERAL = 'regexp:[+\-–—―]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
-        REAL_LITERAL = 'regexp:[+\-–—―]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
-        KEYWORD = 'regexp:(begin|break|catch|class|continue|data|define|do|dynamicparam|else|elseif|end|exit|filter|finally|for|foreach|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
+        SIGNATURE = 'regexp:# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
+
+        DECIMAL_INTEGER_LITERAL = 'regexp:[+-]?\d+[ld]?([kmgtp]b)?'
+        HEXADECIMAL_INTEGER_LITERAL = 'regexp:[+-]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
+        REAL_LITERAL = 'regexp:[+-]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
+        STRING_LITERAL = 'regexp:"([^$`"]|"")*\$?"'
+
+        KEYWORD = 'regexp:(begin|break|catch|class|continue|data|define|do|dynamicparam|elseif|else|end|exit|filter|finally|foreach|for|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
 
         REGULAR_VARIABLE = 'regexp:[$@][\w_?:]+'
         BRACED_VARIABLE = 'regexp:\$\{[^}]+[^`]}'
 
         LABEL = 'regexp::\w+'
-        STRING_LITERAL = 'regexp:["“”„]([^$`"“”„]|"")*\$?["“”„]'
 
-        ASSIGNMENT_OPERATOR = 'regexp:[+*/%\-–—―]?='
+        ASSIGNMENT_OPERATOR = 'regexp:[+*/%-]?='
         FILE_REDIRECTION_OPERATOR = 'regexp:[><]|(>>)|(2>)|(2>>)|(3>)|(3>>)|(4>)|(4>>)|(5>)|(5>>)|(6>)|(6>>)|(\*>)|(\*>>)'
         MERGING_REDIRECTION_OPERATOR = 'regexp:(\*>&1)|(2>&1)|(3>&1)|(4>&1)|(5>&1)|(6>&1)|(\*>&2)|(1>&2)|(3>&2)|(4>&2)|(5>&2)|(6>&2)'
-        FORMAT_OPERATOR = 'regexp:[\-–—―]f'
-        COMPARISON_OPERATOR = 'regexp:[\-–—―]([ic]?(contains|notcontains)|in|notin)'
-        LOGICAL_OPERATOR = 'regexp:[\-–—―]and|or|xor'
-        BITWISE_LOGICAL_OPERATOR = 'regexp:[\-–—―]band|bor|bxor'
-        LOGICAL_NOT_OPERATOR = 'regexp:[\-–—―]not'
-        BITWISE_LOGICAL_NOT_OPERATOR = 'regexp:[\-–—―]bnot'
-        SPLIT_OPERATOR = 'regexp:[\-–—―]split'
-        JOIN_OPERATOR = 'regexp:[\-–—―]join'
-        SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.\-–—―+*/%]'
+        FORMAT_OPERATOR = 'regexp:-f'
+        COMPARISON_OPERATOR = 'regexp:-[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
+        LOGICAL_OPERATOR = 'regexp:-and|or|xor'
+        BITWISE_LOGICAL_OPERATOR = 'regexp:-band|bor|bxor'
+        LOGICAL_NOT_OPERATOR = 'regexp:-not'
+        BITWISE_LOGICAL_NOT_OPERATOR = 'regexp:-bnot'
+        SPLIT_OPERATOR = 'regexp:-split'
+        JOIN_OPERATOR = 'regexp:-join'
+        SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.\-+*/%]'
 
-        FILE_PARAM = 'regexp:[\-–—―]file'
-        SUPPORTED_COMMAND_PARAM = 'regexp:[\-–—―]supportedcommand'
-        SWITCH_PARAM = 'regexp:[\-–—―](regex|wildcard|exact|casesensitive|parallel)'
-        COMMAND_PARAMETER = 'regexp:[\-–—―]\w+[?\w]+;?'
+        FILE_PARAM = '-file'
+        SUPPORTED_COMMAND_PARAM = '-supportedcommand'
+        SWITCH_PARAM = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
 
-        GENERIC_TOKEN = "regexp:\w+[\-–—―?\w]+"
-        GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[\-–—―?\w]+\$\("
+        TYPE_NAME = 'regexp:\w+'
+        SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w+'
+        GENERIC_TOKEN = "regexp:\w+[-?\w]+"
+        STATEMENT_PARAMETER = ""
+        COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
+        GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
+//        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
+//        GENERIC_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 
-        DASH = 'regexp:[\-–—―]'
-        DASH_DASH = 'regexp:[\-–—―][\-–—―]'
+        DASH = 'regexp:-'
+        DASH_DASH = 'regexp:--'
         BRACE = 'regexp:[{}]|(@\{)'
         BRACKET = 'regexp:[\[\]]'
         PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
         DOLLAR = '$'
-        DOUBLE_QUOTE = 'regexp:["“”„]'
-        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
-        TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_]+'
-        ARRAY_TYPE_NAME = 'regexp:\[\w+[\-–—―?\w]+]\['
-        GENERIC_TYPE_NAME = 'regexp:\[\w+[\-–—―?\w]+]\['
+        DOUBLE_QUOTE = 'regexp:"'
     ]
     
     name('.*expression') = 'expression'
     name('.*statement') = 'statement'
     name('.*operator') = 'operator'
-//    name('.*literal') = 'literal'
 }
 
-root ::=
-    script-file
+root ::= "regexp:.*"
+//    script-file
 //  | module-file
 //  | interactive-input
 //  | data-file
     
-variable ::=
+private variable ::=
     REGULAR_VARIABLE
   | BRACED_VARIABLE
 
@@ -598,7 +601,7 @@ unary-expression ::=
     primary-expression
   | expression-with-unary-operator
 
-expression-with-unary-operator ::=
+private expression-with-unary-operator ::=
     ',' unary-expression
   | LOGICAL_NOT_OPERATOR unary-expression
   | '!' unary-expression
@@ -767,9 +770,10 @@ type-literal ::=
     '[' type-spec ']'
 
 private type-spec ::=
-    ARRAY_TYPE_NAME dimension* ']'
-  | GENERIC_TYPE_NAME generic-type-arguments ']'
-  | TYPE_NAME
+    TYPE_NAME
+//    ARRAY_TYPE_NAME dimension* ']'
+//  | GENERIC_TYPE_NAME generic-type-arguments ']'
+//  | TYPE_NAME
 
 private dimension ::=
     ','

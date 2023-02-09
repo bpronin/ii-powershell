@@ -6,9 +6,11 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.B
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACKET
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.COMMAND_PARAMETER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.DECIMAL_INTEGER_NUMBER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FILE_REDIRECTION_OPERATOR
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FLOATING_POINT_NUMBER
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.FUNCTION_DECLARATION
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.HEXADECIMAL_INTEGER_NUMBER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.KEYWORD
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.LINE_COMMENT
@@ -77,6 +79,8 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//other_operators"), OTHER_OPERATOR),
+            AttributesDescriptor(string("command_parameter"), COMMAND_PARAMETER),
+            AttributesDescriptor(string("function_declaration"), FUNCTION_DECLARATION),
             AttributesDescriptor(string("string_text"), STRING),
             AttributesDescriptor(string("type"), TYPE),
             AttributesDescriptor(string("variable"), VARIABLE),
