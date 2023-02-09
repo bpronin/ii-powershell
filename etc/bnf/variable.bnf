@@ -1,28 +1,50 @@
 {
     tokens = [
+//        DOLLAR = '$'
+//        AT = '@'
+        BRACE = 'regexp:[{}]'
         WHITE_SPACE = 'regexp:\s+'
-        VARIABLE_CHARS = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?]+'
-        DOLLAR = '$'
+//        BRACED_VARIABLE_NAME = 'regexp:([^}`]|`.)+'
+//        BRACED_VARIABLE_NAME = 'regexp:[^}`]+'
+//        VARIABLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?]+'
+//        BRACED_VARIABLE = 'regexp:\$\{[^}]+}'
+//        BRACED_VARIABLE_START = 'regexp:\$\{'
+//        BRACED_VARIABLE_END = 'regexp:}'
     ]
 }
 
 root ::= (variable)*
 
 variable ::=
-   '$$' | '$?' | '$^'| '$_'
-  | ('$' | '@') variable-scope? variable-characters
+    '{' 'regexp:[^}`]+' '}'
+//   '$$' | '$?' | '$^'| '$_'
+//  | ('$' | '@') variable-scope? variable-characters
+//   braced-variable
 
-variable-characters ::=
-    VARIABLE_CHARS
+//braced-variable ::=
+//    '${' variable-scope?  braced-variable-characters '}'
+//    '${' braced-variable-characters '}'
+//    'regexp:\$\{' 'regexp:([^}`]|`.)+' '}'
+//    'regexp:\$\{' 'regexp:([^}`])+' '}'
+//    'regexp:\$\{[^}`]+}'
+//    '{' 'regexp:[^}`]+' '}'
 
-variable-scope ::=
-    'global:'
-  | 'local:'
-  | 'private:'
-  | 'script:'
-  | 'using:'
-  | 'workflow:'
-  | variable-namespace
+//private variable-characters ::=
+//    VARIABLE_NAME
 
-variable-namespace ::=
-    variable-characters ':'
+//private braced-variable-characters ::=
+//    'regexp:([^}`]|`.)+'
+////    BRACED_VARIABLE_NAME
+//
+//variable-scope ::=
+//    'global:'
+//  | 'local:'
+//  | 'private:'
+//  | 'script:'
+//  | 'using:'
+//  | 'workflow:'
+//  | variable-namespace
+//
+//variable-namespace ::=
+//    variable-characters ':'
+

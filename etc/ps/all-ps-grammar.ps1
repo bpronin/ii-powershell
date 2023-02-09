@@ -9,6 +9,7 @@
 #########################>
 
 # Operators and punctuators
+
 {   }   [   ]   (   )   @(   @{   $(  ; &&  ||  &   |   ,   ++  ..   ::   .  !   *   /   %   + - --
 
 = -= += *= /= %=
@@ -40,6 +41,7 @@
 -shr          -split
 
 # Variables
+
 $$ $? $^ $_
 $variable
 $Variable23
@@ -50,6 +52,7 @@ ${ this is also a `variable?` }
 @global:variable
 
 # Integer literals
+
 123
 10
 123L
@@ -65,6 +68,7 @@ ${ this is also a `variable?` }
 -20D
 
 # Real literals
+
 123.55
 .58
 1.2e5
@@ -77,28 +81,16 @@ ${ this is also a `variable?` }
 -123.55
 
 # String literals
-#" s "
-#"string"
+""
+" s "
+"string"
 
 # Type literals
+
 [string]
 [int[]]
 [int[,,,]]
 [int[string,string[int]]]
-
-#Commands
-
-Command-1
-Command-Two_ -parameter 100 $v -Hello
-Command-3 -parameter
-Command-4? 100
-Command -Param 3>&1 3>&1 > "filename"
-
-# Expressions
-
-if ($a -eq 10) {
-    Write-Host "Hello"
-}
 
 # SIG # Begin signature block
 # MIInzAYJKoZIhvcNAQcCoIInvTCCJ7kCAQExDzANBglghkgBZQMEAgEFADB5Bgor

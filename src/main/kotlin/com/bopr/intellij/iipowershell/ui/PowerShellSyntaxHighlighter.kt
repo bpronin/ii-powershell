@@ -36,70 +36,32 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             return key
         }
 
-//        val COMMA = createKey("PWSH_COMMA", Colors.COMMA, Types.COMMA)
-//        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.DOT)
-//        val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
         val BAD_CHARACTER = createKey("PWSH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER, TokenType.BAD_CHARACTER)
         val BLOCK_COMMENT = createKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT, Types.BLOCK_COMMENT)
-        val BRACE = createKey("PWSH_BRACES", Colors.BRACES, Types.BRACE)
-        val BRACKET = createKey("PWSH_BRACKETS", Colors.BRACKETS, Types.BRACKET)
-        val FLOATING_POINT_NUMBER = createKey("PWSH_FLOATING_POINT_NUMBER", Colors.NUMBER, Types.REAL_NUMBER)
-        val KEYWORD = createKey("PWSH_KEYWORD", Colors.KEYWORD, Types.KEYWORD_NAME)
+        val BRACE = createKey("PWSH_BRACE", Colors.BRACES, Types.BRACE)
+        val BRACKET = createKey("PWSH_BRACKET", Colors.BRACKETS, Types.BRACKET)
+        val FLOATING_POINT_NUMBER = createKey("PWSH_REAL_LITERAL", Colors.NUMBER, Types.REAL_LITERAL)
+        val KEYWORD = createKey("PWSH_KEYWORD", Colors.KEYWORD, Types.KEYWORD)
         val LINE_COMMENT = createKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT, Types.LINE_COMMENT)
         val PARENTHESIS = createKey("PWSH_PARENTHESIS", Colors.PARENTHESES, Types.PARENTHESIS)
         val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
-        val STRING = createKey("PWSH_STRING", Colors.STRING, Types.STRING)
+        val STRING = createKey("PWSH_STRING_LITERAL", Colors.STRING, Types.STRING_LITERAL)
         val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_LITERAL)
         val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
         val ASSIGNMENT_OPERATOR =
-            createKey(
-                "PWSH_ASSIGNMENT_OPERATORS", Colors.OPERATION_SIGN,
-                Types.ASSIGNMENT_OPERATOR
-            )
+            createKey("PWSH_ASSIGNMENT_OPERATOR", Colors.OPERATION_SIGN, Types.ASSIGNMENT_OPERATOR)
         val DECIMAL_INTEGER_NUMBER =
-            createKey(
-                "PWSH_DECIMAL_INTEGER_NUMBER", Colors.NUMBER,
-                Types.DECIMAL_INTEGER_NUMBER
-            )
+            createKey("PWSH_DECIMAL_INTEGER_LITERAL", Colors.NUMBER, Types.DECIMAL_INTEGER_LITERAL)
         val VARIABLE =
-            createKey(
-                "PWSH_VARIABLE", Colors.LOCAL_VARIABLE, Types.VARIABLE_NAME,
-                Types.BRACED_VARIABLE_NAME
-            )
+            createKey("PWSH_VARIABLE", Colors.LOCAL_VARIABLE, Types.REGULAR_VARIABLE, Types.BRACED_VARIABLE)
         val FILE_REDIRECTION_OPERATOR =
-            createKey(
-                "PWSH_FILE_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN,
-                Types.FILE_REDIRECTION_OPERATOR
-            )
+            createKey("PWSH_FILE_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.FILE_REDIRECTION_OPERATOR)
         val HEXADECIMAL_INTEGER_NUMBER =
-            createKey(
-                "PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER,
-                Types.HEXADECIMAL_INTEGER_NUMBER
-            )
+            createKey("PWSH_HEXADECIMAL_INTEGER_LITERAL", Colors.NUMBER, Types.HEXADECIMAL_INTEGER_LITERAL)
         val MERGING_REDIRECTION_OPERATOR =
-            createKey(
-                "PWSH_MERGING_REDIRECTION_OPERATORS", Colors.OPERATION_SIGN,
-                Types.MERGING_REDIRECTION_OPERATOR
-            )
-        val ARITHMETIC_OPERATOR =
-            createKey(
-                "PWSH_ARITHMETIC_OPERATORS", Colors.OPERATION_SIGN,
-                Types.ARITHMETIC_OPERATOR
-            )
+            createKey("PWSH_MERGING_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.MERGING_REDIRECTION_OPERATOR)
         val OTHER_OPERATOR =
-            createKey(
-                "PWSH_OTHER_OPERATORS", Colors.OPERATION_SIGN,
-                Types.INCREMENT_OPERATOR,
-                Types.SYMBOLIC_OPERATOR,
-                Types.T_FORMAT_OPERATOR,
-                Types.PREFIXED_OPERATOR,
-                Types.IC_PREFIXED_OPERATOR,
-                Types.LOGICAL_OPERATOR,
-                Types.BITWISE_LOGICAL_OPERATOR,
-                Types.LOGICAL_NOT_OPERATOR,
-                Types.BITWISE_LOGICAL_NOT_OPERATOR,
-                Types.SPLIT_OPERATOR,
-                Types.JOIN_OPERATOR,
-            )
+            createKey("PWSH_OTHER_OPERATOR", Colors.OPERATION_SIGN,
+                Types.FORMAT_OPERATOR, Types.COMPARISON_OPERATOR, Types.SYMBOLIC_OPERATOR)
     }
 }

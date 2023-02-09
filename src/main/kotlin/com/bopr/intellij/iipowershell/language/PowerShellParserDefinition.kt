@@ -47,7 +47,6 @@ class PowerShellParserDefinition : ParserDefinition {
 
     override fun createElement(node: ASTNode): PsiElement {
         return PowerShellTypes.Factory.createElement(node)
-//        throw RuntimeException("Cannot create element")
     }
 
     companion object {

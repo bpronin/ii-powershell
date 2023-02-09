@@ -1,0 +1,119 @@
+{
+    tokens = [
+//        NEW_LINE = 'regexp:[\r\n]|\r\n'
+        WHITE_SPACE = 'regexp:\s+'
+        LINE_COMMENT = 'regexp:#.*'
+//        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\\"|\\\'|\\)*\")"
+//        string='regexp:"([^"]|")*"'
+//        VARIABLE_CHARS = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?]+'
+//        DOLLAR = '$'
+
+        BRACED_VARIABLE = 'regexp:\$\{[^}]+}'
+//        VARIABLE = 'regexp:\$[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
+
+//        DOUBLE_QUOTE = 'regexp:["“”„]'
+//        DOUBLE_DOUBLE_QUOTE = 'regexp:["“”„]["“”„]'
+//        EXPANDABLE_STRING_CHARS = 'regexp:[^"“”„$`]'
+
+//        EXPANDABLE_HERE_STRING_START = 'regexp:@["“”„][\r\n]'
+//        EXPANDABLE_HERE_STRING_END = 'regexp:[\r\n]["“”„]@'
+//        EXPANDABLE_HERE_STRING_CHAR = 'regexp:[^\r\n$]'
+
+//        SINGLE_QUOTE = "regexp:['‘’‚‛]"
+//        VERBATIM_STRING_CHARS = "regexp:[^'‘’‚‛]"
+
+//        VERBATIM_EXPANDABLE_HERE_STRING_START = "regexp:@['‘’‚‛][\r\n]"
+//        VERBATIM_EXPANDABLE_HERE_STRING_END = "regexp:[\r\n]['‘’‚‛]@"
+//        VERBATIM_EXPANDABLE_HERE_STRING_CHAR = 'regexp:[^\r\n]'
+    ]
+}
+
+root ::= (string-literal)*
+
+//private variable ::=
+//    braced-variable | 'regexp:\$[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_?:]+'
+
+private braced-variable ::=
+    'regexp:\$\{[^}]+}'
+
+//private new-line ::=
+//    'regexp:[\r\n]|\r\n'
+
+//////////////////////////////////
+
+string-literal ::=
+   expandable-string-literal
+ | expandable-here-string-literal
+ | verbatim-string-literal
+ | verbatim-here-string-literal
+
+expandable-string-literal ::=
+    'regexp:["“”„]' expandable-string-parts? '$'? 'regexp:["“”„]'  {pin=1 recoverWhile=expandable-string-literal-recover}
+//  | 'regexp:["“”„]["“”„]'
+
+private expandable-string-literal-recover ::=
+    !('regexp:["“”„]')
+
+private expandable-string-parts ::=
+    expandable-string-part+
+
+private expandable-string-part ::=
+    'regexp:[^$"“”„`]'
+  | braced-variable
+  | 'regexp:\$[^({"“”„`]'
+  | 'regexp:\$*`.'
+  | 'regexp:["“”„]["“”„]'
+
+expandable-here-string-literal ::=
+    'regexp:@["“”„][\r\n]' expandable-here-string-characters? 'regexp:[\r\n]["“”„]@'
+
+private expandable-here-string-characters ::=
+    expandable-here-string-part+
+
+private expandable-here-string-part ::=
+    'regexp:[^\r\n$]'
+   | braced-variable
+   | 'regexp:\$[^(\r\n]'
+   | 'regexp:\$\r\n[^"“”„]'
+   | 'regexp:\$\r\n["“”„][^@]'
+   | 'regexp:\r\n[^"“”„]'
+   | 'regexp:\r\n["“”„][^@]'
+
+////expandable-string-with-subexpr-start:
+////    double-quote-character  expandable-string-chars?  $(
+////
+////expandable-string-with-subexpr-end:
+////    double-quote-char
+////
+////expandable-here-string-with-subexpr-start:
+////    @  double-quote-character whitespace? new-line-character expandable-here-string-chars?  $(
+////
+////expandable-here-string-with-subexpr-end:
+////    new-line-character  double-quote-character  @
+
+verbatim-string-literal ::=
+//    "regexp:['‘’‚‛]([^'‘’‚‛]|(['‘’‚‛]['‘’‚‛]))*['‘’‚‛]"
+    "regexp:['‘’‚‛]" verbatim-string-characters? "regexp:['‘’‚‛]" {pin=1 recoverWhile=expandable-string-literal-recover}
+//  | "regexp:['‘’‚‛]['‘’‚‛]"
+
+private expandable-string-literal-recover ::=
+    !("regexp:['‘’‚‛]")
+
+verbatim-string-characters ::=
+    verbatim-string-part+
+
+verbatim-string-part ::=
+    "regexp:[^'‘’‚‛]"
+  | "regexp:['‘’‚‛]['‘’‚‛]"
+
+verbatim-here-string-literal ::=
+//    "regexp:@['‘’‚‛][\r\n]([^\r\n]|(\r\n[^'‘’‚‛])|(\r\n[^'‘’‚‛][^@]))*[\r\n]['‘’‚‛]@"
+    "regexp:@['‘’‚‛][\r\n]" verbatim-here-string-characters? "regexp:[\r\n]['‘’‚‛]@"
+
+verbatim-here-string-characters ::=
+    verbatim-here-string-part+
+
+verbatim-here-string-part ::=
+    'regexp:[^\r\n]'
+   | "regexp:\r\n[^'‘’‚‛]"
+   | "regexp:\r\n[^'‘’‚‛][^@]"
