@@ -170,6 +170,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 <IN_TYPE_LITERAL> {
     "]"                                  { yypopState(); return BRACKET; }
     {TYPE_NAME}                          { return TYPE_NAME; }
+    "."|","                              { return SYMBOLIC_OPERATOR; }
 //    "."                                  { return MEMBER_ACCESS_OPERATOR; }
 //    ","                                  { return DIMENSION_OPERATOR; }
     "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }

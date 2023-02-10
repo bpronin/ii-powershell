@@ -55,9 +55,10 @@
         BITWISE_LOGICAL_NOT_OPERATOR = 'regexp:-bnot'
         SPLIT_OPERATOR = 'regexp:-split'
         JOIN_OPERATOR = 'regexp:-join'
+
+//        MEMBER_ACCESS_OPERATOR = '.'
+//        DIMENSION_OPERATOR = ','
         SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.\-+*/%]'
-        MEMBER_ACCESS_OPERATOR = '.'
-        DIMENSION_OPERATOR = ','
 
         FILE_PARAMETER = '-file'
         SUPPORTED_COMMAND_PARAMETER = '-supportedcommand'

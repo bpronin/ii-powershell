@@ -50,8 +50,8 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_NAME)
         val GENERIC_TOKEN = createKey("PWSH_GENERIC_TOKEN", Colors.FUNCTION_CALL, Types.GENERIC_TOKEN)
         val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
-        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.MEMBER_ACCESS_OPERATOR)
-        val COMMA = createKey("PWSH_COMMA", Colors.DOT, Types.DIMENSION_OPERATOR)
+//        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.MEMBER_ACCESS_OPERATOR)
+//        val COMMA = createKey("PWSH_COMMA", Colors.DOT, Types.DIMENSION_OPERATOR)
         val FUNCTION_DECLARATION =
             createKey("PWSH_FUNCTION_DECLARATION", Colors.FUNCTION_DECLARATION, Types.FUNCTION_NAME)
         val ASSIGNMENT_OPERATOR =
