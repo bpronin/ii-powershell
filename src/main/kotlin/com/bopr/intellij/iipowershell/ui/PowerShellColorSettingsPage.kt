@@ -18,6 +18,7 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.M
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.OTHER_OPERATOR
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.PARENTHESIS
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.REQUIRES_COMMENT
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SIGNATURE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.TYPE
@@ -63,14 +64,16 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
     companion object {
 
         private val DESCRIPTORS = arrayOf(
-            AttributesDescriptor(string("comments//signature"), SIGNATURE),
             AttributesDescriptor(string("bad_value"), BAD_CHARACTER),
             AttributesDescriptor(string("braces//braces"), BRACE),
             AttributesDescriptor(string("braces//brackets"), BRACKET),
             AttributesDescriptor(string("braces//parentheses"), PARENTHESIS),
+            AttributesDescriptor(string("command_parameter"), COMMAND_PARAMETER),
             AttributesDescriptor(string("comments//block_comment"), BLOCK_COMMENT),
             AttributesDescriptor(string("comments//line_comment"), LINE_COMMENT),
             AttributesDescriptor(string("comments//requires_comment"), REQUIRES_COMMENT),
+            AttributesDescriptor(string("comments//signature"), SIGNATURE),
+            AttributesDescriptor(string("function_declaration"), FUNCTION_DECLARATION),
             AttributesDescriptor(string("keyword"), KEYWORD),
             AttributesDescriptor(string("number//decimal_integer"), DECIMAL_INTEGER_NUMBER),
             AttributesDescriptor(string("number//floating_point"), FLOATING_POINT_NUMBER),
@@ -79,8 +82,7 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("operators//file_redirection_operators"), FILE_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//merging_redirection_operators"), MERGING_REDIRECTION_OPERATOR),
             AttributesDescriptor(string("operators//other_operators"), OTHER_OPERATOR),
-            AttributesDescriptor(string("command_parameter"), COMMAND_PARAMETER),
-            AttributesDescriptor(string("function_declaration"), FUNCTION_DECLARATION),
+            AttributesDescriptor(string("semicolon"), SEMICOLON),
             AttributesDescriptor(string("string_text"), STRING),
             AttributesDescriptor(string("type"), TYPE),
             AttributesDescriptor(string("variable"), VARIABLE),

@@ -46,11 +46,13 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val PARENTHESIS = createKey("PWSH_PARENTHESIS", Colors.PARENTHESES, Types.PARENTHESIS)
         val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
         val STRING = createKey("PWSH_STRING_LITERAL", Colors.STRING, Types.STRING_LITERAL)
+        val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
         val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_LITERAL)
-        val FUNCTION_DECLARATION = createKey("PWSH_FUNCTION_DECLARATION", Colors.FUNCTION_DECLARATION, Types.FUNCTION_NAME)
         val GENERIC_TOKEN = createKey("PWSH_GENERIC_TOKEN", Colors.FUNCTION_CALL, Types.GENERIC_TOKEN)
         val COMMAND_PARAMETER = createKey("PWSH_COMMAND_PARAMETER", Colors.PARAMETER, Types.COMMAND_PARAMETER)
         val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
+        val FUNCTION_DECLARATION =
+            createKey("PWSH_FUNCTION_DECLARATION", Colors.FUNCTION_DECLARATION, Types.FUNCTION_NAME)
         val ASSIGNMENT_OPERATOR =
             createKey("PWSH_ASSIGNMENT_OPERATOR", Colors.OPERATION_SIGN, Types.ASSIGNMENT_OPERATOR)
         val DECIMAL_INTEGER_NUMBER =
@@ -64,7 +66,9 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val MERGING_REDIRECTION_OPERATOR =
             createKey("PWSH_MERGING_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.MERGING_REDIRECTION_OPERATOR)
         val OTHER_OPERATOR =
-            createKey("PWSH_OTHER_OPERATOR", Colors.OPERATION_SIGN,
-                Types.FORMAT_OPERATOR, Types.COMPARISON_OPERATOR, Types.SYMBOLIC_OPERATOR)
+            createKey(
+                "PWSH_OTHER_OPERATOR", Colors.OPERATION_SIGN,
+                Types.FORMAT_OPERATOR, Types.COMPARISON_OPERATOR, Types.SYMBOLIC_OPERATOR
+            )
     }
 }

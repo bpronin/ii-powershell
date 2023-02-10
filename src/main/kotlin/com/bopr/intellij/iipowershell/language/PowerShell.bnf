@@ -70,13 +70,14 @@
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 //        GENERIC_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 
-        DASH = 'regexp:-'
-        DASH_DASH = 'regexp:--'
+        DASH = '-'
+        SEMICOLON = ';'
+        DASH_DASH = '--'
         BRACE = 'regexp:[{}]|(@\{)'
         BRACKET = 'regexp:[\[\]]'
         PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
         DOLLAR = '$'
-        DOUBLE_QUOTE = 'regexp:"'
+        DOUBLE_QUOTE = '"'
     ]
     
     name('.*expression') = 'expression'

@@ -98,8 +98,8 @@ BITWISE_LOGICAL_NOT_OPERATOR = {DASH} bnot
 JOIN_OPERATOR = {DASH} join
 CAST_OPERATOR = {DASH} as
 FORMAT_OPERATOR = {DASH} f
-SYMBOLIC_OPERATOR = ".." | "::" | "&&" | "||" | "!" | "&" | "|" | ";" | "," | "." | "++" | {DASH} {DASH}
-    | "+" | "*" | "/" | "%" | {DASH}
+SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "++" | {DASH} {DASH}| "!" | "&" | "|"
+    | ";" | "," | "." | "+" | "*" | "/" | "%" | {DASH}
 COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
     |{SPLIT_OPERATOR}|{LOGICAL_OPERATOR}|{BITWISE_LOGICAL_OPERATOR}|{TYPE_OPERATOR}|{LOGICAL_NOT_OPERATOR}
     |{BITWISE_LOGICAL_NOT_OPERATOR}|{JOIN_OPERATOR}|{CAST_OPERATOR}|{SHIFT_OPERATOR}
@@ -127,6 +127,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
 
+    ";"                                  { return SEMICOLON; }
     "["                                  { yypushState(BRACKETS); return BRACKET; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
