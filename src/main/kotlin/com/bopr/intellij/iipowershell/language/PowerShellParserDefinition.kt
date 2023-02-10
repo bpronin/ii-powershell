@@ -1,6 +1,7 @@
 package com.bopr.intellij.iipowershell.language
 
 import com.bopr.intellij.iipowershell.language.psi.PowerShellFile
+import com.bopr.intellij.iipowershell.language.psi.PowerShellPsiElement
 import com.bopr.intellij.iipowershell.language.psi.PowerShellTokenSets
 import com.bopr.intellij.iipowershell.language.psi.PowerShellTypes
 import com.bopr.intellij.iipowershell.parser.PowerShellParser
@@ -46,7 +47,8 @@ class PowerShellParserDefinition : ParserDefinition {
     }
 
     override fun createElement(node: ASTNode): PsiElement {
-        return PowerShellTypes.Factory.createElement(node)
+//        return PowerShellTypes.Factory.createElement(node)
+        return PowerShellPsiElement(node)
     }
 
     companion object {

@@ -7,15 +7,15 @@
 */
 
 {
-//    generate = [
-//        psi = 'no'
+    generate = [
+        psi = 'no'
 //        exact-types = 'elements'
 //        java = '8'
-//    ]
+    ]
 
     elementTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellElementType"
     elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
-    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    extends="com.bopr.intellij.iipowershell.language.psi.PowerShellPsiElement"
     parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
     psiClassPrefix="PowerShell"
     psiImplClassSuffix="Impl"
@@ -58,6 +58,8 @@
 
 //        MEMBER_ACCESS_OPERATOR = '.'
 //        DIMENSION_OPERATOR = ','
+        INCREMENT_OPERATOR = '++'
+        DECREMENT_OPERATOR = '--'
         SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.\-+*/%]'
 
         FILE_PARAMETER = '-file'
@@ -74,7 +76,6 @@
 
         DASH = '-'
         SEMICOLON = ';'
-        DASH_DASH = '--'
         BRACE = 'regexp:[{}]|(@\{)'
         BRACKET = 'regexp:[\[\]]'
         PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
@@ -110,10 +111,10 @@ private merging-redirection-operator ::=
     MERGING_REDIRECTION_OPERATOR
 
 private increment-operator ::=
-    '++'
+    INCREMENT_OPERATOR
 
 private decrement-operator ::=
-    DASH_DASH
+    DECREMENT_OPERATOR
 
 private additive-operator ::=
     '+' | DASH
@@ -141,6 +142,9 @@ private join-operator ::=
 
 private range-operator ::=
     '..'
+
+private array-literal-operator ::=
+    ','
 
 private variable ::=
     REGULAR_VARIABLE
@@ -659,25 +663,25 @@ range-expression ::=
     array-literal-expression (range-operator array-literal-expression)*
 
 array-literal-expression ::=
-    unary-expression (',' unary-expression)*
+    unary-expression (array-literal-operator unary-expression)*
 
-unary-expression ::=
+private unary-expression ::=
     primary-expression
   | expression-with-unary-operator
 
 private expression-with-unary-operator ::=
     array-create-expression
+  | pre-decrement-expression
   | logical-not-expression
   | bitwise-logical-not-expression
   | sign-expression
   | pre-increment-expression
-  | pre-decrement-expression
   | cast-expression
   | split-expression
   | join-expression
 
 array-create-expression ::=
-    ',' unary-expression
+    array-literal-operator unary-expression
 
 split-expression ::=
     split-operator unary-expression
@@ -707,19 +711,19 @@ cast-expression ::=
 //    type-literal variable
 
 primary-expression ::=
-    value
+//    value
 //  | member-access
 //  | element-access
 //  | invocation-expression
 //  | post-increment-expression
 //  | post-decrement-expression
-//
+
 //   invocation-expression
 //    member-access
 //  | element-access
-//  | post-increment-expression
-//  | post-decrement-expression
-//  | value
+    post-increment-expression
+  | post-decrement-expression
+  | value
 
 value ::=
     parenthesized-expression

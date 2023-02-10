@@ -98,7 +98,9 @@ BITWISE_LOGICAL_NOT_OPERATOR = {DASH} bnot
 JOIN_OPERATOR = {DASH} join
 CAST_OPERATOR = {DASH} as
 FORMAT_OPERATOR = {DASH} f
-SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "++" | {DASH} {DASH}| "!" | "&" | "|"
+INCREMENT_OPERATOR = "++"
+DECREMENT_OPERATOR = {DASH} {DASH}
+SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
     | ";" | "," | "." | "+" | "*" | "/" | "%" | {DASH}
 COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
     |{SPLIT_OPERATOR}|{LOGICAL_OPERATOR}|{BITWISE_LOGICAL_OPERATOR}|{TYPE_OPERATOR}|{LOGICAL_NOT_OPERATOR}
@@ -130,6 +132,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {WHITE_SPACE}                        { return WHITE_SPACE; }
 
     ";"                                  { return SEMICOLON; }
+    {DASH}                               { return DASH; }
     "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
@@ -141,12 +144,14 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {LINE_COMMENT}                       { return LINE_COMMENT; }
     {BLOCK_COMMENT}                      { return BLOCK_COMMENT; }
 
+    {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
+    {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
+    {INCREMENT_OPERATOR}                 { return INCREMENT_OPERATOR; }
+    {DECREMENT_OPERATOR}                 { return DECREMENT_OPERATOR; }
     {COMPARISON_OPERATOR}                { return COMPARISON_OPERATOR; }
     {FORMAT_OPERATOR}                    { return FORMAT_OPERATOR; }
-    {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
     {FILE_REDIRECTION_OPERATOR}          { return FILE_REDIRECTION_OPERATOR; }
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
-    {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
 
 //    {FUNCTION_KEYWORD}                   { yybegin(IN_FUNCTION_DECLARATION); return KEYWORD; }
     {KEYWORD}                            { return KEYWORD; }

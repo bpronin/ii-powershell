@@ -68,12 +68,19 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             createKey("PWSH_MERGING_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.MERGING_REDIRECTION_OPERATOR)
         val COMMAND_PARAMETER = createKey(
             "PWSH_COMMAND_PARAMETER", Colors.PARAMETER,
-            Types.COMMAND_PARAMETER, Types.SWITCH_PARAMETER, Types.FILE_PARAMETER, Types.SUPPORTED_COMMAND_PARAMETER
+            Types.COMMAND_PARAMETER,
+            Types.SWITCH_PARAMETER,
+            Types.FILE_PARAMETER,
+            Types.SUPPORTED_COMMAND_PARAMETER
         )
         val OTHER_OPERATOR =
             createKey(
                 "PWSH_OTHER_OPERATOR", Colors.OPERATION_SIGN,
-                Types.FORMAT_OPERATOR, Types.COMPARISON_OPERATOR, Types.SYMBOLIC_OPERATOR
+                Types.FORMAT_OPERATOR,
+                Types.COMPARISON_OPERATOR,
+                Types.INCREMENT_OPERATOR,
+                Types.DECREMENT_OPERATOR,
+                Types.SYMBOLIC_OPERATOR
             )
     }
 }
