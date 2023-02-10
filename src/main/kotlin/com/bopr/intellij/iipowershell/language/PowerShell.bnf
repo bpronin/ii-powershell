@@ -56,6 +56,8 @@
         SPLIT_OPERATOR = 'regexp:-split'
         JOIN_OPERATOR = 'regexp:-join'
         SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.\-+*/%]'
+        MEMBER_ACCESS_OPERATOR = '.'
+        DIMENSION_OPERATOR = ','
 
         FILE_PARAM = '-file'
         SUPPORTED_COMMAND_PARAM = '-supportedcommand'

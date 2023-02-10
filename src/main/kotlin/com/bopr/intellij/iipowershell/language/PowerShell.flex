@@ -77,7 +77,7 @@ STRING_LITERAL = \" [^\"]* \"
 
 /* Keywords */
 
-FUNCTION_KEYWORD = function|filter|workflow
+//FUNCTION_KEYWORD = function|filter|workflow
 KEYWORD = begin|break|catch|class|continue|data|define|do|dynamicparam|elseif|else|end|exit|filter|finally
     |foreach|for|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var
     |while|workflow
@@ -118,9 +118,9 @@ VARIABLE_SCOPE = global:|local:|private:|script:|using:|workflow:|{NAMESPACE_NAM
 REGULAR_VARIABLE = (("$"|"@") {VARIABLE_SCOPE}? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
 BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
-%state BRACKETS
-%state FUNCTION_DECLARATION
-//%state STRING
+%state IN_TYPE_LITERAL
+//%state IN_FUNCTION_DECLARATION
+//%state IN_STRING
 
 %%
 
@@ -128,7 +128,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {WHITE_SPACE}                        { return WHITE_SPACE; }
 
     ";"                                  { return SEMICOLON; }
-    "["                                  { yypushState(BRACKETS); return BRACKET; }
+    "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
 //    {DOUBLE_QUOTE}                       { yybegin(STRING); }
@@ -146,7 +146,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
     {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
 
-    {FUNCTION_KEYWORD}                   { yybegin(FUNCTION_DECLARATION); return KEYWORD; }
+//    {FUNCTION_KEYWORD}                   { yybegin(IN_FUNCTION_DECLARATION); return KEYWORD; }
     {KEYWORD}                            { return KEYWORD; }
     {LABEL}                              { return LABEL; }
 
@@ -163,19 +163,20 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
 }
 
-<BRACKETS> {
+<IN_TYPE_LITERAL> {
     "]"                                  { yypopState(); return BRACKET; }
-//     {ARRAY_OR_GENERIC_TYPE_NAME}        { return TYPE_LITERAL; }
-     {TYPE_NAME}                         { return TYPE_LITERAL; }
-    "["                                  { yypushState(BRACKETS); return BRACKET; }
+    {TYPE_NAME}                          { return TYPE_LITERAL; }
+    "."                                  { return MEMBER_ACCESS_OPERATOR; }
+    ","                                  { return DIMENSION_OPERATOR; }
+    "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
 }
 
-<FUNCTION_DECLARATION> {
-    {WHITE_SPACE}                        { return WHITE_SPACE; }
-    {GENERIC_TOKEN}                      { yybegin(YYINITIAL); return FUNCTION_NAME; }
-}
+//<IN_FUNCTION_DECLARATION> {
+//    {WHITE_SPACE}                        { return WHITE_SPACE; }
+//    {GENERIC_TOKEN}                      { yybegin(YYINITIAL); return FUNCTION_NAME; }
+//}
 
-//<STRING> {
+//<IN_STRING> {
 //    {DOUBLE_QUOTE}                       { yybegin(YYINITIAL); return STRING_LITERAL;}
 //}
 
