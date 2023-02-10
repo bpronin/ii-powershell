@@ -32,10 +32,10 @@
         BLOCK_COMMENT = 'regexp:<#(.|\n)*#>'
         SIGNATURE = 'regexp:# SIG # Begin signature block\n(#(.|\n)*)+# SIG # End signature block'
 
-        DECIMAL_INTEGER_LITERAL = 'regexp:[+-]?\d+[ld]?([kmgtp]b)?'
-        HEXADECIMAL_INTEGER_LITERAL = 'regexp:[+-]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
-        REAL_LITERAL = 'regexp:[+-]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
-        STRING_LITERAL = 'regexp:"([^$`"]|"")*\$?"'
+        DECIMAL_INTEGER_NUMBER = 'regexp:[+-]?\d+[ld]?([kmgtp]b)?'
+        HEXADECIMAL_INTEGER_NUMBER = 'regexp:[+-]?0x[0-9da-f]+[ld]?([kmgtp]b)?'
+        REAL_NUMBER = 'regexp:[+-]?\d*\.\d+(e\d+[ld]?([kmgtp]b)?)?'
+        STRING = 'regexp:"([^$`"]|"")*\$?"'
 
         KEYWORD = 'regexp:(begin|break|catch|class|continue|data|define|do|dynamicparam|elseif|else|end|exit|filter|finally|foreach|for|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
 
@@ -59,15 +59,14 @@
         MEMBER_ACCESS_OPERATOR = '.'
         DIMENSION_OPERATOR = ','
 
-        FILE_PARAM = '-file'
-        SUPPORTED_COMMAND_PARAM = '-supportedcommand'
-        SWITCH_PARAM = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
+        FILE_PARAMETER = '-file'
+        SUPPORTED_COMMAND_PARAMETER = '-supportedcommand'
+        SWITCH_PARAMETER = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
+        COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
 
         TYPE_NAME = 'regexp:\w+'
         SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w+'
         GENERIC_TOKEN = "regexp:\w+[-?\w]+"
-        STATEMENT_PARAMETER = ""
-        COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
         GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 //        GENERIC_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
@@ -87,12 +86,61 @@
     name('.*operator') = 'operator'
 }
 
-root ::= "regexp:.*"
-//    script-file
+root ::=
+//  "regexp:.*"
+    script-file
 //  | module-file
 //  | interactive-input
 //  | data-file
-    
+
+private comparison-operator ::=
+    COMPARISON_OPERATOR
+
+private format-operator ::=
+    FORMAT_OPERATOR
+
+private assignment-operator ::=
+    ASSIGNMENT_OPERATOR
+
+private file-redirection-operator ::=
+    FILE_REDIRECTION_OPERATOR
+
+private merging-redirection-operator ::=
+    MERGING_REDIRECTION_OPERATOR
+
+private increment-operator ::=
+    '++'
+
+private decrement-operator ::=
+    DASH_DASH
+
+private additive-operator ::=
+    '+' | DASH
+
+private multiplicative-operator ::=
+    '\*' | '/' | '%'
+
+private logical-operator ::=
+    LOGICAL_OPERATOR
+
+private bitwise-logical-operator ::=
+    BITWISE_LOGICAL_OPERATOR
+
+private logical-not-operator ::=
+    LOGICAL_NOT_OPERATOR
+
+private bitwise-logical-not-operator ::=
+    BITWISE_LOGICAL_NOT_OPERATOR
+
+private split-operator ::=
+    SPLIT_OPERATOR
+
+private join-operator ::=
+    JOIN_OPERATOR
+
+private range-operator ::=
+    '..'
+
 private variable ::=
     REGULAR_VARIABLE
   | BRACED_VARIABLE
@@ -172,12 +220,24 @@ private variable ::=
 /* B.1.9 Literals */
 
 private literal ::=
-    DECIMAL_INTEGER_LITERAL
-  | HEXADECIMAL_INTEGER_LITERAL
-  | REAL_LITERAL
-  | STRING_LITERAL
+    integer-literal
+  | real-literal
+  | string-literal
+
+/* B.1.9.1 Integer Literals */
+
+integer-literal ::=
+    DECIMAL_INTEGER_NUMBER | HEXADECIMAL_INTEGER_NUMBER
+
+/* B.1.9.2 Real Literals */
+
+real-literal ::=
+    REAL_NUMBER
 
 /* B.1.9.3 String Literals */
+
+string-literal ::=
+    STRING
 
 //string-literal ::=
 //    STRING
@@ -362,17 +422,20 @@ private statement ::=
     if-statement
   | LABEL? labeled-statement
   | function-statement
-  | flow-control-statement STATEMENT_TERMINATOR?
+  | flow-control-statement statement-terminator?
   | trap-statement
   | try-statement
   | data-statement
   | inlinescript-statement
   | parallel-statement
   | sequence-statement
-  | pipeline STATEMENT_TERMINATOR?
+  | pipeline statement-terminator?
+
+private statement-terminator ::=
+    SEMICOLON
 
 private statement-terminators ::=
-    STATEMENT_TERMINATOR+
+    statement-terminator+
 
 if-statement ::=
     'if' '(' pipeline ')' statement-block elseif-clauses? else-clause?
@@ -397,14 +460,11 @@ switch-statement ::=
     'switch' switch-parameters? switch-condition switch-body
 
 private switch-parameters ::=
-    switch-parameter+
-
-switch-parameter ::=
-    SWITCH_PARAM
+    SWITCH_PARAMETER+
 
 switch-condition ::=
     '(' pipeline ')'
-   | FILE_PARAM switch-filename
+   | FILE_PARAMETER switch-filename
 
 switch-filename ::=
     command-argument
@@ -430,9 +490,9 @@ foreach-statement ::=
     'foreach' '(' variable 'in' pipeline ')' statement-block
 
 for-statement ::=
-    'for' '(' for-initializer? STATEMENT_TERMINATOR
-        for-condition? STATEMENT_TERMINATOR for-iterator? ')' statement-block
-  | 'for' '(' for-initializer? STATEMENT_TERMINATOR
+    'for' '(' for-initializer? statement-terminator
+        for-condition? statement-terminator for-iterator? ')' statement-block
+  | 'for' '(' for-initializer? statement-terminator
         for-condition? ')' statement-block
   | 'for' '(' for-initializer? ')' statement-block
 
@@ -499,7 +559,7 @@ data-name ::=
     SIMPLE_NAME
 
 data-commands-allowed ::=
-    SUPPORTED_COMMAND_PARAM data-commands-list
+    SUPPORTED_COMMAND_PARAMETER data-commands-list
 
 data-commands-list ::=
     data-command (',' data-command)*
@@ -522,7 +582,7 @@ pipeline ::=
   | command verbatim-command-argument? pipeline-tail?
 
 assignment-expression ::=
-    expression ASSIGNMENT_OPERATOR statement
+    expression assignment-operator statement
 
 pipeline-tail ::=
     '|' command ('|' command)*
@@ -564,8 +624,8 @@ redirections ::=
     redirection+
 
 redirection ::=
-    MERGING_REDIRECTION_OPERATOR
-  | FILE_REDIRECTION_OPERATOR redirected-file-name
+    merging-redirection-operator
+  | file-redirection-operator redirected-file-name
 
 redirected-file-name ::=
     command-argument
@@ -577,25 +637,25 @@ private expression ::=
     logical-expression
 
 logical-expression ::=
-    bitwise-expression (LOGICAL_OPERATOR bitwise-expression)*
+    bitwise-expression (logical-operator bitwise-expression)*
 
 bitwise-expression ::=
-    comparison-expression (BITWISE_LOGICAL_OPERATOR comparison-expression)*
+    comparison-expression (bitwise-logical-operator comparison-expression)*
 
 comparison-expression ::=
-    additive-expression (COMPARISON_OPERATOR additive-expression)*
+    additive-expression (comparison-operator additive-expression)*
 
 additive-expression ::=
-    multiplicative-expression (('+' | DASH) multiplicative-expression)*
+    multiplicative-expression (additive-operator multiplicative-expression)*
 
 multiplicative-expression ::=
-    format-expression (('\*' | '/' | '%') format-expression)*
+    format-expression (multiplicative-operator format-expression)*
 
 format-expression ::=
-    range-expression (FORMAT_OPERATOR range-expression)*
+    range-expression (format-operator range-expression)*
 
 range-expression ::=
-    array-literal-expression ('..' array-literal-expression)*
+    array-literal-expression (range-operator array-literal-expression)*
 
 array-literal-expression ::=
     unary-expression (',' unary-expression)*
@@ -605,23 +665,39 @@ unary-expression ::=
   | expression-with-unary-operator
 
 private expression-with-unary-operator ::=
-    ',' unary-expression
-  | LOGICAL_NOT_OPERATOR unary-expression
-  | '!' unary-expression
-  | BITWISE_LOGICAL_NOT_OPERATOR unary-expression
-  | '+' unary-expression
-  | DASH unary-expression
+    array-create-expression
+  | logical-not-expression
+  | bitwise-logical-not-expression
+  | sign-expression
   | pre-increment-expression
   | pre-decrement-expression
   | cast-expression
-  | SPLIT_OPERATOR unary-expression
-  | JOIN_OPERATOR unary-expression
+  | split-expression
+  | join-expression
+
+array-create-expression ::=
+    ',' unary-expression
+
+split-expression ::=
+    split-operator unary-expression
+
+join-expression ::=
+    join-operator unary-expression
+
+sign-expression ::=
+    additive-operator unary-expression
+
+logical-not-expression ::=
+    ('!' | logical-not-operator) unary-expression
+
+bitwise-logical-not-expression ::=
+    bitwise-logical-not-operator unary-expression
 
 pre-increment-expression ::=
-    '++' unary-expression
+    increment-operator unary-expression
 
 pre-decrement-expression ::=
-    DASH_DASH unary-expression
+    decrement-operator unary-expression
 
 cast-expression ::=
     type-literal unary-expression
@@ -681,11 +757,11 @@ key-expression ::=
 
 post-increment-expression ::=
 //    primary-expression '++'
-    value '++'
+    value increment-operator
 
 post-decrement-expression ::=
 //    primary-expression dashdash
-    value DASH_DASH
+    value decrement-operator
 
 member-access ::=
 // Note no whitespace is allowed after primary-expression.
@@ -714,30 +790,30 @@ argument-expression ::=
     logical-argument-expression
 
 logical-argument-expression ::=
-   bitwise-argument-expression (LOGICAL_OPERATOR bitwise-argument-expression)*
+   bitwise-argument-expression (logical-operator bitwise-argument-expression)*
 
 bitwise-argument-expression ::=
-    comparison-argument-expression (BITWISE_LOGICAL_OPERATOR comparison-argument-expression)*
+    comparison-argument-expression (bitwise-logical-operator comparison-argument-expression)*
 
 comparison-argument-expression ::=
-    additive-argument-expression (COMPARISON_OPERATOR additive-argument-expression)*
+    additive-argument-expression (comparison-operator additive-argument-expression)*
 
 additive-argument-expression ::=
-    multiplicative-argument-expression (('+' | DASH) multiplicative-argument-expression)*
+    multiplicative-argument-expression (additive-operator multiplicative-argument-expression)*
 
 multiplicative-argument-expression ::=
-    format-argument-expression (('/*' | '/' | '%') format-argument-expression)*
+    format-argument-expression (multiplicative-operator format-argument-expression)*
 
 format-argument-expression ::=
-    range-argument-expression (FORMAT_OPERATOR range-argument-expression)*
+    range-argument-expression (format-operator range-argument-expression)*
 
 range-argument-expression ::=
     unary-expression
-  | range-expression '..' unary-expression
+  | range-expression range-operator unary-expression
 
 member-name ::=
     SIMPLE_NAME
-  | STRING_LITERAL
+  | STRING
 //  | string-literal-with-subexpression
   | expression-with-unary-operator
   | value

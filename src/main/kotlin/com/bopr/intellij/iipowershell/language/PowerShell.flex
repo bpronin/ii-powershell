@@ -62,18 +62,18 @@ COMMAND_PARAMETER = {DASH} {GENERIC_TOKEN}
 //GENERIC_TYPE_SPEC = {TYPE_NAME} "[" {TYPE_SPEC} ("," {TYPE_SPEC})* "]"
 //TYPE_SPEC = {ARRAY_TYPE_SPEC} | {GENERIC_TYPE_SPEC} | {TYPE_NAME}
 
-NAMESPACE_NAME =  (\w | {DASH} | "?")+ ":"
-VARIABLE_NAME = (\w | {DASH} | "?")+
+NAMESPACE_NAME =  (\w | "?")+ ":"
+VARIABLE_NAME = (\w |"?")+
 
 /* Literals */
 
 NUMBER_SIGN = "+" | {DASH}
 INTEGER_SUFFIX = (l | d)? (kb | mb | gb | tb | pb)?
-DECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
-HEXADECIMAL_INTEGER_LITERAL = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
-REAL_LITERAL = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
-//STRING_LITERAL = {DOUBLE_QUOTE} (!{DOUBLE_QUOTE})* {DOUBLE_QUOTE}
-STRING_LITERAL = \" [^\"]* \"
+DECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
+HEXADECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
+REAL_NUMBER = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
+//STRING = {DOUBLE_QUOTE} (!{DOUBLE_QUOTE})* {DOUBLE_QUOTE}
+STRING = \" [^\"]* \"
 
 /* Keywords */
 
@@ -109,7 +109,9 @@ MERGING_REDIRECTION_OPERATOR = "*>&1"|"2>&1"|"3>&1"|"4>&1"|"5>&1"|"6>&1"|"*>&2"|
 
 /* Predefined statements params */
 
-STATEMENT_PARAMETER = {DASH} regex|wildcard|exact|casesensitive|parallel|file|supportedcommand
+SWITCH_PARAMETER = {DASH} (regex|wildcard|exact|casesensitive|parallel)
+FILE_PARAMETER = {DASH} file
+SUPPORTED_COMMAND_PARAMETER = {DASH} supportedcommand
 
 /* Variables */
 
@@ -131,8 +133,8 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
-//    {DOUBLE_QUOTE}                       { yybegin(STRING); }
-    {STRING_LITERAL}                     { return STRING_LITERAL; }
+//    {DOUBLE_QUOTE}                       { yybegin(IN_STRING); }
+    {STRING}                             { return STRING; }
 
     {SIGNATURE}                          { return SIGNATURE; }
     {REQUIRES_COMMENT}                   { return REQUIRES_COMMENT; }
@@ -150,14 +152,16 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {KEYWORD}                            { return KEYWORD; }
     {LABEL}                              { return LABEL; }
 
-    {DECIMAL_INTEGER_LITERAL}            { return DECIMAL_INTEGER_LITERAL; }
-    {HEXADECIMAL_INTEGER_LITERAL}        { return HEXADECIMAL_INTEGER_LITERAL; }
-    {REAL_LITERAL}                       { return REAL_LITERAL; }
+    {DECIMAL_INTEGER_NUMBER}            { return DECIMAL_INTEGER_NUMBER; }
+    {HEXADECIMAL_INTEGER_NUMBER}        { return HEXADECIMAL_INTEGER_NUMBER; }
+    {REAL_NUMBER}                       { return REAL_NUMBER; }
 
     {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE; }
     {BRACED_VARIABLE}                    { return BRACED_VARIABLE; }
 
-    {STATEMENT_PARAMETER}                { return STATEMENT_PARAMETER; }
+    {SWITCH_PARAMETER}                   { return SWITCH_PARAMETER; } //todo: move to IN_SWITCH state ?
+    {FILE_PARAMETER}                     { return FILE_PARAMETER; }  //todo: move to IN_SWITCH state ?
+    {SUPPORTED_COMMAND_PARAMETER}        { return SUPPORTED_COMMAND_PARAMETER; }  //todo: move to IN_DATA state ?
     {COMMAND_PARAMETER}                  { return COMMAND_PARAMETER; }
 
     {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
@@ -165,9 +169,9 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
 <IN_TYPE_LITERAL> {
     "]"                                  { yypopState(); return BRACKET; }
-    {TYPE_NAME}                          { return TYPE_LITERAL; }
-    "."                                  { return MEMBER_ACCESS_OPERATOR; }
-    ","                                  { return DIMENSION_OPERATOR; }
+    {TYPE_NAME}                          { return TYPE_NAME; }
+//    "."                                  { return MEMBER_ACCESS_OPERATOR; }
+//    ","                                  { return DIMENSION_OPERATOR; }
     "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
 }
 
@@ -177,7 +181,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 //}
 
 //<IN_STRING> {
-//    {DOUBLE_QUOTE}                       { yybegin(YYINITIAL); return STRING_LITERAL;}
+//    {DOUBLE_QUOTE}                       { yybegin(YYINITIAL); return STRING;}
 //}
 
 

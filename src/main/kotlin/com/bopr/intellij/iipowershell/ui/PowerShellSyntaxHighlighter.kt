@@ -40,16 +40,15 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val BLOCK_COMMENT = createKey("PWSH_BLOCK_COMMENT", Colors.BLOCK_COMMENT, Types.BLOCK_COMMENT)
         val BRACE = createKey("PWSH_BRACE", Colors.BRACES, Types.BRACE)
         val BRACKET = createKey("PWSH_BRACKET", Colors.BRACKETS, Types.BRACKET)
-        val FLOATING_POINT_NUMBER = createKey("PWSH_REAL_LITERAL", Colors.NUMBER, Types.REAL_LITERAL)
+        val FLOATING_POINT_NUMBER = createKey("PWSH_REAL_NUMBER", Colors.NUMBER, Types.REAL_NUMBER)
         val KEYWORD = createKey("PWSH_KEYWORD", Colors.KEYWORD, Types.KEYWORD)
         val LINE_COMMENT = createKey("PWSH_LINE_COMMENT", Colors.LINE_COMMENT, Types.LINE_COMMENT)
         val PARENTHESIS = createKey("PWSH_PARENTHESIS", Colors.PARENTHESES, Types.PARENTHESIS)
         val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
-        val STRING = createKey("PWSH_STRING_LITERAL", Colors.STRING, Types.STRING_LITERAL)
+        val STRING = createKey("PWSH_STRING", Colors.STRING, Types.STRING)
         val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
-        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_LITERAL)
+        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_NAME)
         val GENERIC_TOKEN = createKey("PWSH_GENERIC_TOKEN", Colors.FUNCTION_CALL, Types.GENERIC_TOKEN)
-        val COMMAND_PARAMETER = createKey("PWSH_COMMAND_PARAMETER", Colors.PARAMETER, Types.COMMAND_PARAMETER)
         val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
         val DOT = createKey("PWSH_DOT", Colors.DOT, Types.MEMBER_ACCESS_OPERATOR)
         val COMMA = createKey("PWSH_COMMA", Colors.DOT, Types.DIMENSION_OPERATOR)
@@ -58,15 +57,19 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val ASSIGNMENT_OPERATOR =
             createKey("PWSH_ASSIGNMENT_OPERATOR", Colors.OPERATION_SIGN, Types.ASSIGNMENT_OPERATOR)
         val DECIMAL_INTEGER_NUMBER =
-            createKey("PWSH_DECIMAL_INTEGER_LITERAL", Colors.NUMBER, Types.DECIMAL_INTEGER_LITERAL)
+            createKey("PWSH_DECIMAL_INTEGER_NUMBER", Colors.NUMBER, Types.DECIMAL_INTEGER_NUMBER)
         val VARIABLE =
             createKey("PWSH_VARIABLE", Colors.LOCAL_VARIABLE, Types.REGULAR_VARIABLE, Types.BRACED_VARIABLE)
         val FILE_REDIRECTION_OPERATOR =
             createKey("PWSH_FILE_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.FILE_REDIRECTION_OPERATOR)
         val HEXADECIMAL_INTEGER_NUMBER =
-            createKey("PWSH_HEXADECIMAL_INTEGER_LITERAL", Colors.NUMBER, Types.HEXADECIMAL_INTEGER_LITERAL)
+            createKey("PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER, Types.HEXADECIMAL_INTEGER_NUMBER)
         val MERGING_REDIRECTION_OPERATOR =
             createKey("PWSH_MERGING_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.MERGING_REDIRECTION_OPERATOR)
+        val COMMAND_PARAMETER = createKey(
+            "PWSH_COMMAND_PARAMETER", Colors.PARAMETER,
+            Types.COMMAND_PARAMETER, Types.SWITCH_PARAMETER, Types.FILE_PARAMETER, Types.SUPPORTED_COMMAND_PARAMETER
+        )
         val OTHER_OPERATOR =
             createKey(
                 "PWSH_OTHER_OPERATOR", Colors.OPERATION_SIGN,
