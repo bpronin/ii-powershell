@@ -67,8 +67,8 @@
         SWITCH_PARAMETER = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
         COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
 
+        SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w*'
         TYPE_NAME = 'regexp:\w+'
-        SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w+'
         GENERIC_TOKEN = "regexp:\w+[-?\w]+"
         GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
@@ -148,27 +148,27 @@ private array-literal-operator ::=
 
 private variable ::=
     REGULAR_VARIABLE
-  | BRACED_VARIABLE
+  | braced-variable
 
-//braced-variable-character ::=
-//    !('}' | '`')
+private braced-variable ::=
+    BRACED_VARIABLE
 //  | escaped-character
-//
+
 //escaped-character ::=
-//  '`'   //(The backtick character U+0060) followed by any Unicode character
+//    '`'   //(The backtick character U+0060) followed by any Unicode character
 
 /* B.1.7 Commands */
 
-//private generic-token ::=
+//generic-token ::=
 //    generic-token-part
 //
-//private generic-token-part ::=
+//generic-token-part ::=
 ////    expandable-string-literal
 ////  | verbatim-here-string-literal
 //   variable
 //  | generic-token-chars
 //
-//private generic-token-chars ::=
+//generic-token-chars ::=
 //    GENERIC_TOKEN
 ////    Any Unicode character except
 ////        { } ( ) ; , | & . [
@@ -176,7 +176,7 @@ private variable ::=
 ////        whitespace
 ////        new-line-character
 //
-//private generic-token-with-subexpr-start ::=
+//generic-token-with-subexpr-start ::=
 //    generic-token-part+ '$('
 
 /* B.1.8 Parameters*/
@@ -242,31 +242,25 @@ real-literal ::=
 /* B.1.9.3 String Literals */
 
 string-literal ::=
+    expandable-string-literal
+  | expandable-here-string-literal
+  | verbatim-string-literal
+  | verbatim-here-string-literal
+
+expandable-string-literal ::=
     STRING
+//    DOUBLE_QUOTE expandable-string-characters? '$'* DOUBLE_QUOTE
 
-//string-literal ::=
-//    STRING
-//    expandable-string-literal
-//  | expandable-here-string-literal
-//    verbatim-string-literal
-//    verbatim-here-string-literal
+expandable-string-characters ::=
+    expandable-string-part+
 
-//expandable-string-literal ::=
-//    double-quote-character expandable-string-characters? dollars? double-quote-character
-//
-//private double-quote-character ::=
-//    '"' | '“' | '”' | '„'
-//
-//expandable-string-characters ::=
-//    expandable-string-part+
-//
-//expandable-string-part ::=
-//    !('$' | double-quote-character | '`')
-//  | braced-variable
-//  | '$' !('(' |'{' | double-quote-character | '`')
+expandable-string-part ::=
+    !('$' | DOUBLE_QUOTE | '`')
+  | braced-variable
+//  | '$' !('(' |'{' | DOUBLE_QUOTE | '`')
 //  | '$' escaped-character
 //  | escaped-character
-//  | double-quote-character double-quote-character
+//  | DOUBLE_QUOTE DOUBLE_QUOTE
 
 /*
     Any Unicode character except
@@ -284,10 +278,8 @@ string-literal ::=
     double-quote-character double-quote-character
 */
 
-//dollars ::=
-//    '$'+
-//
-//expandable-here-string-literal ::=
+expandable-here-string-literal ::=
+    MULTILINE_STRING
 //    '@' double-quote-character whitespace? new-line
 //        expandable-here-string-characters? new-line double-quote-character '@'
 //
@@ -314,8 +306,9 @@ string-literal ::=
 //
 //expandable-here-string-with-subexpr-end:
 //    new-line-character  double-quote-character  @
-//
-//verbatim-string-literal:
+
+verbatim-string-literal ::=
+    VERBATIM_STRING
 //    single-quote-character verbatim-string-characters? single-quote-char
 //
 //single-quote-character:
@@ -332,8 +325,9 @@ string-literal ::=
 //verbatim-string-part:
 //    *Any Unicode character except* single-quote-character
 //    single-quote-character  single-quote-character
-//
-//verbatim-here-string-literal:
+
+verbatim-here-string-literal ::=
+    VERBATIM_MULTILINE_STRING
 //    @ single-quote-character whitespace?  new-line-character
 //        verbatim-here-string-characters?  new-line-character
 //            single-quote-character *@*
@@ -349,33 +343,28 @@ string-literal ::=
 
 /* B.1.10 Simple Names */
 
-//private simple-name ::=
-//    GENERIC_TOKEN
-////        SIMPLE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_]+'
+private simple-name ::=
+    SIMPLE_NAME
 
 /* B.1.11 Type Names */
 
-//private type-name ::=
-//    type-identifier ('.' type-identifier)*
-//
-//private type-identifier ::=
-//    type-characters
-//
-//private type-characters ::=
-//    GENERIC_TOKEN
-////  TYPE_NAME = 'regexp:[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nd}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}_]+'
-//
-//private array-type-name ::=
-//    type-name '['
-//
-//private generic-type-name ::=
-//    type-name '['
+private type-name ::=
+    type-identifier ('.' type-identifier)*
+
+type-identifier ::=
+    TYPE_NAME
+
+array-type-name ::=
+    type-name '['
+
+generic-type-name ::=
+    type-name '['
 
 /** B.2 Syntactic grammar **/
 
 /* B.2.1 Basic concepts */
 
-script-file ::=
+private script-file ::=
     script-block
 
 //module-file ::=
@@ -431,7 +420,7 @@ private statement ::=
   | trap-statement
   | try-statement
   | data-statement
-  | inlinescript-statement
+  | inline-script-statement
   | parallel-statement
   | sequence-statement
   | pipeline statement-terminator?
@@ -536,7 +525,7 @@ flow-control-statement ::=
   | 'exit' pipeline?
 
 label-expression ::=
-    SIMPLE_NAME
+    simple-name
   | unary-expression
 
 trap-statement ::=
@@ -561,7 +550,7 @@ data-statement ::=
     'data' data-name? data-commands-allowed? statement-block
 
 data-name ::=
-    SIMPLE_NAME
+    simple-name
 
 data-commands-allowed ::=
     SUPPORTED_COMMAND_PARAMETER data-commands-list
@@ -572,7 +561,7 @@ data-commands-list ::=
 data-command ::=
     command-name-expr
 
-inlinescript-statement ::=
+inline-script-statement ::=
     'inlinescript' statement-block
 
 parallel-statement ::=
@@ -584,13 +573,14 @@ sequence-statement ::=
 pipeline ::=
     assignment-expression
   | expression redirections? pipeline-tail?
-  | command verbatim-command-argument? pipeline-tail?
+//  | command verbatim-command-argument? pipeline-tail?
 
 assignment-expression ::=
     expression assignment-operator statement
 
-pipeline-tail ::=
-    '|' command ('|' command)*
+private pipeline-tail ::=
+//    '|' command ('|' command)*
+    ('|' command)+
 
 command ::=
     command-name command-element*
@@ -625,7 +615,7 @@ command-argument ::=
 verbatim-command-argument ::=
     '--%' VERBATIM_COMMAND_ARGUMENT_CHARS
 
-redirections ::=
+private redirections ::=
     redirection+
 
 redirection ::=
@@ -707,23 +697,16 @@ pre-decrement-expression ::=
 cast-expression ::=
     type-literal unary-expression
 
-//private attributed-expression ::=
+//attributed-expression ::=
 //    type-literal variable
 
-primary-expression ::=
-//    value
-//  | member-access
-//  | element-access
-//  | invocation-expression
-//  | post-increment-expression
-//  | post-decrement-expression
-
-//   invocation-expression
-//    member-access
-//  | element-access
-    post-increment-expression
+private primary-expression ::=
+    value
+  | invocation-expression
+  | element-access
+  | member-access
+  | post-increment-expression
   | post-decrement-expression
-  | value
 
 value ::=
     parenthesized-expression
@@ -757,38 +740,39 @@ hash-entry ::=
     key-expression '=' statement
 
 key-expression ::=
-    SIMPLE_NAME
+    simple-name
   | unary-expression
 
 post-increment-expression ::=
 //    primary-expression '++'
-    value increment-operator
+    value increment-operator   // todo: value?
 
 post-decrement-expression ::=
-//    primary-expression dashdash
+//    primary-expression decrement-operator
     value decrement-operator
 
 member-access ::=
 // Note no whitespace is allowed after primary-expression.
 //    primary-expression '.' member-name
-////  | primary-expression '::' member-name
-    value (('.' | '::') member-name)*
+//  | primary-expression '::' member-name
+    ('.' | '::') member-name primary-expression?
 
 element-access ::=
 // Note no whitespace is allowed between primary-expression and [.
 //    primary-expression '[' expression ']'
-    value '[' expression ']'
+    '[' expression ']' primary-expression?
 
 invocation-expression ::=
 // Note no whitespace is allowed after primary-expression.
 //   primary-expression '.' member-name argument-list
 //   | primary-expression  '::' member-name argument-list
-    value (('.' | '::') member-name argument-list)
+//    ('.' | '::') member-name argument-list primary-expression?
+    ('.' | '::') member-name argument-list primary-expression?
 
-argument-list ::=
+private argument-list ::=
     '(' argument-expression-list? ')'
 
-argument-expression-list ::=
+private argument-expression-list ::=
     argument-expression (',' argument-expression)*
 
 argument-expression ::=
@@ -817,8 +801,8 @@ range-argument-expression ::=
   | range-expression range-operator unary-expression
 
 member-name ::=
-    SIMPLE_NAME
-  | STRING
+    simple-name
+  | string-literal
 //  | string-literal-with-subexpression
   | expression-with-unary-operator
   | value
@@ -853,16 +837,16 @@ member-name ::=
 type-literal ::=
     '[' type-spec ']'
 
-private type-spec ::=
-    TYPE_NAME
-//    ARRAY_TYPE_NAME dimension* ']'
-//  | GENERIC_TYPE_NAME generic-type-arguments ']'
-//  | TYPE_NAME
+type-spec ::=
+//    TYPE_NAME
+    array-type-name dimension* ']'
+  | generic-type-name generic-type-arguments ']'
+  | type-name
 
-private dimension ::=
+dimension ::=
     ','
 
-private generic-type-arguments ::=
+generic-type-arguments ::=
     type-spec (',' type-spec)*
 
 /* B.2.4 Attributes */
@@ -882,6 +866,5 @@ private attribute-arguments ::=
 
 attribute-argument ::=
     expression
-  | SIMPLE_NAME
-  | SIMPLE_NAME '=' expression
-
+  | simple-name
+  | simple-name '=' expression

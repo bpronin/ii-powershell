@@ -53,6 +53,7 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
 
+SIMPLE_NAME = [\p{Alpha}\_] \w*
 GENERIC_TOKEN = \w+ (\w | {DASH} | "?")+
 TYPE_NAME = \w+ (\w | {DASH} | "?")+
 ARRAY_OR_GENERIC_TYPE_NAME = {TYPE_NAME} "["
@@ -72,8 +73,11 @@ INTEGER_SUFFIX = (l | d)? (kb | mb | gb | tb | pb)?
 DECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
 HEXADECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
 REAL_NUMBER = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
-//STRING = {DOUBLE_QUOTE} (!{DOUBLE_QUOTE})* {DOUBLE_QUOTE}
+
 STRING = \" [^\"]* \"
+MULTILINE_STRING = \@\" {ANY}* \"\@
+VERBATIM_STRING = \' [^\']* \'
+VERBATIM_MULTILINE_STRING = \@\' {ANY}* \'\@
 
 /* Keywords */
 
@@ -122,9 +126,9 @@ VARIABLE_SCOPE = global:|local:|private:|script:|using:|workflow:|{NAMESPACE_NAM
 REGULAR_VARIABLE = (("$"|"@") {VARIABLE_SCOPE}? {VARIABLE_NAME}) | {RESERVED_VARIABLE_NAME}
 BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
-%state IN_TYPE_LITERAL
-//%state IN_FUNCTION_DECLARATION
-//%state IN_STRING
+%state IN_BRACKETS
+//%state IN_DOUBLE_QUOTES
+//%state AFTER_FUNCTION_KEYWORD
 
 %%
 
@@ -133,33 +137,39 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
     ";"                                  { return SEMICOLON; }
     {DASH}                               { return DASH; }
-    "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
-//    {DOUBLE_QUOTE}                       { yybegin(IN_STRING); }
+    "["                                  { yypushState(IN_BRACKETS); return BRACKET; }
+
+//    {DOUBLE_QUOTE}                       { yybegin(IN_DOUBLE_QUOTES); return DOUBLE_QUOTE; }
     {STRING}                             { return STRING; }
+    {MULTILINE_STRING}                   { return MULTILINE_STRING; }
+    {VERBATIM_STRING}                    { return VERBATIM_STRING; }
+    {VERBATIM_MULTILINE_STRING}          { return VERBATIM_MULTILINE_STRING; }
 
     {SIGNATURE}                          { return SIGNATURE; }
     {REQUIRES_COMMENT}                   { return REQUIRES_COMMENT; }
     {LINE_COMMENT}                       { return LINE_COMMENT; }
     {BLOCK_COMMENT}                      { return BLOCK_COMMENT; }
 
-    {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
+    {SIMPLE_NAME}                        { return SIMPLE_NAME; }
+
     {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
     {INCREMENT_OPERATOR}                 { return INCREMENT_OPERATOR; }
     {DECREMENT_OPERATOR}                 { return DECREMENT_OPERATOR; }
+    {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
     {COMPARISON_OPERATOR}                { return COMPARISON_OPERATOR; }
     {FORMAT_OPERATOR}                    { return FORMAT_OPERATOR; }
     {FILE_REDIRECTION_OPERATOR}          { return FILE_REDIRECTION_OPERATOR; }
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
 
-//    {FUNCTION_KEYWORD}                   { yybegin(IN_FUNCTION_DECLARATION); return KEYWORD; }
+//    {FUNCTION_KEYWORD}                   { yybegin(AFTER_FUNCTION_KEYWORD); return KEYWORD; }
     {KEYWORD}                            { return KEYWORD; }
     {LABEL}                              { return LABEL; }
 
-    {DECIMAL_INTEGER_NUMBER}            { return DECIMAL_INTEGER_NUMBER; }
-    {HEXADECIMAL_INTEGER_NUMBER}        { return HEXADECIMAL_INTEGER_NUMBER; }
-    {REAL_NUMBER}                       { return REAL_NUMBER; }
+    {DECIMAL_INTEGER_NUMBER}             { return DECIMAL_INTEGER_NUMBER; }
+    {HEXADECIMAL_INTEGER_NUMBER}         { return HEXADECIMAL_INTEGER_NUMBER; }
+    {REAL_NUMBER}                        { return REAL_NUMBER; }
 
     {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE; }
     {BRACED_VARIABLE}                    { return BRACED_VARIABLE; }
@@ -172,23 +182,26 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
 }
 
-<IN_TYPE_LITERAL> {
+<IN_BRACKETS> {
     "]"                                  { yypopState(); return BRACKET; }
     {TYPE_NAME}                          { return TYPE_NAME; }
     "."|","                              { return SYMBOLIC_OPERATOR; }
 //    "."                                  { return MEMBER_ACCESS_OPERATOR; }
 //    ","                                  { return DIMENSION_OPERATOR; }
-    "["                                  { yypushState(IN_TYPE_LITERAL); return BRACKET; }
+    "["                                  { yypushState(IN_BRACKETS); return BRACKET; }
 }
 
-//<IN_FUNCTION_DECLARATION> {
+//<IN_DOUBLE_QUOTES> {
+//    {DOUBLE_QUOTE}                       { yybegin(YYINITIAL); return STRING_LITERAL;}
+//    {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE;}
+//    {BRACED_VARIABLE}                    { return BRACED_VARIABLE;}
+//}
+
+//<AFTER_FUNCTION_KEYWORD> {
 //    {WHITE_SPACE}                        { return WHITE_SPACE; }
 //    {GENERIC_TOKEN}                      { yybegin(YYINITIAL); return FUNCTION_NAME; }
 //}
 
-//<IN_STRING> {
-//    {DOUBLE_QUOTE}                       { yybegin(YYINITIAL); return STRING;}
-//}
 
 
 [^] { return BAD_CHARACTER; }
