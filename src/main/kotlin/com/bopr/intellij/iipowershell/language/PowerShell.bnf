@@ -26,6 +26,7 @@
 
    /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
     tokens = [
+//        NEW_LINE = 'regexp:[\r\n]'
         WHITE_SPACE = 'regexp:\s+'
         LINE_COMMENT = 'regexp:#.*'
         REQUIRES_COMMENT = 'regexp:#\s*requires\s+.*'
@@ -60,18 +61,19 @@
 //        DIMENSION_OPERATOR = ','
         INCREMENT_OPERATOR = '++'
         DECREMENT_OPERATOR = '--'
-        SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|;,.\-+*/%]'
+        SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|,.\-+*/%]'
 
         FILE_PARAMETER = '-file'
         SUPPORTED_COMMAND_PARAMETER = '-supportedcommand'
         SWITCH_PARAMETER = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
-        COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
+//        COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
 
 
 //        TYPE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
-        SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w*'
-        GENERIC_TOKEN = "regexp:\w+[-?\w]+"
-        GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
+        SIMPLE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
+        COMMAND_PARAMETER = 'regexp:[\p{Alpha}_?]\w*:?'
+        GENERIC_IDENTIFIER = "regexp:\w+[-?\w]+"
+//        GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 //        GENERIC_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 
@@ -166,46 +168,55 @@ private braced-variable ::=
 
 /* B.1.7 Commands */
 
-//generic-token ::=
-//    generic-token-part
-//
-//generic-token-part ::=
-////    expandable-string-literal
-////  | verbatim-here-string-literal
-//   variable
-//  | generic-token-chars
-//
-//generic-token-chars ::=
-//    GENERIC_TOKEN
-////    Any Unicode character except
-////        { } ( ) ; , | & . [
-////        colon
-////        whitespace
-////        new-line-character
-//
-//generic-token-with-subexpr-start ::=
-//    generic-token-part+ '$('
+generic-token ::=
+    generic-token-parts
+
+private generic-token-parts ::=
+    generic-token-part+
+
+private generic-token-part ::=
+    expandable-string-literal
+  | verbatim-here-string-literal
+  | variable
+  | generic-token-char
+
+private generic-token-char ::=
+    GENERIC_IDENTIFIER
+/*
+    Any Unicode character except
+        {   }   (   )   ;   ,   |   &   $
+        ` (The backtick character U+0060)
+        double-quote-character
+        single-quote-character
+        whitespace
+        new-line-character
+        escaped-character
+*/
+
+generic-token-with-subexpr-start ::=
+    generic-token-parts '$('
 
 /* B.1.8 Parameters*/
 
-// first-parameter-char:
-//     A Unicode character of classes Lu, Ll, Lt, Lm, or Lo
-//     _ (The underscore character U+005F)
-//     ?
-//
-// parameter-chars:
-//     parameter-char
-//     parameter-chars parameter-char
-//
-// parameter-char:
-//     Any Unicode character except
-//         { } ( ) ; , | & . [
-//         colon
-//         whitespace
-//         new-line-character
-//
-// colon:
-//     : (The colon character U+003A)
+private command-parameter ::=
+//    dash first-parameter-char parameter-chars colon~opt~
+    COMMAND_PARAMETER
+
+/*
+first-parameter-char:
+    A Unicode character of classes Lu, Ll, Lt, Lm, or Lo
+    _ (The underscore character U+005F)
+    ?
+parameter-char:
+    Any Unicode character except
+        { } ( ) ; , | & . [
+        colon
+        whitespace
+        new-line-character
+colon:
+    : (The colon character U+003A)
+*/
+
 
 //verbatim-command-argument-chars ::=
 //     verbatim-command-argument-part+
@@ -351,7 +362,7 @@ verbatim-here-string-literal ::=
 /* B.1.10 Simple Names */
 
 private simple-name ::=
-    SIMPLE_NAME
+    SIMPLE_IDENTIFIER
 
 /* B.1.11 Type Names */
 
@@ -437,6 +448,8 @@ private statement ::=
 
 private statement-terminator ::=
     SEMICOLON
+//  | NEW_LINE
+//  | <<eof>>
 
 private statement-terminators ::=
     statement-terminator+
@@ -583,13 +596,12 @@ sequence-statement ::=
 pipeline ::=
     assignment-expression
   | expression redirections? pipeline-tail?
-//  | command verbatim-command-argument? pipeline-tail?
+  | command verbatim-command-argument? pipeline-tail?
 
 assignment-expression ::=
     expression assignment-operator statement
 
 private pipeline-tail ::=
-//    '|' command ('|' command)*
     ('|' command)+
 
 command ::=
@@ -603,19 +615,19 @@ command-module ::=
     primary-expression
 
 command-name ::=
-    GENERIC_TOKEN
+    generic-token
   | generic-token-with-subexpr
 
 generic-token-with-subexpr ::=
 //    No whitespace is allowed between ) and command-name.
-    GENERIC_TOKEN_WITH_SUBEXPR_START statement-list? ')' /*todo:no-space*/ command-name
+    generic-token-with-subexpr-start statement-list? ')' /*todo:no-space*/ command-name
 
 private command-name-expr ::=
     command-name
   | primary-expression
 
 private command-element ::=
-    COMMAND_PARAMETER
+    command-parameter
   | command-argument
   | redirections
 
@@ -710,7 +722,7 @@ cast-expression ::=
 //attributed-expression ::=
 //    type-literal variable
 
-private primary-expression ::=
+primary-expression ::=
     invocation-expression
   | element-access
   | member-access
@@ -848,12 +860,12 @@ type-literal ::=
     '[' type-spec ']'
 
 private type-spec ::=
-    array-type-name dimension* ']'
+    array-type-name dimensions ']'
   | generic-type-name generic-type-arguments ']'
   | type-name
 
-dimension ::=
-    ','
+dimensions ::=
+    ','*
 
 generic-type-arguments ::=
     type-spec (',' type-spec)*

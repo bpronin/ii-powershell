@@ -53,18 +53,13 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
 
-SIMPLE_NAME = [\p{Alpha}\_] \w*
-//TYPE_IDENTIFIER = {SIMPLE_NAME}
-//ATTRIBUTE_IDENTIFIER = {SIMPLE_NAME} "("
-GENERIC_TOKEN = \w+ (\w | {DASH} | "?")+
-COMMAND_PARAMETER = {DASH} {GENERIC_TOKEN}
-
-//ARRAY_TYPE_SPEC = {TYPE_NAME} "[" ","* "]"
-//GENERIC_TYPE_SPEC = {TYPE_NAME} "[" {TYPE_SPEC} ("," {TYPE_SPEC})* "]"
-//TYPE_SPEC = {ARRAY_TYPE_SPEC} | {GENERIC_TYPE_SPEC} | {TYPE_NAME}
-
-NAMESPACE_NAME =  (\w | "?")+ ":"
-VARIABLE_NAME = (\w |"?")+
+SIMPLE_IDENTIFIER = [\p{Alpha}\_] \w*
+GENERIC_IDENTIFIER = \w+ (\w | {DASH} | "?")+
+COMMAND_PARAMETER = {DASH} [\p{Alpha}\_\?] \w* \:?
+//NAMESPACE_NAME =  (\w | "?")+ ":"
+NAMESPACE_NAME =  [\w\?]+ \:
+//VARIABLE_NAME = (\w |"?")+
+VARIABLE_NAME = [\w\?]+
 
 /* Literals */
 
@@ -104,8 +99,9 @@ CAST_OPERATOR = {DASH} as
 FORMAT_OPERATOR = {DASH} f
 INCREMENT_OPERATOR = "++"
 DECREMENT_OPERATOR = {DASH} {DASH}
-SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
-    | ";" | "," | "." | "+" | "*" | "/" | "%" | {DASH}
+VERBATIM_PARAM_OPERATOR = "--%"
+SYMBOLIC_OPERATOR = {VERBATIM_PARAM_OPERATOR} | "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
+    | "," | "." | "+" | "*" | "/" | "%" | {DASH}
 COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
     |{SPLIT_OPERATOR}|{LOGICAL_OPERATOR}|{BITWISE_LOGICAL_OPERATOR}|{TYPE_OPERATOR}|{LOGICAL_NOT_OPERATOR}
     |{BITWISE_LOGICAL_NOT_OPERATOR}|{JOIN_OPERATOR}|{CAST_OPERATOR}|{SHIFT_OPERATOR}
@@ -134,7 +130,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
-
+    {NEW_LINE}                           { return NEW_LINE; }
     ";"                                  { return SEMICOLON; }
     {DASH}                               { return DASH; }
     {BRACE}                              { return BRACE; }
@@ -173,21 +169,19 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE; }
     {BRACED_VARIABLE}                    { return BRACED_VARIABLE; }
 
+    {GENERIC_IDENTIFIER}                 { return GENERIC_IDENTIFIER; }
     {SWITCH_PARAMETER}                   { return SWITCH_PARAMETER; } //todo: move to IN_SWITCH state ?
     {FILE_PARAMETER}                     { return FILE_PARAMETER; }  //todo: move to IN_SWITCH state ?
     {SUPPORTED_COMMAND_PARAMETER}        { return SUPPORTED_COMMAND_PARAMETER; }  //todo: move to IN_DATA state ?
+    {SIMPLE_IDENTIFIER}                  { return SIMPLE_IDENTIFIER; }
     {COMMAND_PARAMETER}                  { return COMMAND_PARAMETER; }
-
-//    {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
-    {SIMPLE_NAME}                        { return SIMPLE_NAME; }
 }
 
 <IN_BRACKETS> {
-    {SIMPLE_NAME} "("                    { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
-    {SIMPLE_NAME}                        { return TYPE_IDENTIFIER; }
-    "]"                                  { yybegin(YYINITIAL); return BRACKET; }
     "["                                  { yypushback(1); yybegin(YYINITIAL); return BRACKET; }
-//    "("                                  { yypushback(1); yybegin(YYINITIAL); return PARENTHESIS; }
+    "]"                                  { yybegin(YYINITIAL); return BRACKET; }
+    {SIMPLE_IDENTIFIER} "("                    { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
+    {SIMPLE_IDENTIFIER}                        { return TYPE_IDENTIFIER; }
     "."                                  { return SYMBOLIC_OPERATOR; }
     ","                                  { return SYMBOLIC_OPERATOR; }
 }
@@ -203,5 +197,4 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 //    {GENERIC_TOKEN}                      { yybegin(YYINITIAL); return FUNCTION_NAME; }
 //}
 
-
-[^] { return BAD_CHARACTER; }
+[^]                                      { return BAD_CHARACTER; }
