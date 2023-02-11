@@ -14,16 +14,16 @@ import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
         this((java.io.Reader)null);
     }
 
-    private Stack<Integer> stateStack = new Stack<Integer>();
-
-    public void yypushState(int state) {
-        stateStack.push(yystate());
-        yybegin(state);
-    }
-
-    public void yypopState() {
-        yybegin(stateStack.pop());
-    }
+//    private Stack<Integer> stateStack = new Stack<Integer>();
+//
+//    public void yypushState(int state) {
+//        stateStack.push(yystate());
+//        yybegin(state);
+//    }
+//
+//    public void yypopState() {
+//        yybegin(stateStack.pop());
+//    }
 %}
 
 %public
@@ -38,8 +38,8 @@ import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
 NEW_LINE = [\r\n]|\r\n
 WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
-DASH = [-–—―]
-DOUBLE_QUOTE = [\"”„] //[\"“”„]
+DASH = [\-\–\—\―]
+DOUBLE_QUOTE = [\"\“\”\„]
 BRACE = "{" | "}" | "@{"
 PARENTHESIS = "(" | ")" | "$(" | "@("
 LABEL = ":" \w+
@@ -54,9 +54,9 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 /* Identifiers */
 
 SIMPLE_NAME = [\p{Alpha}\_] \w*
+TYPE_NAME = {SIMPLE_NAME}
 GENERIC_TOKEN = \w+ (\w | {DASH} | "?")+
-TYPE_NAME = \w+ (\w | {DASH} | "?")+
-ARRAY_OR_GENERIC_TYPE_NAME = {TYPE_NAME} "["
+//ARRAY_OR_GENERIC_TYPE_NAME = {TYPE_NAME} "["
 COMMAND_PARAMETER = {DASH} {GENERIC_TOKEN}
 
 //ARRAY_TYPE_SPEC = {TYPE_NAME} "[" ","* "]"
@@ -139,7 +139,8 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {DASH}                               { return DASH; }
     {BRACE}                              { return BRACE; }
     {PARENTHESIS}                        { return PARENTHESIS; }
-    "["                                  { yypushState(IN_BRACKETS); return BRACKET; }
+    "["                                  { yybegin(IN_BRACKETS); return BRACKET; }
+    "]"                                  { return BRACKET; }
 
 //    {DOUBLE_QUOTE}                       { yybegin(IN_DOUBLE_QUOTES); return DOUBLE_QUOTE; }
     {STRING}                             { return STRING; }
@@ -183,12 +184,11 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 }
 
 <IN_BRACKETS> {
-    "]"                                  { yypopState(); return BRACKET; }
     {TYPE_NAME}                          { return TYPE_NAME; }
-    "."|","                              { return SYMBOLIC_OPERATOR; }
-//    "."                                  { return MEMBER_ACCESS_OPERATOR; }
-//    ","                                  { return DIMENSION_OPERATOR; }
-    "["                                  { yypushState(IN_BRACKETS); return BRACKET; }
+    "]"                                  { yybegin(YYINITIAL); return BRACKET; }
+    "["                                  { yypushback(1); yybegin(YYINITIAL); return BRACKET; }
+    "."                                  { return SYMBOLIC_OPERATOR; }
+    ","                                  { return SYMBOLIC_OPERATOR; }
 }
 
 //<IN_DOUBLE_QUOTES> {

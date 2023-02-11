@@ -17,7 +17,7 @@
     elementTypeHolderClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTypes"
     extends="com.bopr.intellij.iipowershell.language.psi.PowerShellPsiElement"
     parserClass="com.bopr.intellij.iipowershell.parser.PowerShellParser"
-    psiClassPrefix="PowerShell"
+//    psiClassPrefix="PowerShell"
     psiImplClassSuffix="Impl"
     psiImplPackage="com.bopr.intellij.iipowershell.language.psi.impl"
     psiImplUtilClass="com.bopr.intellij.iipowershell.language.psi.PowerShellPsiUtil"
@@ -68,7 +68,7 @@
         COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
 
         SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w*'
-        TYPE_NAME = 'regexp:\w+'
+        TYPE_NAME = 'regexp:[\p{Alpha}_]\w*'
         GENERIC_TOKEN = "regexp:\w+[-?\w]+"
         GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
@@ -94,6 +94,9 @@ root ::=
 //  | module-file
 //  | interactive-input
 //  | data-file
+
+private no-space ::=
+    "" //todo:
 
 private comparison-operator ::=
     COMPARISON_OPERATOR
@@ -598,7 +601,7 @@ command-name ::=
 
 generic-token-with-subexpr ::=
 //    No whitespace is allowed between ) and command-name.
-    GENERIC_TOKEN_WITH_SUBEXPR_START statement-list? ')' command-name
+    GENERIC_TOKEN_WITH_SUBEXPR_START statement-list? ')' /*todo:no-space*/ command-name
 
 private command-name-expr ::=
     command-name
@@ -701,12 +704,12 @@ cast-expression ::=
 //    type-literal variable
 
 private primary-expression ::=
-    value
-  | invocation-expression
+    invocation-expression
   | element-access
   | member-access
   | post-increment-expression
   | post-decrement-expression
+  | value
 
 value ::=
     parenthesized-expression
@@ -744,8 +747,8 @@ key-expression ::=
   | unary-expression
 
 post-increment-expression ::=
-//    primary-expression '++'
-    value increment-operator   // todo: value?
+//    primary-expression increment-operator
+    value increment-operator
 
 post-decrement-expression ::=
 //    primary-expression decrement-operator
@@ -755,19 +758,19 @@ member-access ::=
 // Note no whitespace is allowed after primary-expression.
 //    primary-expression '.' member-name
 //  | primary-expression '::' member-name
-    ('.' | '::') member-name primary-expression?
+    /*todo:no-space*/ ('.' | '::') member-name primary-expression?
 
 element-access ::=
 // Note no whitespace is allowed between primary-expression and [.
 //    primary-expression '[' expression ']'
-    '[' expression ']' primary-expression?
+    /*todo:no-space*/ '[' expression ']' primary-expression?
 
 invocation-expression ::=
 // Note no whitespace is allowed after primary-expression.
 //   primary-expression '.' member-name argument-list
 //   | primary-expression  '::' member-name argument-list
 //    ('.' | '::') member-name argument-list primary-expression?
-    ('.' | '::') member-name argument-list primary-expression?
+    /*todo:no-space*/ ('.' | '::') member-name argument-list primary-expression?
 
 private argument-list ::=
     '(' argument-expression-list? ')'
@@ -779,7 +782,7 @@ argument-expression ::=
     logical-argument-expression
 
 logical-argument-expression ::=
-   bitwise-argument-expression (logical-operator bitwise-argument-expression)*
+    bitwise-argument-expression (logical-operator bitwise-argument-expression)*
 
 bitwise-argument-expression ::=
     comparison-argument-expression (bitwise-logical-operator comparison-argument-expression)*
@@ -838,7 +841,6 @@ type-literal ::=
     '[' type-spec ']'
 
 type-spec ::=
-//    TYPE_NAME
     array-type-name dimension* ']'
   | generic-type-name generic-type-arguments ']'
   | type-name
