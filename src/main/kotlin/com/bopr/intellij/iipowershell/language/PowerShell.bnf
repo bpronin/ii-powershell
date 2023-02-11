@@ -51,10 +51,10 @@
         COMPARISON_OPERATOR = 'regexp:-[ic]?(eq|ne|gt|lt|le|ge|match|notmatch|replace|like|notlike|contains|notcontains|split|join)'
         LOGICAL_OPERATOR = 'regexp:-and|or|xor'
         BITWISE_LOGICAL_OPERATOR = 'regexp:-band|bor|bxor'
-        LOGICAL_NOT_OPERATOR = 'regexp:-not'
-        BITWISE_LOGICAL_NOT_OPERATOR = 'regexp:-bnot'
-        SPLIT_OPERATOR = 'regexp:-split'
-        JOIN_OPERATOR = 'regexp:-join'
+        LOGICAL_NOT_OPERATOR = '-not'
+        BITWISE_LOGICAL_NOT_OPERATOR = '-bnot'
+        SPLIT_OPERATOR = '-split'
+        JOIN_OPERATOR = '-join'
 
 //        MEMBER_ACCESS_OPERATOR = '.'
 //        DIMENSION_OPERATOR = ','
@@ -67,8 +67,9 @@
         SWITCH_PARAMETER = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
         COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
 
+
+//        TYPE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
         SIMPLE_NAME = 'regexp:[\p{Alpha}_]\w*'
-        TYPE_NAME = 'regexp:[\p{Alpha}_]\w*'
         GENERIC_TOKEN = "regexp:\w+[-?\w]+"
         GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
@@ -76,11 +77,14 @@
 
         DASH = '-'
         SEMICOLON = ';'
-        BRACE = 'regexp:[{}]|(@\{)'
-        BRACKET = 'regexp:[\[\]]'
-        PARENTHESIS = 'regexp:[()]|(\$\()|(@\()'
-        DOLLAR = '$'
         DOUBLE_QUOTE = '"'
+
+        /* Dummy items to generate corresponding tags */
+        ATTRIBUTE_IDENTIFIER = '<attribute identifier>'
+        TYPE_IDENTIFIER = '<type identifier>'
+        BRACE = '<brace>'
+        BRACKET = '<bracket>'
+        PARENTHESIS = '<parenthesis>'
     ]
     
     name('.*expression') = 'expression'
@@ -351,11 +355,12 @@ private simple-name ::=
 
 /* B.1.11 Type Names */
 
-private type-name ::=
+type-name ::=
     type-identifier ('.' type-identifier)*
 
-type-identifier ::=
-    TYPE_NAME
+private type-identifier ::=
+    TYPE_IDENTIFIER
+  | ATTRIBUTE_IDENTIFIER
 
 array-type-name ::=
     type-name '['
@@ -370,14 +375,16 @@ generic-type-name ::=
 private script-file ::=
     script-block
 
-//module-file ::=
-//    script-block
-//
-//interactive-input ::=
-//    script-block
-//
-//data-file ::=
-//    statement-list
+/*
+module-file ::=
+    script-block
+
+interactive-input ::=
+    script-block
+
+data-file ::=
+    statement-list
+*/
 
 /* B.2.2 Statements */
 
@@ -631,7 +638,7 @@ redirected-file-name ::=
 
 /* B.2.3 Expressions */
 
-private expression ::=
+expression ::=
     logical-expression
 
 logical-expression ::=
@@ -840,7 +847,7 @@ member-name ::=
 type-literal ::=
     '[' type-spec ']'
 
-type-spec ::=
+private type-spec ::=
     array-type-name dimension* ']'
   | generic-type-name generic-type-arguments ']'
   | type-name
@@ -853,20 +860,20 @@ generic-type-arguments ::=
 
 /* B.2.4 Attributes */
 
-private attribute-list ::=
+attribute-list ::=
     attribute+
 
 attribute ::=
-    '[' attribute-name '(' attribute-arguments ')' ']'
+    '[' attribute-name '(' attribute-arguments? ')' ']'
   | type-literal
 
 attribute-name ::=
     type-spec
 
 private attribute-arguments ::=
-    attribute-argument*
+    attribute-argument+
 
 attribute-argument ::=
-    expression
+    simple-name '=' expression
+  | expression
   | simple-name
-  | simple-name '=' expression

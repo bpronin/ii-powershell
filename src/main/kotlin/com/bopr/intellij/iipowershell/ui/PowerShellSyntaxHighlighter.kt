@@ -46,8 +46,8 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val PARENTHESIS = createKey("PWSH_PARENTHESIS", Colors.PARENTHESES, Types.PARENTHESIS)
         val REQUIRES_COMMENT = createKey("PWSH_REQUIRES_COMMENT", Colors.LINE_COMMENT, Types.REQUIRES_COMMENT)
         val SEMICOLON = createKey("PWSH_SEMICOLON", Colors.SEMICOLON, Types.SEMICOLON)
-        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_NAME)
-        val GENERIC_TOKEN = createKey("PWSH_GENERIC_TOKEN", Colors.FUNCTION_CALL, Types.GENERIC_TOKEN)
+        val TYPE = createKey("PWSH_TYPE", Colors.CLASS_NAME, Types.TYPE_IDENTIFIER)
+        val ATTRIBUTE = createKey("PWSH_ATTRIBUTE", Colors.METADATA, Types.ATTRIBUTE_IDENTIFIER)
         val SIGNATURE = createKey("PWSH_SIGNATURE", Colors.LINE_COMMENT, Types.SIGNATURE)
         val ASSIGNMENT_OPERATOR =
             createKey("PWSH_ASSIGNMENT_OPERATOR", Colors.OPERATION_SIGN, Types.ASSIGNMENT_OPERATOR)
@@ -56,7 +56,7 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
         val VARIABLE =
             createKey("PWSH_VARIABLE", Colors.LOCAL_VARIABLE, Types.REGULAR_VARIABLE, Types.BRACED_VARIABLE)
         //        val DOT = createKey("PWSH_DOT", Colors.DOT, Types.MEMBER_ACCESS_OPERATOR)
-//        val COMMA = createKey("PWSH_COMMA", Colors.DOT, Types.DIMENSION_OPERATOR)
+        //        val COMMA = createKey("PWSH_COMMA", Colors.DOT, Types.DIMENSION_OPERATOR)
         val FUNCTION_DECLARATION =
             createKey("PWSH_FUNCTION_DECLARATION", Colors.FUNCTION_DECLARATION, Types.FUNCTION_NAME)
         val FILE_REDIRECTION_OPERATOR =

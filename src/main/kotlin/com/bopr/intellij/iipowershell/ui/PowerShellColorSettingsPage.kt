@@ -2,6 +2,7 @@ package com.bopr.intellij.iipowershell.ui
 
 import com.bopr.intellij.iipowershell.language.PowerShellFileType
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.ASSIGNMENT_OPERATOR
+import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.ATTRIBUTE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACE
@@ -88,6 +89,7 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor(string("string_text"), STRING),
             AttributesDescriptor(string("type"), TYPE),
             AttributesDescriptor(string("variable"), VARIABLE),
+            AttributesDescriptor(string("attribute"), ATTRIBUTE),
         )
     }
 }

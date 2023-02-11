@@ -54,9 +54,9 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 /* Identifiers */
 
 SIMPLE_NAME = [\p{Alpha}\_] \w*
-TYPE_NAME = {SIMPLE_NAME}
+//TYPE_IDENTIFIER = {SIMPLE_NAME}
+//ATTRIBUTE_IDENTIFIER = {SIMPLE_NAME} "("
 GENERIC_TOKEN = \w+ (\w | {DASH} | "?")+
-//ARRAY_OR_GENERIC_TYPE_NAME = {TYPE_NAME} "["
 COMMAND_PARAMETER = {DASH} {GENERIC_TOKEN}
 
 //ARRAY_TYPE_SPEC = {TYPE_NAME} "[" ","* "]"
@@ -153,8 +153,6 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {LINE_COMMENT}                       { return LINE_COMMENT; }
     {BLOCK_COMMENT}                      { return BLOCK_COMMENT; }
 
-    {SIMPLE_NAME}                        { return SIMPLE_NAME; }
-
     {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
     {INCREMENT_OPERATOR}                 { return INCREMENT_OPERATOR; }
     {DECREMENT_OPERATOR}                 { return DECREMENT_OPERATOR; }
@@ -180,13 +178,16 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {SUPPORTED_COMMAND_PARAMETER}        { return SUPPORTED_COMMAND_PARAMETER; }  //todo: move to IN_DATA state ?
     {COMMAND_PARAMETER}                  { return COMMAND_PARAMETER; }
 
-    {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
+//    {GENERIC_TOKEN}                      { return GENERIC_TOKEN; }
+    {SIMPLE_NAME}                        { return SIMPLE_NAME; }
 }
 
 <IN_BRACKETS> {
-    {TYPE_NAME}                          { return TYPE_NAME; }
+    {SIMPLE_NAME} "("                    { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
+    {SIMPLE_NAME}                        { return TYPE_IDENTIFIER; }
     "]"                                  { yybegin(YYINITIAL); return BRACKET; }
     "["                                  { yypushback(1); yybegin(YYINITIAL); return BRACKET; }
+//    "("                                  { yypushback(1); yybegin(YYINITIAL); return PARENTHESIS; }
     "."                                  { return SYMBOLIC_OPERATOR; }
     ","                                  { return SYMBOLIC_OPERATOR; }
 }
@@ -201,7 +202,6 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 //    {WHITE_SPACE}                        { return WHITE_SPACE; }
 //    {GENERIC_TOKEN}                      { yybegin(YYINITIAL); return FUNCTION_NAME; }
 //}
-
 
 
 [^] { return BAD_CHARACTER; }
