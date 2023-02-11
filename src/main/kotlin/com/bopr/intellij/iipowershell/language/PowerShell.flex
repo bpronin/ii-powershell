@@ -39,7 +39,8 @@ NEW_LINE = [\r\n]|\r\n
 WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [\-\–\—\―]
-DOUBLE_QUOTE = [\"\“\”\„]
+//SINGLE_QUOTE = [\'\u2019\u201A\u201B]
+//DOUBLE_QUOTE = [\"\“\”\„]
 BRACE = "{" | "}" | "@{"
 PARENTHESIS = "(" | ")" | "$(" | "@("
 LABEL = ":" \w+
@@ -99,8 +100,8 @@ CAST_OPERATOR = {DASH} as
 FORMAT_OPERATOR = {DASH} f
 INCREMENT_OPERATOR = "++"
 DECREMENT_OPERATOR = {DASH} {DASH}
-VERBATIM_PARAM_OPERATOR = "--%"
-SYMBOLIC_OPERATOR = {VERBATIM_PARAM_OPERATOR} | "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
+VERBATIM_COMMAND_PARAM = "--%"
+SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
     | "," | "." | "+" | "*" | "/" | "%" | {DASH}
 COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
     |{SPLIT_OPERATOR}|{LOGICAL_OPERATOR}|{BITWISE_LOGICAL_OPERATOR}|{TYPE_OPERATOR}|{LOGICAL_NOT_OPERATOR}
@@ -150,6 +151,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {BLOCK_COMMENT}                      { return BLOCK_COMMENT; }
 
     {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
+    {VERBATIM_COMMAND_PARAM}             { return VERBATIM_COMMAND_PARAM; }
     {INCREMENT_OPERATOR}                 { return INCREMENT_OPERATOR; }
     {DECREMENT_OPERATOR}                 { return DECREMENT_OPERATOR; }
     {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }

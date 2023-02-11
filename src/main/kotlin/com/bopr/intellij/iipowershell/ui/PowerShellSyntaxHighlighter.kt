@@ -75,7 +75,8 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             Types.COMMAND_PARAMETER,
             Types.SWITCH_PARAMETER,
             Types.FILE_PARAMETER,
-            Types.SUPPORTED_COMMAND_PARAMETER
+            Types.SUPPORTED_COMMAND_PARAMETER,
+            Types.VERBATIM_COMMAND_PARAM
         )
         val OTHER_OPERATOR =
             createKey(

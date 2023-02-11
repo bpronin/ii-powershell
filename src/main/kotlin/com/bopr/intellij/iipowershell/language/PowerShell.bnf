@@ -56,7 +56,8 @@
         BITWISE_LOGICAL_NOT_OPERATOR = '-bnot'
         SPLIT_OPERATOR = '-split'
         JOIN_OPERATOR = '-join'
-
+        
+        VERBATIM_COMMAND_PARAM = '--%'
 //        MEMBER_ACCESS_OPERATOR = '.'
 //        DIMENSION_OPERATOR = ','
         INCREMENT_OPERATOR = '++'
@@ -70,9 +71,9 @@
 
 
 //        TYPE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
+        GENERIC_IDENTIFIER = "regexp:\w+[-?\w]+"
         SIMPLE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
         COMMAND_PARAMETER = 'regexp:[\p{Alpha}_?]\w*:?'
-        GENERIC_IDENTIFIER = "regexp:\w+[-?\w]+"
 //        GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 //        GENERIC_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
@@ -535,8 +536,9 @@ function-statement ::=
     ('function'| 'filter'| 'workflow') function-name function-parameter-declaration? '{' script-block '}'
 
 function-name ::=
-    command-argument
-
+    /* command-argument */
+    GENERIC_IDENTIFIER
+    
 function-parameter-declaration ::=
     '(' parameter-list ')'
 
@@ -635,7 +637,7 @@ command-argument ::=
     command-name-expr
 
 verbatim-command-argument ::=
-    '--%' VERBATIM_COMMAND_ARGUMENT_CHARS
+    VERBATIM_COMMAND_PARAM VERBATIM_COMMAND_ARGUMENT_CHARS
 
 private redirections ::=
     redirection+
