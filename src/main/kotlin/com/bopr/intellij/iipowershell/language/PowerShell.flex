@@ -36,7 +36,9 @@ import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
 %ignorecase
 
 NEW_LINE = [\r\n]|\r\n
-WHITE_SPACE = [ \t\n\x0B\f\r]+
+//WHITE_SPACE = [ \t\x0B\f]+
+WHITE_SPACE = [\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C] | \`[\r\n]
+//WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [\-\–\—\―]
 //SINGLE_QUOTE = [\'\u2019\u201A\u201B]
@@ -54,8 +56,9 @@ REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
 
 /* Identifiers */
 
-SIMPLE_IDENTIFIER = [\p{Alpha}\_] \w*
-GENERIC_IDENTIFIER = \w+ (\w | {DASH} | "?")+
+SIMPLE_IDENTIFIER = \w (\w | {DASH} | "?")*
+//SIMPLE_IDENTIFIER = [\p{Alpha}\_] \w*
+//GENERIC_IDENTIFIER = \w (\w | {DASH} | "?")*
 COMMAND_PARAMETER = {DASH} [\p{Alpha}\_\?] \w* \:?
 //NAMESPACE_NAME =  (\w | "?")+ ":"
 NAMESPACE_NAME =  [\w\?]+ \:
@@ -124,11 +127,12 @@ ASSIGNMENT_OPERATOR = "+=" | "*=" | "/=" | "%=" | {DASH} "=" | "="
 FILE_REDIRECTION_OPERATOR = ">"|"<"|">>"|"2>"|"2>>"|"3>"|"3>>"|"4>"|"4>>"|"5>"|"5>>"|"6>"|"6>>"|"*>"|"*>>"
 MERGING_REDIRECTION_OPERATOR = "*>&1"|"2>&1"|"3>&1"|"4>&1"|"5>&1"|"6>&1"|"*>&2"|"1>&2"|"3>&2"|"4>&2"|"5>&2"|"6>&2"
 
-/* Predefined statements params */
+/* Predefined statements params and arguments*/
 
 SWITCH_PARAMETER = {DASH} (regex|wildcard|exact|casesensitive|parallel)
 FILE_PARAMETER = {DASH} file
 SUPPORTED_COMMAND_PARAMETER = {DASH} supportedcommand
+DEFAULT_CLAUSE = default
 
 /* Variables */
 
@@ -145,7 +149,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
-//    {NEW_LINE}                           { return NEW_LINE; }
+    {NEW_LINE}                           { return NEW_LINE; }
     ";"                                  { return SEMICOLON; }
     {DASH}                               { return DASH; }
     {BRACE}                              { return BRACE; }
@@ -185,19 +189,22 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {REGULAR_VARIABLE}                   { return REGULAR_VARIABLE; }
     {BRACED_VARIABLE}                    { return BRACED_VARIABLE; }
 
-    {GENERIC_IDENTIFIER}                 { return GENERIC_IDENTIFIER; }
     {SWITCH_PARAMETER}                   { return SWITCH_PARAMETER; } //todo: move to IN_SWITCH state ?
     {FILE_PARAMETER}                     { return FILE_PARAMETER; }  //todo: move to IN_SWITCH state ?
     {SUPPORTED_COMMAND_PARAMETER}        { return SUPPORTED_COMMAND_PARAMETER; }  //todo: move to IN_DATA state ?
-    {SIMPLE_IDENTIFIER}                  { return SIMPLE_IDENTIFIER; }
     {COMMAND_PARAMETER}                  { return COMMAND_PARAMETER; }
+
+    {SIMPLE_IDENTIFIER}                  { return SIMPLE_IDENTIFIER; }
+//    {GENERIC_IDENTIFIER}                 { return GENERIC_IDENTIFIER; }
 }
 
 <IN_BRACKETS> {
-    "["                                  { yypushback(1); yybegin(YYINITIAL); return BRACKET; }
-    "]"                                  { yybegin(YYINITIAL); return BRACKET; }
-    {SIMPLE_IDENTIFIER} "("              { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
-    {SIMPLE_IDENTIFIER}                  { return TYPE_IDENTIFIER; }
+    "["                                  { yypushback(1); yybegin(YYINITIAL); }
+    "]"                                  { yypushback(1); yybegin(YYINITIAL); }
+//    {SIMPLE_IDENTIFIER} "("              { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
+//    {SIMPLE_IDENTIFIER}                  { return TYPE_IDENTIFIER; }
+    {SIMPLE_IDENTIFIER}                  { return SIMPLE_IDENTIFIER; }
+    "("                                  { yypushback(1); yybegin(YYINITIAL);}
     "."                                  { return SYMBOLIC_OPERATOR; }
     ","                                  { return SYMBOLIC_OPERATOR; }
 }

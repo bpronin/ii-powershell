@@ -24,7 +24,6 @@
     psiPackage="com.bopr.intellij.iipowershell.psi"
     tokenTypeClass="com.bopr.intellij.iipowershell.language.psi.PowerShellTokenType"
 
-   /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
     tokens = [
         NEW_LINE = 'regexp:[\r\n]'
         WHITE_SPACE = 'regexp:\s+'
@@ -39,6 +38,7 @@
         STRING = 'regexp:"([^$`"]|"")*\$?"'
 
         KEYWORD = 'regexp:(begin|break|catch|class|continue|data|define|do|dynamicparam|elseif|else|end|exit|filter|finally|foreach|for|from|function|if|in|inlinescript|parallel|param|process|return|switch|throw|trap|try|until|using|var|while|workflow)'
+        DEFAULT_CLAUSE = 'default'
 
         REGULAR_VARIABLE = 'regexp:[$@][\w_?:]+'
         BRACED_VARIABLE = 'regexp:\$\{[^}]+[^`]}'
@@ -56,38 +56,37 @@
         BITWISE_LOGICAL_NOT_OPERATOR = '-bnot'
         SPLIT_OPERATOR = '-split'
         JOIN_OPERATOR = '-join'
-        
+        FILE_PARAMETER = '-file'
+        SUPPORTED_COMMAND_PARAMETER = '-supportedcommand'
+        SWITCH_PARAMETER = 'regexp:-regex|wildcard|exact|casesensitive|parallel'
+
         VERBATIM_COMMAND_ARGUMENT = '--%.*'
 //        MEMBER_ACCESS_OPERATOR = '.'
 //        DIMENSION_OPERATOR = ','
         INCREMENT_OPERATOR = '++'
         DECREMENT_OPERATOR = '--'
         SYMBOLIC_OPERATOR = 'regexp:(\.\.)|(::)|(&&)|(\|\|)|[!&|,.\-+*/%]'
+        DASH = '-'
+        SEMICOLON = ';'
+        DOUBLE_QUOTE = '"'
 
-        FILE_PARAMETER = '-file'
-        SUPPORTED_COMMAND_PARAMETER = '-supportedcommand'
-        SWITCH_PARAMETER = 'regexp:-(regex|wildcard|exact|casesensitive|parallel)'
 //        COMMAND_PARAMETER = 'regexp:-\w+[?\w]+;?'
-
-
 //        TYPE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
-        GENERIC_IDENTIFIER = "regexp:\w+[-?\w]+"
         SIMPLE_IDENTIFIER = 'regexp:[\p{Alpha}_]\w*'
+//        GENERIC_IDENTIFIER = "regexp:\w+[-?\w]+"
         COMMAND_PARAMETER = 'regexp:[\p{Alpha}_?]\w*:?'
 //        GENERIC_TOKEN_WITH_SUBEXPR_START = "regexp:\w+[-?\w]+\$\("
 //        ARRAY_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 //        GENERIC_TYPE_NAME = 'regexp:\[\w+[-?\w]+]\['
 
-        DASH = '-'
-        SEMICOLON = ';'
-        DOUBLE_QUOTE = '"'
 
         /* Dummy items to generate corresponding tags */
-        ATTRIBUTE_IDENTIFIER = '<attribute identifier>'
-        TYPE_IDENTIFIER = '<type identifier>'
+//        ATTRIBUTE_IDENTIFIER = '<attribute identifier>'
+//        TYPE_IDENTIFIER = '<type identifier>'
         BRACE = '<brace>'
         BRACKET = '<bracket>'
         PARENTHESIS = '<parenthesis>'
+        ARGUMENT = '<argument>'
     ]
     
     name('.*expression') = 'expression'
@@ -97,10 +96,25 @@
 
 root ::=
 //  "regexp:.*"
-    script-file
+     script-file
 //  | module-file
 //  | interactive-input
 //  | data-file
+
+/* B.1.3 White space */
+
+whitespace ::=
+    'regexp:[\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C]|`[\r\n]'
+/*
+    Any character with Unicode class Zs, Zl, or Zp
+    Horizontal tab character (U+0009)
+    Vertical tab character (U+000B)
+    Form feed character (U+000C)
+    ` (The backtick character U+0060) followed by new-line-character
+*/
+
+private new-line ::=
+    NEW_LINE
 
 private no-space ::=
     "" //todo:
@@ -182,7 +196,8 @@ private generic-token-part ::=
   | generic-token-char
 
 private generic-token-char ::=
-    GENERIC_IDENTIFIER
+    SIMPLE_IDENTIFIER
+//    GENERIC_IDENTIFIER
 /*
     Any Unicode character except
         {   }   (   )   ;   ,   |   &   $
@@ -371,8 +386,9 @@ type-name ::=
     type-identifier ('.' type-identifier)*
 
 private type-identifier ::=
-    TYPE_IDENTIFIER
-  | ATTRIBUTE_IDENTIFIER
+    SIMPLE_IDENTIFIER
+//    TYPE_IDENTIFIER
+//  | ATTRIBUTE_IDENTIFIER
 
 array-type-name ::=
     type-name '['
@@ -401,19 +417,19 @@ data-file ::=
 /* B.2.2 Statements */
 
 script-block ::=
-    param-block? statement-terminators? script-block-body?
+    param-block? statement-terminator* script-block-body?
 
 param-block ::=
-    attribute-list? 'param' '(' parameter-list? ')'
+    new-line*  attribute-list? new-line*  'param' new-line* '(' parameter-list? ')'
 
 private parameter-list ::=
-    script-parameter (',' script-parameter)*
+    new-line* script-parameter (',' new-line*  script-parameter)*
 
 script-parameter ::=
-    attribute-list? variable script-parameter-default?
+    new-line* attribute-list? new-line* variable script-parameter-default?
 
 script-parameter-default ::=
-    '=' expression
+    new-line* '=' new-line* expression
 
 private script-block-body ::=
     named-block-list
@@ -423,13 +439,16 @@ private named-block-list ::=
     named-block+
 
 named-block ::=
-    block-name statement-block statement-terminators?
+    block-name statement-block statement-terminator*
 
 block-name ::=
-    'dynamicparam' | 'begin' | 'process' | 'end'
+    'dynamicparam'
+  | 'begin'
+  | 'process'
+  | 'end'
 
 statement-block ::=
-    '{' statement-list? '}'
+    new-line* '{' statement-list? new-line* '}'
 
 private statement-list ::=
     statement+
@@ -438,34 +457,30 @@ private statement ::=
     if-statement
   | LABEL? labeled-statement
   | function-statement
-  | flow-control-statement statement-terminator?
+  | flow-control-statement statement-terminator*
   | trap-statement
   | try-statement
   | data-statement
   | inline-script-statement
   | parallel-statement
   | sequence-statement
-  | pipeline statement-terminator?
+  | pipeline statement-terminator*
 
 private statement-terminator ::=
     SEMICOLON
-//  | NEW_LINE
-//  | <<eof>>
-
-private statement-terminators ::=
-    statement-terminator+
+  | new-line
 
 if-statement ::=
-    'if' '(' pipeline ')' statement-block elseif-clauses? else-clause?
+    'if' new-line* '(' new-line* pipeline new-line* ')' statement-block elseif-clauses? else-clause?
 
 private elseif-clauses ::=
     elseif-clause+
 
 elseif-clause ::=
-    'elseif' ( pipeline ) statement-block
+    new-line* 'elseif' new-line* ( new-line* pipeline new-line* ) statement-block
 
 else-clause ::=
-    'else' statement-block
+    new-line* 'else' statement-block
 
 private labeled-statement ::=
     switch-statement
@@ -475,44 +490,51 @@ private labeled-statement ::=
   | do-statement
 
 switch-statement ::=
-    'switch' switch-parameters? switch-condition switch-body
+    'switch' new-line* switch-parameters? switch-condition switch-body
 
 private switch-parameters ::=
     SWITCH_PARAMETER+
 
 switch-condition ::=
-    '(' pipeline ')'
-   | FILE_PARAMETER switch-filename
+    '(' new-line* pipeline new-line* ')'
+   | FILE_PARAMETER new-line* switch-filename
 
 switch-filename ::=
     command-argument
   | primary-expression
 
 switch-body ::=
-    '{' switch-clauses switch-default-clause? '}'
+    new-line* '{' new-line* switch-clauses new-line* switch-default-clause? '}'
 
 private switch-clauses ::=
     switch-clause+
 
 switch-clause ::=
-    switch-clause-condition statement-block statement-terminators?
+    switch-clause-condition statement-block statement-terminator*
 
 switch-default-clause ::=
-    'default' statement-block statement-terminators?
+    'default' statement-block statement-terminator*
 
 switch-clause-condition ::=
     command-argument
   | primary-expression
 
 foreach-statement ::=
-    'foreach' '(' variable 'in' pipeline ')' statement-block
+    'foreach' new-line* '(' new-line* variable new-line* 'in' new-line* pipeline new-line* ')' statement-block
 
 for-statement ::=
-    'for' '(' for-initializer? statement-terminator
-        for-condition? statement-terminator for-iterator? ')' statement-block
-  | 'for' '(' for-initializer? statement-terminator
-        for-condition? ')' statement-block
-  | 'for' '(' for-initializer? ')' statement-block
+    'for' new-line* '('
+        new-line* for-initializer? statement-terminator+
+        new-line* for-condition? statement-terminator+
+        new-line* for-iterator?
+        new-line* ')' statement-block
+  | 'for' new-line* '('
+        new-line* for-initializer? statement-terminator+
+        new-line* for-condition?
+        new-line* ')' statement-block
+  | 'for' new-line* '('
+        new-line* for-initializer?
+        new-line* ')' statement-block
 
 for-initializer ::=
     pipeline
@@ -524,23 +546,24 @@ for-iterator ::=
     pipeline
 
 while-statement ::=
-    'while' '(' while-condition ')' statement-block
+    'while' new-line* '(' new-line* while-condition new-line* ')' statement-block
 
 do-statement ::=
-    'do' statement-block ('while' | 'until') '(' while-condition ')'
+    'do' statement-block new-line* ('while' | 'until') new-line* '(' while-condition new-line* ')'
 
 while-condition ::=
-    pipeline
+    new-line* pipeline
 
 function-statement ::=
-    ('function'| 'filter'| 'workflow') function-name function-parameter-declaration? '{' script-block '}'
+    ('function'| 'filter'| 'workflow') new-line* function-name function-parameter-declaration? '{' script-block '}'
 
 function-name ::=
     /* command-argument */
-    GENERIC_IDENTIFIER
-    
+//    GENERIC_IDENTIFIER
+    SIMPLE_IDENTIFIER
+
 function-parameter-declaration ::=
-    '(' parameter-list ')'
+    new-line* '(' parameter-list new-line* ')'
 
 flow-control-statement ::=
     'break' label-expression?
@@ -554,7 +577,7 @@ label-expression ::=
   | unary-expression
 
 trap-statement ::=
-    'trap' type-literal? statement-block
+    'trap' new-line* type-literal? new-line* statement-block
 
 try-statement ::=
     'try' statement-block ((catch-clauses finally-clause) | (catch-clauses | finally-clause))
@@ -563,25 +586,25 @@ private catch-clauses ::=
     catch-clause+
 
 catch-clause ::=
-    'catch' catch-type-list? statement-block
+    new-line* 'catch' catch-type-list? statement-block
 
 catch-type-list ::=
-    type-literal (',' type-literal)*
+    new-line* type-literal (',' new-line* type-literal)*
 
 finally-clause ::=
-    'finally' statement-block
+    new-line* 'finally' statement-block
 
 data-statement ::=
-    'data' data-name? data-commands-allowed? statement-block
+    'data' new-line* data-name? data-commands-allowed? statement-block
 
 data-name ::=
     simple-name
 
 data-commands-allowed ::=
-    SUPPORTED_COMMAND_PARAMETER data-commands-list
+    new-line* SUPPORTED_COMMAND_PARAMETER data-commands-list
 
 data-commands-list ::=
-    data-command (',' data-command)*
+    new-line* data-command (',' new-line* data-command)*
 
 data-command ::=
     command-name-expr
@@ -604,7 +627,7 @@ assignment-expression ::=
     expression assignment-operator statement
 
 private pipeline-tail ::=
-    ('|' command)+
+    ('|' new-line* command)+
 
 command ::=
     command-name command-element*
@@ -656,28 +679,28 @@ expression ::=
     logical-expression
 
 logical-expression ::=
-    bitwise-expression (logical-operator bitwise-expression)*
+    bitwise-expression (logical-operator new-line* bitwise-expression)*
 
 bitwise-expression ::=
-    comparison-expression (bitwise-logical-operator comparison-expression)*
+    comparison-expression (bitwise-logical-operator new-line* comparison-expression)*
 
 comparison-expression ::=
-    additive-expression (comparison-operator additive-expression)*
+    additive-expression (comparison-operator new-line* additive-expression)*
 
 additive-expression ::=
-    multiplicative-expression (additive-operator multiplicative-expression)*
+    multiplicative-expression (additive-operator new-line* multiplicative-expression)*
 
 multiplicative-expression ::=
-    format-expression (multiplicative-operator format-expression)*
+    format-expression (multiplicative-operator new-line* format-expression)*
 
 format-expression ::=
-    range-expression (format-operator range-expression)*
+    range-expression (format-operator new-line* range-expression)*
 
 range-expression ::=
-    array-literal-expression (range-operator array-literal-expression)*
+    array-literal-expression (range-operator new-line* array-literal-expression)*
 
 array-literal-expression ::=
-    unary-expression (array-literal-operator unary-expression)*
+    unary-expression (array-literal-operator new-line* unary-expression)*
 
 private unary-expression ::=
     primary-expression
@@ -695,28 +718,28 @@ private expression-with-unary-operator ::=
   | join-expression
 
 array-create-expression ::=
-    array-literal-operator unary-expression
+    array-literal-operator new-line* unary-expression
 
 split-expression ::=
-    split-operator unary-expression
+    split-operator new-line* unary-expression
 
 join-expression ::=
-    join-operator unary-expression
+    join-operator new-line* unary-expression
 
 sign-expression ::=
-    additive-operator unary-expression
+    additive-operator new-line* unary-expression
 
 logical-not-expression ::=
-    ('!' | logical-not-operator) unary-expression
+    ('!' | logical-not-operator) new-line* unary-expression
 
 bitwise-logical-not-expression ::=
-    bitwise-logical-not-operator unary-expression
+    bitwise-logical-not-operator new-line* unary-expression
 
 pre-increment-expression ::=
-    increment-operator unary-expression
+    increment-operator new-line* unary-expression
 
 pre-decrement-expression ::=
-    decrement-operator unary-expression
+    decrement-operator new-line* unary-expression
 
 cast-expression ::=
     type-literal unary-expression
@@ -743,91 +766,100 @@ value ::=
   | variable
 
 private parenthesized-expression ::=
-    '(' pipeline ')'
+    '(' new-line* pipeline new-line* ')'
 
 sub-expression ::=
-    '$(' statement-list? ')'
+    '$(' new-line* statement-list? new-line* ')'
 
 array-expression ::=
-    '@(' statement-list? ')'
+    '@(' new-line* statement-list? new-line* ')'
 
 script-block-expression ::=
-    '{' script-block '}'
+    '{' new-line* script-block new-line* '}'
 
 hash-literal-expression ::=
-    '@{' hash-literal-body? '}'
+    '@{' new-line* hash-literal-body? new-line* '}'
 
 hash-literal-body ::=
-    hash-entry (statement-terminators hash-entry)*
+    hash-entry (statement-terminator+ hash-entry)*
+/*
+    hash-entry
+    hash-literal-body statement-terminators hash-entry
+*/
 
 hash-entry ::=
-    key-expression '=' statement
+    key-expression '=' new-line* statement
 
 key-expression ::=
     simple-name
   | unary-expression
 
 post-increment-expression ::=
-//    primary-expression increment-operator
     value increment-operator
+  /* primary-expression ++ */
 
 post-decrement-expression ::=
-//    primary-expression decrement-operator
     value decrement-operator
+  /* primary-expression dashdash */
 
 member-access ::=
-// Note no whitespace is allowed after primary-expression.
-//    primary-expression '.' member-name
-//  | primary-expression '::' member-name
     /*todo:no-space*/ ('.' | '::') member-name primary-expression?
+/*
+ Note no whitespace is allowed after primary-expression.
+    primary-expression . member-name
+    primary-expression :: member-name
+*/
 
 element-access ::=
-// Note no whitespace is allowed between primary-expression and [.
-//    primary-expression '[' expression ']'
-    /*todo:no-space*/ '[' expression ']' primary-expression?
+    /*todo:no-space*/ '[' new-line* expression new-line* ']' primary-expression?
+/*
+ Note no whitespace is allowed between primary-expression and [.
+    primary-expression [ expression ]
+*/
 
 invocation-expression ::=
-// Note no whitespace is allowed after primary-expression.
-//   primary-expression '.' member-name argument-list
-//   | primary-expression  '::' member-name argument-list
-//    ('.' | '::') member-name argument-list primary-expression?
     /*todo:no-space*/ ('.' | '::') member-name argument-list primary-expression?
+/*
+ Note no whitespace is allowed after primary-expression.
+   primary-expression . member-name argument-list
+   primary-expression  :: member-name argument-list
+*/
 
 private argument-list ::=
-    '(' argument-expression-list? ')'
+    '(' argument-expression-list? new-line* ')'
 
 private argument-expression-list ::=
-    argument-expression (',' argument-expression)*
+    argument-expression (',' new-line*  argument-expression)*
 
 argument-expression ::=
     logical-argument-expression
 
 logical-argument-expression ::=
-    bitwise-argument-expression (logical-operator bitwise-argument-expression)*
+    new-line* bitwise-argument-expression (logical-operator bitwise-argument-expression)*
 
 bitwise-argument-expression ::=
-    comparison-argument-expression (bitwise-logical-operator comparison-argument-expression)*
+    comparison-argument-expression (bitwise-logical-operator new-line* comparison-argument-expression)*
 
 comparison-argument-expression ::=
-    additive-argument-expression (comparison-operator additive-argument-expression)*
+    additive-argument-expression (comparison-operator new-line* additive-argument-expression)*
 
 additive-argument-expression ::=
-    multiplicative-argument-expression (additive-operator multiplicative-argument-expression)*
+    multiplicative-argument-expression (additive-operator new-line* multiplicative-argument-expression)*
 
 multiplicative-argument-expression ::=
-    format-argument-expression (multiplicative-operator format-argument-expression)*
+    format-argument-expression (multiplicative-operator new-line* format-argument-expression)*
 
 format-argument-expression ::=
-    range-argument-expression (format-operator range-argument-expression)*
+    range-argument-expression (format-operator new-line* range-argument-expression)*
 
 range-argument-expression ::=
     unary-expression
-  | range-expression range-operator unary-expression
+  | range-expression range-operator new-line* unary-expression
 
 member-name ::=
     simple-name
   | string-literal
-//  | string-literal-with-subexpression
+//todo:  | string-literal-with-subexpression
   | expression-with-unary-operator
   | value
 
@@ -862,15 +894,15 @@ type-literal ::=
     '[' type-spec ']'
 
 private type-spec ::=
-    array-type-name dimensions ']'
-  | generic-type-name generic-type-arguments ']'
+    array-type-name new-line* dimensions ']'
+  | generic-type-name new-line* generic-type-arguments ']'
   | type-name
 
 dimensions ::=
     ','*
 
 generic-type-arguments ::=
-    type-spec (',' type-spec)*
+    type-spec (',' new-line*  type-spec)*
 
 /* B.2.4 Attributes */
 
@@ -878,7 +910,7 @@ attribute-list ::=
     attribute+
 
 attribute ::=
-    '[' attribute-name '(' attribute-arguments? ')' ']'
+    new-line* '[' new-line* attribute-name '(' attribute-arguments? new-line* ')' new-line* ']'
   | type-literal
 
 attribute-name ::=
@@ -888,6 +920,6 @@ private attribute-arguments ::=
     attribute-argument+
 
 attribute-argument ::=
-    simple-name '=' expression
-  | expression
-  | simple-name
+    new-line* simple-name '=' new-line* expression
+  | new-line* expression
+  | new-line* simple-name

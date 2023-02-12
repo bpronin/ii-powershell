@@ -2,7 +2,6 @@ package com.bopr.intellij.iipowershell.ui
 
 import com.bopr.intellij.iipowershell.language.PowerShellFileType
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.ASSIGNMENT_OPERATOR
-import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.ATTRIBUTE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BAD_CHARACTER
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BLOCK_COMMENT
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.BRACE
@@ -22,7 +21,6 @@ import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.R
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SEMICOLON
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.SIGNATURE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.STRING
-import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.TYPE
 import com.bopr.intellij.iipowershell.ui.PowerShellSyntaxHighlighter.Companion.VARIABLE
 import com.bopr.intellij.iipowershell.util.Resources.string
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -87,9 +85,9 @@ class PowerShellColorSettingsPage : ColorSettingsPage {
 //            AttributesDescriptor(string("operators//comma"), COMMA),
 //            AttributesDescriptor(string("operators//dot"), DOT),
             AttributesDescriptor(string("string_text"), STRING),
-            AttributesDescriptor(string("type"), TYPE),
+//            AttributesDescriptor(string("type"), TYPE),
             AttributesDescriptor(string("variable"), VARIABLE),
-            AttributesDescriptor(string("attribute"), ATTRIBUTE),
+//            AttributesDescriptor(string("attribute"), ATTRIBUTE),
         )
     }
 }
