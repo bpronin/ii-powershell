@@ -65,18 +65,20 @@ class PowerShellSyntaxHighlighter : SyntaxHighlighterBase() {
             createKey("PWSH_HEXADECIMAL_INTEGER_NUMBER", Colors.NUMBER, Types.HEXADECIMAL_INTEGER_NUMBER)
         val MERGING_REDIRECTION_OPERATOR =
             createKey("PWSH_MERGING_REDIRECTION_OPERATOR", Colors.OPERATION_SIGN, Types.MERGING_REDIRECTION_OPERATOR)
-        val STRING = createKey("PWSH_STRING", Colors.STRING,
+        val STRING = createKey(
+            "PWSH_STRING", Colors.STRING,
             Types.STRING,
             Types.MULTILINE_STRING,
             Types.VERBATIM_STRING,
-            Types.VERBATIM_MULTILINE_STRING)
+            Types.VERBATIM_MULTILINE_STRING,
+            Types.VERBATIM_COMMAND_ARGUMENT
+        )
         val COMMAND_PARAMETER = createKey(
             "PWSH_COMMAND_PARAMETER", Colors.PARAMETER,
             Types.COMMAND_PARAMETER,
             Types.SWITCH_PARAMETER,
             Types.FILE_PARAMETER,
-            Types.SUPPORTED_COMMAND_PARAMETER,
-            Types.VERBATIM_COMMAND_PARAM
+            Types.SUPPORTED_COMMAND_PARAMETER
         )
         val OTHER_OPERATOR =
             createKey(

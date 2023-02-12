@@ -26,7 +26,7 @@
 
    /* NOTE: In generated flex file change (.|\n) to ([^]|\n) */
     tokens = [
-//        NEW_LINE = 'regexp:[\r\n]'
+        NEW_LINE = 'regexp:[\r\n]'
         WHITE_SPACE = 'regexp:\s+'
         LINE_COMMENT = 'regexp:#.*'
         REQUIRES_COMMENT = 'regexp:#\s*requires\s+.*'
@@ -57,7 +57,7 @@
         SPLIT_OPERATOR = '-split'
         JOIN_OPERATOR = '-join'
         
-        VERBATIM_COMMAND_PARAM = '--%'
+        VERBATIM_COMMAND_ARGUMENT = '--%.*'
 //        MEMBER_ACCESS_OPERATOR = '.'
 //        DIMENSION_OPERATOR = ','
         INCREMENT_OPERATOR = '++'
@@ -636,8 +636,8 @@ private command-element ::=
 command-argument ::=
     command-name-expr
 
-verbatim-command-argument ::=
-    VERBATIM_COMMAND_PARAM VERBATIM_COMMAND_ARGUMENT_CHARS
+private verbatim-command-argument ::=
+    VERBATIM_COMMAND_ARGUMENT
 
 private redirections ::=
     redirection+

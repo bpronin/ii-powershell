@@ -70,10 +70,25 @@ DECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? \d+ {INTEGER_SUFFIX}?
 HEXADECIMAL_INTEGER_NUMBER = {NUMBER_SIGN}? 0x [\dA-Fa-f]+ {INTEGER_SUFFIX}?
 REAL_NUMBER = {NUMBER_SIGN}? \d*\.\d+ (e \d+ {INTEGER_SUFFIX}?)?
 
+
 STRING = \" [^\"]* \"
 MULTILINE_STRING = \@\" {ANY}* \"\@
 VERBATIM_STRING = \' [^\']* \'
 VERBATIM_MULTILINE_STRING = \@\' {ANY}* \'\@
+
+VERBATIM_COMMAND_ARGUMENT = "--%" [^\|\r\n]*
+//todo: VERBATIM_COMMAND_ARGUMENT = "--%" ((\" [^\"]* \") | (\&[^\&]*) | ([^\|]))*
+
+//VERBATIM_COMMAND_ARGUMENT_1 = \" [^\"]* \"
+//VERBATIM_COMMAND_ARGUMENT_2 = (!\&\&)
+//VERBATIM_COMMAND_ARGUMENT_3 = [^\|\r\n]
+//VERBATIM_COMMAND_ARGUMENT = "--%" (
+//    {VERBATIM_COMMAND_ARGUMENT_1}
+////    |
+////    {VERBATIM_COMMAND_ARGUMENT_2}
+////    |
+////    {VERBATIM_COMMAND_ARGUMENT_3}
+//    ) {NEW_LINE}
 
 /* Keywords */
 
@@ -100,7 +115,6 @@ CAST_OPERATOR = {DASH} as
 FORMAT_OPERATOR = {DASH} f
 INCREMENT_OPERATOR = "++"
 DECREMENT_OPERATOR = {DASH} {DASH}
-VERBATIM_COMMAND_PARAM = "--%"
 SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
     | "," | "." | "+" | "*" | "/" | "%" | {DASH}
 COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
@@ -131,7 +145,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
-    {NEW_LINE}                           { return NEW_LINE; }
+//    {NEW_LINE}                           { return NEW_LINE; }
     ";"                                  { return SEMICOLON; }
     {DASH}                               { return DASH; }
     {BRACE}                              { return BRACE; }
@@ -151,7 +165,7 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {BLOCK_COMMENT}                      { return BLOCK_COMMENT; }
 
     {ASSIGNMENT_OPERATOR}                { return ASSIGNMENT_OPERATOR; }
-    {VERBATIM_COMMAND_PARAM}             { return VERBATIM_COMMAND_PARAM; }
+    {VERBATIM_COMMAND_ARGUMENT}          { return VERBATIM_COMMAND_ARGUMENT; }
     {INCREMENT_OPERATOR}                 { return INCREMENT_OPERATOR; }
     {DECREMENT_OPERATOR}                 { return DECREMENT_OPERATOR; }
     {SYMBOLIC_OPERATOR}                  { return SYMBOLIC_OPERATOR; }
@@ -182,8 +196,8 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 <IN_BRACKETS> {
     "["                                  { yypushback(1); yybegin(YYINITIAL); return BRACKET; }
     "]"                                  { yybegin(YYINITIAL); return BRACKET; }
-    {SIMPLE_IDENTIFIER} "("                    { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
-    {SIMPLE_IDENTIFIER}                        { return TYPE_IDENTIFIER; }
+    {SIMPLE_IDENTIFIER} "("              { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
+    {SIMPLE_IDENTIFIER}                  { return TYPE_IDENTIFIER; }
     "."                                  { return SYMBOLIC_OPERATOR; }
     ","                                  { return SYMBOLIC_OPERATOR; }
 }
