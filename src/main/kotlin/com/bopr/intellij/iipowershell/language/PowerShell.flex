@@ -37,7 +37,7 @@ import static com.bopr.intellij.iipowershell.language.psi.PowerShellTypes.*;
 
 NEW_LINE = [\r\n]|\r\n
 //WHITE_SPACE = [ \t\x0B\f]+
-WHITE_SPACE = [\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C] | \`[\r\n]
+WHITE_SPACE = ([\p{Zs}\p{Zl}\p{Zp}\u0009\u000B\u000C] | \`[\r\n])+
 //WHITE_SPACE = [ \t\n\x0B\f\r]+
 ANY = [^] | {NEW_LINE}
 DASH = [\-\–\—\―]
