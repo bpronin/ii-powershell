@@ -1,20 +1,31 @@
 # Single line comment
 #Requires requirements
+
+[String]$hello = "Hello!"
+${found a string} = @"
+    Found a string
+"@
+
 <#---------------#
  # Block comment #
  #---------------#>
-begin end
-100 100L 100D 200Kb
-0xF1FA .5 10.5e8
-$variable  ${braced variable}
-"" "string text"
-[string] [type.member] [int[]] [int[,,,]]  [int[string,string[int]]]
-. , ; {} () [] @() @{} $()
-&& || & | ++ .. :: . ! * / % + - --
-= += -= *= /= %=
->  >>  2>  2>>  3>  3>>  4>  4>> 5>  5>>  6>  6>>  *>  *>>  <
-*>&1  2>&1  3>&1  4>&1  5>&1  6>&1 *>&2  1>&2  3>&2  4>&2  5>&2  6>&2
--and -band -bnot -bor -bxor -not -f
+
+:label switch -Exact (100, "Hello") {
+    100 {
+        Call-Command -One 100 -Two "text" 6>&1 > "file.txt"
+        continue
+    }
+    $hello {
+        break label
+    }
+    {$_ -is [String] -and $$ -eq 10.5e8} {
+        Write-Host ${found a string} | Also-Call("argument")
+    }
+    default {
+        "No matches"
+    }
+}
+
 # SIG # Begin signature block
 # x+GhsHxy2QDYkrJBh8Rlcw==
 # SIG # End signature block

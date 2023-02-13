@@ -43,8 +43,8 @@ ANY = [^] | {NEW_LINE}
 DASH = [\-\–\—\―]
 //SINGLE_QUOTE = [\'\u2019\u201A\u201B]
 //DOUBLE_QUOTE = [\"\“\”\„]
-BRACE = "{" | "}" | "@{"
-PARENTHESIS = "(" | ")" | "$(" | "@("
+//BRACE = "{" | "}" | "@{"
+//PARENTHESIS = "(" | ")" | "$(" | "@("
 LABEL = ":" \w+
 
 /* Comments */
@@ -52,7 +52,7 @@ LABEL = ":" \w+
 LINE_COMMENT = # .*
 BLOCK_COMMENT = <# {ANY}* #>
 SIGNATURE = "# SIG # Begin signature block" {NEW_LINE} {ANY}* "# SIG # End signature block"
-REQUIRES_COMMENT = # {WHITE_SPACE}* requires {WHITE_SPACE}+ .*
+REQUIRES_COMMENT = # {WHITE_SPACE}? requires {WHITE_SPACE} .*
 
 /* Identifiers */
 
@@ -119,7 +119,7 @@ FORMAT_OPERATOR = {DASH} f
 INCREMENT_OPERATOR = "++"
 DECREMENT_OPERATOR = {DASH} {DASH}
 SYMBOLIC_OPERATOR = "??=" | "??" | "?." | "?[]" | ".." | "::" | "&&" | "||" | "!" | "&" | "|"
-    | "," | "." | "+" | "*" | "/" | "%" | {DASH}
+    | "+" | "*" | "/" | "%"
 COMPARISON_OPERATOR={EQUALITY_OPERATOR}|{MATCHING_OPERATOR}|{CONTAINMENT_OPERATOR}|{REPLACEMENT_OPERATOR}
     |{SPLIT_OPERATOR}|{LOGICAL_OPERATOR}|{BITWISE_LOGICAL_OPERATOR}|{TYPE_OPERATOR}|{LOGICAL_NOT_OPERATOR}
     |{BITWISE_LOGICAL_NOT_OPERATOR}|{JOIN_OPERATOR}|{CAST_OPERATOR}|{SHIFT_OPERATOR}
@@ -150,12 +150,20 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 <YYINITIAL> {
     {WHITE_SPACE}                        { return WHITE_SPACE; }
     {NEW_LINE}                           { return NEW_LINE; }
+    "."                                  { return DOT; }
+    ","                                  { return COMMA; }
     ";"                                  { return SEMICOLON; }
     {DASH}                               { return DASH; }
-    {BRACE}                              { return BRACE; }
-    {PARENTHESIS}                        { return PARENTHESIS; }
-    "["                                  { yybegin(IN_BRACKETS); return BRACKET; }
-    "]"                                  { return BRACKET; }
+    "${"                                 { return BRACED_VARIABLE_START; }
+    "@{"                                 { return HASH_EXPRESSION_START; }
+    "{"                                  { return LBRACE; }
+    "}"                                  { return RBRACE; }
+    "$("                                 { return SUB_EXPRESSION_START; }
+    "@("                                 { return ARRAY_EXPRESSION_START; }
+    "("                                  { return LPARENTHESIS; }
+    ")"                                  { return RPARENTHESIS; }
+    "["                                  { yybegin(IN_BRACKETS); return LBRACKET; }
+    "]"                                  { return RBRACKET; }
 
 //    {DOUBLE_QUOTE}                       { yybegin(IN_DOUBLE_QUOTES); return DOUBLE_QUOTE; }
     {STRING}                             { return STRING; }
@@ -179,8 +187,8 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
     {MERGING_REDIRECTION_OPERATOR}       { return MERGING_REDIRECTION_OPERATOR; }
 
 //    {FUNCTION_KEYWORD}                   { yybegin(AFTER_FUNCTION_KEYWORD); return KEYWORD; }
-    {KEYWORD}                            { return KEYWORD; }
     {LABEL}                              { return LABEL; }
+    {KEYWORD}                            { return KEYWORD; }
 
     {DECIMAL_INTEGER_NUMBER}             { return DECIMAL_INTEGER_NUMBER; }
     {HEXADECIMAL_INTEGER_NUMBER}         { return HEXADECIMAL_INTEGER_NUMBER; }
@@ -199,14 +207,14 @@ BRACED_VARIABLE = "${" {VARIABLE_SCOPE}? [^}]+ [^`] "}"
 }
 
 <IN_BRACKETS> {
-    "["                                  { yypushback(1); yybegin(YYINITIAL); }
-    "]"                                  { yypushback(1); yybegin(YYINITIAL); }
 //    {SIMPLE_IDENTIFIER} "("              { yypushback(1); yybegin(YYINITIAL); return ATTRIBUTE_IDENTIFIER; }
 //    {SIMPLE_IDENTIFIER}                  { return TYPE_IDENTIFIER; }
     {SIMPLE_IDENTIFIER}                  { return SIMPLE_IDENTIFIER; }
+    "["                                  { yypushback(1); yybegin(YYINITIAL); }
+    "]"                                  { yypushback(1); yybegin(YYINITIAL); }
     "("                                  { yypushback(1); yybegin(YYINITIAL);}
-    "."                                  { return SYMBOLIC_OPERATOR; }
-    ","                                  { return SYMBOLIC_OPERATOR; }
+    ","                                  { yypushback(1); yybegin(YYINITIAL);}
+    "."                                  { yypushback(1); yybegin(YYINITIAL);}
 }
 
 //<IN_DOUBLE_QUOTES> {
